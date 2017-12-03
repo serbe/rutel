@@ -1,4 +1,12 @@
-//#[derive(Serialize, Deserialize)]
+use serde_json::{Value};
+
+#[derive(Serialize, Deserialize)]
+pub struct Response {
+    ok: bool,
+    result: Value,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct User {
     id: u64,
     is_bot: bool,
