@@ -1,21 +1,28 @@
 use tokio_core::reactor::Core;
-use hyper::{Client, Body, Method, Request, Uri};
+use hyper::{Client, Body};
+use hyper_tls::{HttpsConnector};
 use hyper::client::HttpConnector;
-use hyper::header::{ContentLength, ContentType};
-use types::{User};
+use serde_json::{from_slice, from_value, Value, Error};
+//use hyper::header::{ContentLength, ContentType};
+use types::{Response};
+use std::io;
+use futures::future::Future;
+use futures::Stream;
 
 #[derive(Debug)]
 pub struct Bot {
     token: String,
     core: Core,
-    client: Client<HttpConnector, Body>,
+    client: Client<HttpsConnector<HttpConnector>, Body>,
 //    user: Option<User>
 }
 
 impl Bot {
     pub fn new(token: &str) -> Self {
-        let mut core = Core::new().unwrap();
-        let client: Client<HttpConnector, Body> = Client::new(&core.handle());
+        let core = Core::new().unwrap();
+        let client = Client::configure()
+            .connector(HttpsConnector::new(4, &core.handle()).unwrap())
+            .build(&core.handle());
         Bot {
             token: token.to_string(),
             core: core,
@@ -24,18 +31,24 @@ impl Bot {
     }
 
     pub fn get_me(self) -> () {
-        let req = self.create_request("getMe", "");
+        let req = self.create_request("getMe");
         println!("{:?}", req);
     }
 
-    fn create_request(self, method: &str, values: &str) -> Request<Body> {
-//        let json = r#"{"library":"hyper"}"#;
-        let uri: Uri = format!("https://api.telegram.org/bot{}/{}", self.token, method).parse().unwrap();
-        let mut req: Request<Body> = Request::new(Method::Post, uri);
-        req.headers_mut().set(ContentType::json());
-        req.headers_mut().set(ContentLength(values.len() as u64));
-        req.set_body(values.to_string());
-        req
+    fn create_request(mut self, method: &str) -> Result<Response, Error> {
+        let uri = format!("https://api.telegram.org/bot{}/{}", self.token, method).parse().unwrap();
+        let work = self.client.get(uri).and_then(|res| {
+            res.body().concat2().and_then(move |body| {
+                let v: Value = from_slice(&body).map_err(|e| {
+                    io::Error::new(
+                        io::ErrorKind::Other,
+                        e
+                    )
+                })?;
+                Ok(v)
+            })
+        });
+        from_value(self.core.run(work).unwrap())
     }
 //    fullURL := urlAPI + bot.Token + "/" + method
 //    resp, err := bot.Client.PostForm(fullURL, values)
