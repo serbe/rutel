@@ -22,5 +22,6 @@ fn main() {
 
     let b: Bot = Bot::new(TOKEN);
     println!("{:?}", b);
-    b.get_me();
+    let u = b.get_me();
+    println!("{:?}", u);
 }
