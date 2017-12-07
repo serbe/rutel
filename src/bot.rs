@@ -46,15 +46,20 @@ impl Bot {
         from_value(self.event_loop.run(work).unwrap())
     }
 
-    fn create_request_with_values(mut self, method: &str, values: &str) -> Result<Response, Error> {
+    fn create_request_with_values(mut self, method: &str, values: String) -> Result<Response, Error> {
         let uri = format!("https://api.telegram.org/bot{}/{}", self.token, method).parse().unwrap();
         let mut req = Request::new(Method::Post, uri);
         req.headers_mut().set(ContentType::json());
         req.headers_mut().set(ContentLength(values.len() as u64));
-        req.set_body(&values);
+        req.set_body(values);
+//        println!("{:?}", req.body());
         let work = self.client.request(req).and_then(|res| {
             res.body().concat2().and_then(move |body| {
+                let ve = body.to_vec();
+                println!("{:?}", &body);
+                println!("to_string_pretty {:?}", String::from_utf8_lossy(&ve).to_string());
                 let v: Value = from_slice(&body).map_err(|e| {
+                    println!("error {:?}", e);
                     io::Error::new(
                         io::ErrorKind::Other,
                         e
@@ -74,8 +79,8 @@ impl Bot {
         }
     }
 
-    pub fn get_updates(self) -> Result<User, Error> {
-        let resp = self.create_request_with_values("getUpdates", "");
+    pub fn get_updates(self, v: String) -> Result<User, Error> {
+        let resp = self.create_request_with_values("getUpdates", v);
         match resp {
             Ok(v) => from_value(v.result),
             Err(e) => Err(e),
