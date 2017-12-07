@@ -13,6 +13,7 @@ extern crate tokio_core;
 //use tokio_core::reactor::Core;
 
 mod bot;
+mod methods;
 mod types;
 
 use bot::Bot;
@@ -22,6 +23,8 @@ fn main() {
 
     let b: Bot = Bot::new(TOKEN);
     println!("{:?}", b);
-    let u = b.get_me();
+//    let u = b.get_me();
+//    println!("{:?}", u);
+    let u = b.get_updates(methods::getUpdatesParams::new().json());
     println!("{:?}", u);
 }
