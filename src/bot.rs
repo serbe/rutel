@@ -4,7 +4,7 @@ use hyper_tls::{HttpsConnector};
 use hyper::client::HttpConnector;
 use serde_json::{from_slice, from_value, Value, Error};
 use hyper::header::{ContentLength, ContentType};
-use types::{Response, User};
+use types::{Response, User, Update};
 use std::io;
 use futures::future::Future;
 use futures::Stream;
@@ -55,11 +55,11 @@ impl Bot {
 //        println!("{:?}", req.body());
         let work = self.client.request(req).and_then(|res| {
             res.body().concat2().and_then(move |body| {
-                let ve = body.to_vec();
-                println!("{:?}", &body);
-                println!("to_string_pretty {:?}", String::from_utf8_lossy(&ve).to_string());
+//                let ve = body.to_vec();
+//                println!("{:?}", &body);
+//                println!("to_string_pretty {:?}", String::from_utf8_lossy(&ve).to_string());
                 let v: Value = from_slice(&body).map_err(|e| {
-                    println!("error {:?}", e);
+//                    println!("error {:?}", e);
                     io::Error::new(
                         io::ErrorKind::Other,
                         e
@@ -79,7 +79,7 @@ impl Bot {
         }
     }
 
-    pub fn get_updates(self, v: String) -> Result<User, Error> {
+    pub fn get_updates(self, v: String) -> Result<Vec<Update>, Error> {
         let resp = self.create_request_with_values("getUpdates", v);
         match resp {
             Ok(v) => from_value(v.result),
