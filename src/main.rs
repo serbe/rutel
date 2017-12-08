@@ -12,8 +12,10 @@ extern crate hyper_tls;
 extern crate tokio_core;
 
 mod bot;
-mod methods;
-mod types;
+pub mod types;
+pub mod methods;
+
+use methods::*;
 
 use bot::Bot;
 
@@ -24,7 +26,7 @@ fn main() {
 //    println!("{:?}", b);
 //    let u = b.get_me();
 //    println!("{:?}", u);
-    let mut params = methods::getUpdatesParams::new();
+    let mut params = get_updates::getUpdatesParams::new();
     let u = b.get_updates(params.limit(1).json());
     println!("{:?}", u);
 }
