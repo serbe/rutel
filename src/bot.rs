@@ -1,5 +1,5 @@
 use tokio_core::reactor::Core;
-use hyper::{Client, Body, Method, Request};
+use hyper::{Client, Body, Method, Request, Uri};
 use hyper_tls::{HttpsConnector};
 use hyper::client::HttpConnector;
 use serde_json::{from_slice, from_value, Value, Error};
@@ -18,7 +18,7 @@ pub struct Bot {
 }
 
 impl Bot {
-    pub fn new(token: &str) -> Self {
+    pub fn new(token: &'static str) -> Self {
         let core = Core::new().unwrap();
         let client = Client::configure()
             .connector(HttpsConnector::new(4, &core.handle()).unwrap())
@@ -30,8 +30,13 @@ impl Bot {
         }
     }
 
-    fn create_request(mut self, method: &str) -> Result<Response, Error> {
-        let uri = format!("https://api.telegram.org/bot{}/{}", self.token, method).parse().unwrap();
+    fn build_uri(&self, method: &'static str) -> Uri {
+        let uri: Uri = format!("https://api.telegram.org/bot{}/{}", self.token, method).parse().unwrap();
+        uri
+    }
+
+    fn create_request(mut self, method: &'static str) -> Result<Response, Error> {
+        let uri = self.build_uri(method);
         let work = self.client.get(uri).and_then(|res| {
             res.body().concat2().and_then(move |body| {
                 let v: Value = from_slice(&body).map_err(|e| {
@@ -46,20 +51,15 @@ impl Bot {
         from_value(self.event_loop.run(work).unwrap())
     }
 
-    fn create_request_with_values(mut self, method: &str, values: String) -> Result<Response, Error> {
-        let uri = format!("https://api.telegram.org/bot{}/{}", self.token, method).parse().unwrap();
+    fn create_request_with_values(mut self, method: &'static str, values: String) -> Result<Response, Error> {
+        let uri = self.build_uri(method);
         let mut req = Request::new(Method::Post, uri);
         req.headers_mut().set(ContentType::json());
         req.headers_mut().set(ContentLength(values.len() as u64));
         req.set_body(values);
-//        println!("{:?}", req.body());
         let work = self.client.request(req).and_then(|res| {
             res.body().concat2().and_then(move |body| {
-//                let ve = body.to_vec();
-//                println!("{:?}", &body);
-//                println!("to_string_pretty {:?}", String::from_utf8_lossy(&ve).to_string());
                 let v: Value = from_slice(&body).map_err(|e| {
-//                    println!("error {:?}", e);
                     io::Error::new(
                         io::ErrorKind::Other,
                         e
