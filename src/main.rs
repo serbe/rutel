@@ -15,7 +15,7 @@ mod bot;
 pub mod types;
 pub mod methods;
 
-use methods::*;
+pub use self::methods::*;
 
 use bot::Bot;
 
@@ -26,7 +26,7 @@ fn main() {
 //    println!("{:?}", b);
 //    let u = b.get_me();
 //    println!("{:?}", u);
-    let mut params = get_updates::getUpdatesParams::new();
-    let u = b.get_updates(params.limit(1).json());
+    let mut params = getUpdatesParams::new();
+    let u = b.get_updates(params.json());
     println!("{:?}", u);
 }
