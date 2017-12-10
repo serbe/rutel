@@ -22,11 +22,15 @@ use bot::Bot;
 fn main() {
     const TOKEN: &'static str = "123786433:AAFCmpVP5h491DK2Rjz5ofW5cTO-N2iFmhU";
 
-    let b: Bot = Bot::new(TOKEN);
+    let mut b: Bot = Bot::new(TOKEN);
 //    println!("{:?}", b);
-//    let u = b.get_me();
-//    println!("{:?}", u);
-    let mut params = getUpdatesParams::new();
+    let u = b.get_me();
+    println!("{:?}", u);
+    let params = getUpdatesParams::new();
     let u = b.get_updates(params.json());
     println!("{:?}", u);
+    let params = sendMessageParams::new(types::ChatID::from(94983903), String::from("Ку тест"));
+    let u = b.send_message(params.json());
+    println!("{:?}", u);
+    println!("{:?}", params.json());
 }
