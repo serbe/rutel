@@ -24,13 +24,13 @@ fn main() {
 
     let mut b: Bot = Bot::new(TOKEN);
 //    println!("{:?}", b);
-    let u = b.get_me();
-    println!("{:?}", u);
+    // let u = b.get_me();
+    // println!("{:?}", u);
     let params = getUpdatesParams::new();
     let u = b.get_updates(params.json());
     println!("{:?}", u);
-    let params = sendMessageParams::new(types::ChatID::from(94983903), String::from("Ку тест"));
+    let params = sendMessageParams::new(types::ChatID::from(94983903), String::from("Привет"));
     let u = b.send_message(params.json());
     println!("{:?}", u);
-    println!("{:?}", params.json());
+//    println!("{:?}", params.json());
 }
