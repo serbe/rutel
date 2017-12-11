@@ -1,6 +1,6 @@
 use tokio_core::reactor::Core;
 use hyper::{Client, Body, Method, Request, Uri};
-use hyper_tls::{HttpsConnector};
+use hyper_tls::HttpsConnector;
 use hyper::client::HttpConnector;
 use serde_json::{from_slice, from_value, Value};
 use hyper::header::{ContentLength, ContentType};
@@ -54,15 +54,12 @@ impl Bot {
         });
         let v: Value = self.event_loop.run(work).map_err(|e| e.to_string())?;
         let r: Response = from_value(v).map_err(|e| e.to_string())?;
-        match r.ok {
-            true => {
-                let res: Value = r.result.ok_or("result is none")?;
-                Ok(res)
-            }
-            false => {
-                let par = r.parameters.ok_or("Error but parameters is none")?;
-                Err(par.to_string())
-            }
+        if r.ok {
+            let res: Value = r.result.ok_or("result is none")?;
+            Ok(res)
+        } else {
+            let par = r.parameters.ok_or("Error but parameters is none")?;
+            Err(par.to_string())
         }
     }
 
@@ -79,7 +76,7 @@ impl Bot {
     /// limit	Integer	Optional	Limits the number of updates to be retrieved. Values between 1—100 are accepted. Defaults to 100.
     /// timeout	Integer	Optional	Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling. Should be positive, short polling should be used for testing purposes only.
     /// allowed_updates	Array of String	Optional	List the types of updates you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all updates regardless of type (default). If not specified, the previous setting will be used.
-    /// 
+    ///
     /// Please note that this parameter doesn't affect updates created before the call to the getUpdates, so unwanted updates may be received for a short period of time.
     /// Notes
     /// 1. This method will not work if an outgoing webhook is set up.
@@ -117,7 +114,7 @@ impl Bot {
     }
 
     /// Use this method to send photos. On success, the sent Message is returned.
-    /// 
+    ///
     /// Parameters	Type	Required	Description
     /// chat_id	Integer or String	Yes	Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     /// photo	InputFile or String	Yes	Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. More info on Sending Files »
