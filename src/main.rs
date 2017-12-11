@@ -37,8 +37,8 @@ fn main() {
 //    let u = b.send_message(params.json());
 //    println!("{:?}", u);
 //    println!("{:?}", params.json());
-//    let mut params = forwardMessageParams::new(types::ChatID::from(94_983_903), types::ChatID::from(94_983_903), 68);
-//    let u = b.forward_message(params.disable_notification(true).json());
-//    println!("{:?}", u);
-//    println!("{:?}", params.json());
+    let mut params = forwardMessageParams::new(types::ChatID::from(94_983_903), types::ChatID::from(94_983_903), 68);
+    let u = b.forward_message(params.disable_notification(true).json());
+    println!("{:?}", u);
+    println!("{:?}", params.json());
 }
