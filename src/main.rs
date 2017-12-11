@@ -26,11 +26,16 @@ fn main() {
 //    println!("{:?}", b);
     // let u = b.get_me();
     // println!("{:?}", u);
-    let params = getUpdatesParams::new();
-    let u = b.get_updates(params.json());
+    // let mut params = getUpdatesParams::new();
+    // let u = b.get_updates(params.limit(100).json());
+    // println!("{:?}", params.json());
+    // println!("{:?}", u);
+    // let params = sendMessageParams::new(types::ChatID::from(94983903), String::from("Привет"));
+    // let u = b.send_message(params.json());
+    // println!("{:?}", u);
+    // println!("{:?}", params.json());
+    let mut params = forwardMessageParams::new(types::ChatID::from(94983903), types::ChatID::from(94983903), 68);
+    let u = b.forward_message(params.disable_notification(true).json());
     println!("{:?}", u);
-    let params = sendMessageParams::new(types::ChatID::from(94983903), String::from("Привет"));
-    let u = b.send_message(params.json());
-    println!("{:?}", u);
-//    println!("{:?}", params.json());
+    println!("{:?}", params.json());
 }
