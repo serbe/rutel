@@ -29,16 +29,16 @@ fn main() {
     println!("{:?}", b);
     let u = b.get_me();
     println!("{:?}", u);
-//    let mut params = getUpdatesParams::new();
-//    let u = b.get_updates(params.limit(100).json());
+    let mut params = GetUpdatesParams::new();
+    let u = b.get_updates(params.limit(2).json());
 //    println!("{:?}", params.json());
-//    println!("{:?}", u);
-//    let params = sendMessageParams::new(types::ChatID::from(94_983_903), String::from("Привет"));
+    println!("{:?}", u);
+//    let params = SendMessageParams::new(types::ChatID::from(94_983_903), String::from("Привет"));
 //    let u = b.send_message(params.json());
 //    println!("{:?}", u);
 //    println!("{:?}", params.json());
-    let mut params = forwardMessageParams::new(types::ChatID::from(94_983_903), types::ChatID::from(94_983_903), 68);
-    let u = b.forward_message(params.disable_notification(true).json());
-    println!("{:?}", u);
-    println!("{:?}", params.json());
+//    let mut params = ForwardMessageParams::new(types::ChatID::from(94_983_903), types::ChatID::from(94_983_903), 68);
+//    let u = b.forward_message(params.disable_notification(true).json());
+//    println!("{:?}", u);
+//    println!("{:?}", params.json());
 }

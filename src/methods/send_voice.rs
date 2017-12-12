@@ -3,9 +3,12 @@ use serde_json::to_string;
 
 #[derive(Serialize, Debug)]
 pub struct SendVoiceParams {
-    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format
+    /// @channelusername)
     pub chat_id: ChatID,
-    // Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
+    // Audio file to send. Pass a file_id as String to send a file that exists on the Telegram
+    // servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the
+    // Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub voice: File,
     /// Voice message caption, 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -19,7 +22,8 @@ pub struct SendVoiceParams {
     /// If the message is a reply, ID of the original message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_to_message_id: Option<Integer>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom
+    /// reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }

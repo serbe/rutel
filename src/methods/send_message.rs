@@ -1,14 +1,15 @@
 use types::*;
 use serde_json::to_string;
 
-/// Use this method to send text messages. On success, the sent Message is returned.
 #[derive(Serialize, Debug)]
-pub struct sendMessageParams {
-    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+pub struct SendMessageParams {
+    /// Unique identifier for the target chat or username of the target channel (in the format
+    /// @channelusername)
     pub chat_id: ChatID,
     /// Text of the message to be sent
     pub text: String,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or
+    /// inline URLs in your bot's message.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     /// Disables link previews for links in this message
@@ -20,14 +21,15 @@ pub struct sendMessageParams {
     /// If the message is a reply, ID of the original message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_to_message_id: Option<Integer>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
+    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-impl sendMessageParams {
+impl SendMessageParams {
     pub fn new(chat_id: ChatID, text: String) -> Self {
-        sendMessageParams {
+        SendMessageParams {
             chat_id,
             text,
             parse_mode: None,
