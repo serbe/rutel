@@ -10,7 +10,7 @@ pub struct SendAudioParams {
     /// Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio
     /// file from the Internet, or upload a new one using multipart/form-data. More info on Sending
     /// Files »
-    pub audio: File,
+    pub audio: FilePtr,
     /// Audio caption, 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -36,7 +36,7 @@ pub struct SendAudioParams {
 }
 
 impl SendAudioParams {
-    pub fn new(chat_id: ChatID, audio: File) -> Self {
+    pub fn new(chat_id: ChatID, audio: FilePtr) -> Self {
         SendAudioParams {
             chat_id,
             audio,

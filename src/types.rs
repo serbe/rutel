@@ -11,18 +11,6 @@ pub enum ChatID {
     Integer(Integer),
 }
 
-// impl serde::Serialize for ChatID {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//     where
-//         S: serde::Serializer,
-//     {
-//         match *self {
-//             ChatID::String(ref id) => serializer.serialize_str(id),
-//             ChatID::Integer(id) => serializer.serialize_i64(id),
-//         }
-//     }
-// }
-
 impl From<String> for ChatID {
     fn from(id: String) -> Self {
         ChatID::String(id)
@@ -32,6 +20,25 @@ impl From<String> for ChatID {
 impl From<Integer> for ChatID {
     fn from(id: Integer) -> Self {
         ChatID::Integer(id)
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(untagged)]
+pub enum FilePtr {
+    String(String),
+    File(File),
+}
+
+impl From<String> for FilePtr {
+    fn from(url: String) -> Self {
+        FilePtr::String(url)
+    }
+}
+
+impl From<File> for FilePtr {
+    fn from(file: File) -> Self {
+        FilePtr::File(file)
     }
 }
 

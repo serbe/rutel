@@ -9,7 +9,7 @@ pub struct SendPhotoParams {
     /// Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers
     /// (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet,
     /// or upload a new photo using multipart/form-data. More info on Sending Files »
-    pub photo: File,
+    pub photo: FilePtr,
     /// Photo caption (may also be used when resending photos by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -26,7 +26,7 @@ pub struct SendPhotoParams {
 }
 
 impl SendPhotoParams {
-    pub fn new(chat_id: ChatID, photo: File) -> Self {
+    pub fn new(chat_id: ChatID, photo: FilePtr) -> Self {
         SendPhotoParams {
             chat_id,
             photo,

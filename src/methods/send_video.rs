@@ -9,7 +9,7 @@ pub struct SendVideoParams {
     /// Video to send. Pass a file_id as String to send a video that exists on the Telegram servers
     /// (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet,
     /// or upload a new video using multipart/form-data. More info on Sending Files »
-    pub video: File,
+    pub video: FilePtr,
     /// Duration of sent video in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
@@ -35,7 +35,7 @@ pub struct SendVideoParams {
 }
 
 impl SendVideoParams {
-    pub fn new(chat_id: ChatID, video: File) -> Self {
+    pub fn new(chat_id: ChatID, video: FilePtr) -> Self {
         SendVideoParams {
             chat_id,
             video,
