@@ -8,6 +8,7 @@ pub mod send_audio;
 pub mod send_document;
 pub mod send_video;
 pub mod send_voice;
+pub mod send_video_note;
 
 pub use self::get_updates::*;
 pub use self::send_message::*;
@@ -17,3 +18,4 @@ pub use self::send_audio::*;
 pub use self::send_document::*;
 pub use self::send_video::*;
 pub use self::send_voice::*;
+pub use self::send_video_note::*;

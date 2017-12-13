@@ -141,4 +141,11 @@ impl Bot {
         let resp = self.create_request("sendVoice", v)?;
         from_value(resp).map_err(|e| e.to_string())
     }
+
+    /// As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1 minute long.
+    /// Use this method to send video messages. On success, the sent Message is returned.
+    pub fn send_video_note(&mut self, v: String) -> Result<Message, String> {
+        let resp = self.create_request("sendVideoNote", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
 }
