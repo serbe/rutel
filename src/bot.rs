@@ -148,4 +148,17 @@ impl Bot {
         let resp = self.create_request("sendVideoNote", v)?;
         from_value(resp).map_err(|e| e.to_string())
     }
+
+    /// Use this method to send a group of photos or videos as an album. On success, an array of
+    /// the sent Messages is returned.
+    pub fn send_media_group(&mut self, v: String) -> Result<Message, String> {
+        let resp = self.create_request("sendMediaGroup", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to send point on the map. On success, the sent Message is returned.
+    pub fn send_location(&mut self, v: String) -> Result<Message, String> {
+        let resp = self.create_request("sendLocation", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
 }
