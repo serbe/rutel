@@ -9,7 +9,7 @@ pub struct SendDocumentParams {
     /// File to send. Pass a file_id as String to send a file that exists on the Telegram servers
     /// (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet,
     /// or upload a new one using multipart/form-data. More info on Sending Files »
-    pub document: FilePrt,
+    pub document: FilePtr,
     /// Document caption (may also be used when resending documents by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,

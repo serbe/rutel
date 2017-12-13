@@ -42,7 +42,7 @@ impl SendVideoNoteParams {
     }
 
     pub fn duration(&mut self, v: Integer) -> &mut Self {
-        self.caption = Some(v);
+        self.duration = Some(v);
         self
     }
 
