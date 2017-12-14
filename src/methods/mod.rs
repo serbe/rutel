@@ -14,6 +14,7 @@ pub mod send_location;
 pub mod edit_message_live_location;
 pub mod stop_message_live_location;
 pub mod send_venue;
+pub mod send_contact;
 
 pub use self::get_updates::*;
 pub use self::send_message::*;
@@ -29,3 +30,4 @@ pub use self::send_location::*;
 pub use self::edit_message_live_location::*;
 pub use self::stop_message_live_location::*;
 pub use self::send_venue::*;
+pub use self::send_contact::*;
