@@ -10,7 +10,8 @@ pub struct SendLocationParams {
     pub latitude: Float,
     /// Longitude of the location
     pub longitude: Float,
-    /// Period in seconds for which the location will be updated (see Live Locations, should be between 60 and 86400.
+    /// Period in seconds for which the location will be updated (see Live Locations, should be 
+    /// between 60 and 86400.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub live_period: Option<Integer>,
     /// Sends the message silently. Users will receive a notification with no sound.
