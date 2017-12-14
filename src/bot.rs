@@ -81,7 +81,8 @@ impl Bot {
     /// getUpdates, so unwanted updates may be received for a short period of time.
     /// Notes
     /// 1. This method will not work if an outgoing webhook is set up.
-    /// 2. In order to avoid getting duplicate updates, recalculate offset after each server response.
+    /// 2. In order to avoid getting duplicate updates, recalculate offset after each server
+    /// response.
     pub fn get_updates(&mut self, v: String) -> Result<Vec<Update>, String> {
         let resp = self.create_request("getUpdates", v)?;
         from_value(resp).map_err(|e| e.to_string())
@@ -159,6 +160,29 @@ impl Bot {
     /// Use this method to send point on the map. On success, the sent Message is returned.
     pub fn send_location(&mut self, v: String) -> Result<Message, String> {
         let resp = self.create_request("sendLocation", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to edit live location messages sent by the bot or via the bot (for inline
+    /// bots). A location can be edited until its live_period expires or editing is explicitly
+    /// disabled by a call to stopMessageLiveLocation. On success, if the edited message was sent
+    /// by the bot, the edited Message is returned, otherwise True is returned.
+    pub fn edit_message_live_location(&mut self, v: String) -> Result<Message, String> {
+        let resp = self.create_request("editMessageLiveLocation", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to stop updating a live location message sent by the bot or via the bot
+    /// (for inline bots) before live_period expires. On success, if the message was sent by the
+    /// bot, the sent Message is returned, otherwise True is returned.
+    pub fn stop_message_live_location(&mut self, v: String) -> Result<Message, String> {
+        let resp = self.create_request("stopMessageLiveLocation", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to send information about a venue. On success, the sent Message is returned.
+    pub fn send_venue(&mut self, v: String) -> Result<Message, String> {
+        let resp = self.create_request("sendVenue", v)?;
         from_value(resp).map_err(|e| e.to_string())
     }
 }
