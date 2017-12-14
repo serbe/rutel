@@ -24,8 +24,8 @@ pub struct EditMessageLiveLocationParams {
 }
 
 impl EditMessageLiveLocationParams {
-    pub fn new(latitude: Float, longitude: Float,) -> Self {
-        EditMessageLiveLocationParams{
+    pub fn new(latitude: Float, longitude: Float) -> Self {
+        EditMessageLiveLocationParams {
             chat_id: None,
             message_id: None,
             inline_message_id: None,

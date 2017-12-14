@@ -65,7 +65,7 @@ pub struct Update {
     pub pre_checkout_query: Option<PreCheckoutQuery>,
 }
 
-// This object represents a Telegram user or bot.
+/// This object represents a Telegram user or bot.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
     pub id: Integer,
@@ -77,7 +77,7 @@ pub struct User {
 }
 
 
-// This object represents a chat.
+/// This object represents a chat.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Chat {
     pub id: Integer,
@@ -93,10 +93,10 @@ pub struct Chat {
     pub invite_link: Option<String>,
     pub pinned_message: Option<Box<Message>>,
     pub sticker_set_name: Option<String>,
-    pub can_set_sticker_set: Option<Boolean>
+    pub can_set_sticker_set: Option<Boolean>,
 }
 
-// This object represents a message.
+/// This object represents a message.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Message {
     pub message_id: Integer,
@@ -146,7 +146,8 @@ pub struct Message {
     pub successful_payment: Option<SuccessfulPayment>,
 }
 
-// This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
+/// This object represents one special entity in a text message. For example, hashtags, usernames,
+/// URLs, etc.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MessageEntity {
     #[serde(rename = "type")]
@@ -157,7 +158,7 @@ pub struct MessageEntity {
     pub user: Option<User>,
 }
 
-// This object represents one size of a photo or a file / sticker thumbnail.
+/// This object represents one size of a photo or a file / sticker thumbnail.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PhotoSize {
     pub file_id: String,
@@ -166,7 +167,7 @@ pub struct PhotoSize {
     pub file_size: Option<Integer>,
 }
 
-// This object represents an audio file to be treated as music by the Telegram clients.
+/// This object represents an audio file to be treated as music by the Telegram clients.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Audio {
     pub file_id: String,
@@ -177,7 +178,7 @@ pub struct Audio {
     pub file_size: Option<Integer>,
 }
 
-// This object represents a general file (as opposed to photos, voice messages and audio files).
+/// This object represents a general file (as opposed to photos, voice messages and audio files).
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Document {
     pub file_id: String,
@@ -187,7 +188,7 @@ pub struct Document {
     pub file_size: Option<Integer>,
 }
 
-// This object represents a video file.
+/// This object represents a video file.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Video {
     pub file_id: String,
@@ -199,7 +200,7 @@ pub struct Video {
     pub file_size: Option<Integer>,
 }
 
-// This object represents a voice note.
+/// This object represents a voice note.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Voice {
     pub file_id: String,
@@ -208,7 +209,7 @@ pub struct Voice {
     pub file_size: Option<Integer>,
 }
 
-// This object represents a video message (available in Telegram apps as of v.4.0).
+/// This object represents a video message (available in Telegram apps as of v.4.0).
 #[derive(Serialize, Deserialize, Debug)]
 pub struct VideoNote {
     pub file_id: String,
@@ -218,7 +219,7 @@ pub struct VideoNote {
     pub file_size: Option<Integer>,
 }
 
-// This object represents a phone contact.
+/// This object represents a phone contact.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Contact {
     pub phone_number: String,
@@ -227,14 +228,14 @@ pub struct Contact {
     pub user_id: Option<Integer>,
 }
 
-// This object represents a point on the map.
+/// This object represents a point on the map.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Location {
     pub longitude: Float,
     pub latitude: Float,
 }
 
-// This object represents a venue.
+/// This object represents a venue.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Venue {
     pub location: Location,
@@ -243,15 +244,17 @@ pub struct Venue {
     pub foursquare_id: Option<String>,
 }
 
-// This object represent a user's profile pictures.
+/// This object represent a user's profile pictures.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserProfilePhotos {
     pub total_count: Integer,
     pub photos: Vec<Vec<PhotoSize>>,
 }
 
-// This object represents a file ready to be downloaded. The file can be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile.
-// Maximum file size to download is 20 MB
+/// This object represents a file ready to be downloaded. The file can be downloaded via the link
+/// https://api.telegram.org/file/bot<token>/<file_path>. It is guaranteed that the link will be
+/// valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile.
+/// Maximum file size to download is 20 MB
 #[derive(Serialize, Deserialize, Debug)]
 pub struct File {
     pub file_id: String,
@@ -259,7 +262,8 @@ pub struct File {
     pub file_path: Option<String>,
 }
 
-// This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).
+/// This object represents a custom keyboard with reply options (see Introduction to bots
+/// fordetails and examples).
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ReplyKeyboardMarkup {
     pub keyboard: Vec<Vec<KeyboardButton>>,
@@ -268,7 +272,9 @@ pub struct ReplyKeyboardMarkup {
     pub selective: Option<Boolean>,
 }
 
-// This object represents one button of the reply keyboard. For simple text buttons String can be used instead of this object to specify text of the button. Optional fields are mutually exclusive.
+/// This object represents one button of the reply keyboard. For simple text buttons String can be
+/// used instead of this object to specify text of the button. Optional fields are mutually
+/// exclusive.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct KeyboardButton {
     pub text: String,
@@ -276,20 +282,24 @@ pub struct KeyboardButton {
     pub request_location: Option<Boolean>,
 }
 
-// Upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display the default letter-keyboard. By default, custom keyboards are displayed until a new keyboard is sent by a bot. An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).
+/// Upon receiving a message with this object, Telegram clients will remove the current custom
+/// keyboard and display the default letter-keyboard. By default, custom keyboards are displayed
+/// until a new keyboard is sent by a bot. An exception is made for one-time keyboards that are
+/// hidden immediately after the user presses a button (see ReplyKeyboardMarkup).
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ReplyKeyboardRemove {
     pub remove_keyboard: Boolean,
     pub selective: Option<Boolean>,
 }
 
-// This object represents an inline keyboard that appears right next to the message it belongs to.
+/// This object represents an inline keyboard that appears right next to the message it belongs to.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineKeyboardMarkup {
     pub inline_keyboard: Vec<Vec<InlineKeyboardButton>>,
 }
 
-// This object represents one button of an inline keyboard. You must use exactly one of the optional fields.
+/// This object represents one button of an inline keyboard. You must use exactly one of the
+/// optional fields.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineKeyboardButton {
     pub text: String,
@@ -301,7 +311,11 @@ pub struct InlineKeyboardButton {
     pub pay: Option<Boolean>,
 }
 
-// This object represents an incoming callback query from a callback button in an inline keyboard. If the button that originated the query was attached to a message sent by the bot, the field message will be present. If the button was attached to a message sent via the bot (in inline mode), the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
+/// This object represents an incoming callback query from a callback button in an inline keyboard.
+/// If the button that originated the query was attached to a message sent by the bot, the field
+/// message will be present. If the button was attached to a message sent via the bot (in inline
+/// mode), the field inline_message_id will be present. Exactly one of the fields data or
+/// game_short_name will be present.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CallbackQuery {
     pub id: String,
@@ -313,21 +327,24 @@ pub struct CallbackQuery {
     pub game_short_name: Option<String>,
 }
 
-// Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot‘s message and tapped ’Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
+/// Upon receiving a message with this object, Telegram clients will display a reply interface to
+/// the user (act as if the user has selected the bot‘s message and tapped ’Reply'). This can be
+/// extremely useful if you want to create user-friendly step-by-step interfaces without having to
+/// sacrifice privacy mode.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ForceReply {
     pub force_reply: Boolean,
     pub selective: Option<Boolean>,
 }
 
-// This object represents a chat photo.
+/// This object represents a chat photo.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ChatPhoto {
     pub small_file_id: String,
     pub big_file_id: String,
 }
 
-// This object contains information about one member of a chat.
+/// This object contains information about one member of a chat.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ChatMember {
     pub user: User,
@@ -348,21 +365,22 @@ pub struct ChatMember {
     pub can_add_web_page_previews: Option<Boolean>,
 }
 
-// Contains information about why a request was unsuccessful.
+/// Contains information about why a request was unsuccessful.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ResponseParameters {
     pub migrate_to_chat_id: Option<Integer>,
     pub retry_after: Option<Integer>,
 }
 
-// This object represents the content of a media message to be sent. It should be one of InputMediaPhoto InputMediaVideo
+/// This object represents the content of a media message to be sent. It should be one of
+/// InputMediaPhoto InputMediaVideo
 #[derive(Serialize, Deserialize, Debug)]
 pub enum InputMedia {
     InputMediaPhoto,
     InputMediaVideo,
 }
 
-// Represents a photo to be sent.
+/// Represents a photo to be sent.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InputMediaPhoto {
     #[serde(rename = "type")]
@@ -371,7 +389,7 @@ pub struct InputMediaPhoto {
     pub caption: Option<String>,
 }
 
-// Represents a video to be sent.
+/// Represents a video to be sent.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InputMediaVideo {
     #[serde(rename = "type")]
@@ -383,15 +401,16 @@ pub struct InputMediaVideo {
     pub duration: Option<Integer>,
 }
 
-// This object represents the contents of a file to be uploaded. Must be posted using multipart/form-data in the usual way that files are uploaded via the browser.
+/// This object represents the contents of a file to be uploaded. Must be posted using
+/// multipart/form-data in the usual way that files are uploaded via the browser.
 //#[derive(Serialize, Deserialize, Debug)]
 //pub struct InputFile {()}
 
-// ---------------------------------
-// Stickers
-// ---------------------------------
+/// ---------------------------------
+/// Stickers
+/// ---------------------------------
 
-// This object represents a sticker.
+/// This object represents a sticker.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Sticker {
     pub file_id: String,
@@ -404,7 +423,7 @@ pub struct Sticker {
     pub file_size: Option<Integer>,
 }
 
-// This object represents a sticker set.
+/// This object represents a sticker set.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StickerSet {
     pub name: String,
@@ -413,7 +432,7 @@ pub struct StickerSet {
     pub stickers: Vec<Sticker>,
 }
 
-// This object describes the position on faces where a mask should be placed by default.
+/// This object describes the position on faces where a mask should be placed by default.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MaskPosition {
     pub point: String,
@@ -422,11 +441,12 @@ pub struct MaskPosition {
     pub scale: Float,
 }
 
-// ---------------------------------
-// Inline mode
-// ---------------------------------
+/// ---------------------------------
+/// Inline mode
+/// ---------------------------------
 
-// This object represents an incoming inline query. When the user sends an empty query, your bot could return some default or trending results.
+/// This object represents an incoming inline query. When the user sends an empty query, your bot
+/// could return some default or trending results.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQuery {
     pub id: String,
@@ -436,7 +456,7 @@ pub struct InlineQuery {
     pub offset: String,
 }
 
-// Represents a link to an article or web page.
+/// Represents a link to an article or web page.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultArticle {
     #[serde(rename = "type")]
@@ -453,7 +473,9 @@ pub struct InlineQueryResultArticle {
     pub thumb_height: Option<Integer>,
 }
 
-// Represents a link to a photo. By default, this photo will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
+/// Represents a link to a photo. By default, this photo will be sent by the user with optional
+/// caption. Alternatively, you can use input_message_content to send a message with the specified
+/// content instead of the photo.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultPhoto {
     #[serde(rename = "type")]
@@ -470,7 +492,9 @@ pub struct InlineQueryResultPhoto {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to an animated GIF file. By default, this animated GIF file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
+/// Represents a link to an animated GIF file. By default, this animated GIF file will be sent by
+/// the user with optional caption. Alternatively, you can use input_message_content to send a
+/// message with the specified content instead of the animation.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultGif {
     #[serde(rename = "type")]
@@ -487,7 +511,10 @@ pub struct InlineQueryResultGif {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
+/// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default,
+/// this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you
+/// can use input_message_content to send a message with the specified content instead of the
+/// animation.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultMpeg4Gif {
     #[serde(rename = "type")]
@@ -504,8 +531,11 @@ pub struct InlineQueryResultMpeg4Gif {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a page containing an embedded video player or a video file. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
-// If an InlineQueryResultVideo message contains an embedded video (e.g., YouTube), you must replace its content using input_message_content.
+/// Represents a link to a page containing an embedded video player or a video file. By default,
+/// this video file will be sent by the user with an optional caption. Alternatively, you can use
+/// input_message_content to send a message with the specified content instead of the video.
+/// If an InlineQueryResultVideo message contains an embedded video (e.g., YouTube), you must
+/// replace its content using input_message_content.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultVideo {
     #[serde(rename = "type")]
@@ -524,7 +554,9 @@ pub struct InlineQueryResultVideo {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to an mp3 audio file. By default, this audio file will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
+/// Represents a link to an mp3 audio file. By default, this audio file will be sent by the user.
+/// Alternatively, you can use input_message_content to send a message with the specified content
+/// instead of the audio.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultAudio {
     #[serde(rename = "type")]
@@ -539,7 +571,9 @@ pub struct InlineQueryResultAudio {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a voice recording in an .ogg container encoded with OPUS. By default, this voice recording will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the the voice message.
+/// Represents a link to a voice recording in an .ogg container encoded with OPUS. By default, this
+/// voice recording will be sent by the user. Alternatively, you can use input_message_content to
+/// send a message with the specified content instead of the the voice message.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultVoice {
     #[serde(rename = "type")]
@@ -553,7 +587,9 @@ pub struct InlineQueryResultVoice {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a file. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file. Currently, only .PDF and .ZIP files can be sent using this method.
+/// Represents a link to a file. By default, this file will be sent by the user with an optional
+/// caption. Alternatively, you can use input_message_content to send a message with the specified
+/// content instead of the file. Currently, only .PDF and .ZIP files can be sent using this method.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultDocument {
     #[serde(rename = "type")]
@@ -571,7 +607,9 @@ pub struct InlineQueryResultDocument {
     pub thumb_height: Option<Integer>,
 }
 
-// Represents a location on a map. By default, the location will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the location.
+/// Represents a location on a map. By default, the location will be sent by the user.
+/// Alternatively, you can use input_message_content to send a message with the specified content
+/// instead of the location.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultLocation {
     #[serde(rename = "type")]
@@ -588,7 +626,8 @@ pub struct InlineQueryResultLocation {
     pub thumb_height: Option<Integer>,
 }
 
-// Represents a venue. By default, the venue will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the venue.
+/// Represents a venue. By default, the venue will be sent by the user. Alternatively, you can use
+/// input_message_content to send a message with the specified content instead of the venue.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultVenue {
     #[serde(rename = "type")]
@@ -606,7 +645,9 @@ pub struct InlineQueryResultVenue {
     pub thumb_height: Option<Integer>,
 }
 
-// Represents a contact with a phone number. By default, this contact will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the contact.
+/// Represents a contact with a phone number. By default, this contact will be sent by the user.
+/// Alternatively, you can use input_message_content to send a message with the specified content
+/// instead of the contact.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultContact {
     #[serde(rename = "type")]
@@ -622,7 +663,7 @@ pub struct InlineQueryResultContact {
     pub thumb_height: Option<Integer>,
 }
 
-// Represents a Game.
+/// Represents a Game.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultGame {
     #[serde(rename = "type")]
@@ -632,7 +673,9 @@ pub struct InlineQueryResultGame {
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-// Represents a link to a photo stored on the Telegram servers. By default, this photo will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
+/// Represents a link to a photo stored on the Telegram servers. By default, this photo will be
+/// sent by the user with an optional caption. Alternatively, you can use input_message_content to
+/// send a message with the specified content instead of the photo.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedPhoto {
     #[serde(rename = "type")]
@@ -646,7 +689,9 @@ pub struct InlineQueryResultCachedPhoto {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
+/// Represents a link to an animated GIF file stored on the Telegram servers. By default, this
+/// animated GIF file will be sent by the user with an optional caption. Alternatively, you can use
+/// input_message_content to send a message with specified content instead of the animation.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedGif {
     #[serde(rename = "type")]
@@ -659,7 +704,10 @@ pub struct InlineQueryResultCachedGif {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
+/// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the
+/// Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an
+/// optional caption. Alternatively, you can use input_message_content to send a message with the
+/// specified content instead of the animation.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedMpeg4Gif {
     #[serde(rename = "type")]
@@ -672,7 +720,9 @@ pub struct InlineQueryResultCachedMpeg4Gif {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a sticker stored on the Telegram servers. By default, this sticker will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the sticker.
+/// Represents a link to a sticker stored on the Telegram servers. By default, this sticker will be
+/// sent by the user. Alternatively, you can use input_message_content to send a message with the
+/// specified content instead of the sticker.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedSticker {
     #[serde(rename = "type")]
@@ -683,7 +733,9 @@ pub struct InlineQueryResultCachedSticker {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a file stored on the Telegram servers. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file.
+/// Represents a link to a file stored on the Telegram servers. By default, this file will be sent
+/// by the user with an optional caption. Alternatively, you can use input_message_content to send
+/// a message with the specified content instead of the file.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedDocument {
     #[serde(rename = "type")]
@@ -697,7 +749,9 @@ pub struct InlineQueryResultCachedDocument {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a video file stored on the Telegram servers. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
+/// Represents a link to a video file stored on the Telegram servers. By default, this video file
+/// will be sent by the user with an optional caption. Alternatively, you can use
+/// input_message_content to send a message with the specified content instead of the video.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedVideo {
     #[serde(rename = "type")]
@@ -711,7 +765,9 @@ pub struct InlineQueryResultCachedVideo {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to a voice message stored on the Telegram servers. By default, this voice message will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the voice message.
+/// Represents a link to a voice message stored on the Telegram servers. By default, this voice
+/// message will be sent by the user. Alternatively, you can use input_message_content to send a
+/// message with the specified content instead of the voice message.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedVoice {
     #[serde(rename = "type")]
@@ -724,7 +780,9 @@ pub struct InlineQueryResultCachedVoice {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// Represents a link to an mp3 audio file stored on the Telegram servers. By default, this audio file will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
+/// Represents a link to an mp3 audio file stored on the Telegram servers. By default, this audio
+/// file will be sent by the user. Alternatively, you can use input_message_content to send a
+/// message with the specified content instead of the audio.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedAudio {
     #[serde(rename = "type")]
@@ -736,7 +794,8 @@ pub struct InlineQueryResultCachedAudio {
     pub input_message_content: Option<InputMessageContent>,
 }
 
-// This object represents the content of a message to be sent as a result of an inline query. Telegram clients currently support the following 4 types:
+/// This object represents the content of a message to be sent as a result of an inline query.
+/// Telegram clients currently support the following 4 types:
 #[derive(Serialize, Deserialize, Debug)]
 pub enum InputMessageContent {
     InputTextMessageContent,
@@ -745,7 +804,7 @@ pub enum InputMessageContent {
     InputContactMessageContent,
 }
 
-// Represents the content of a text message to be sent as the result of an inline query.
+/// Represents the content of a text message to be sent as the result of an inline query.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InputTextMessageContent {
     pub message_text: String,
@@ -761,7 +820,7 @@ pub struct InputLocationMessageContent {
     pub live_period: Option<Integer>,
 }
 
-// Represents the content of a venue message to be sent as the result of an inline query.
+/// Represents the content of a venue message to be sent as the result of an inline query.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InputVenueMessageContent {
     pub latitude: Float,
@@ -771,7 +830,7 @@ pub struct InputVenueMessageContent {
     pub foursquare_id: Option<String>,
 }
 
-// Represents the content of a contact message to be sent as the result of an inline query.
+/// Represents the content of a contact message to be sent as the result of an inline query.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InputContactMessageContent {
     pub phone_number: String,
@@ -779,7 +838,8 @@ pub struct InputContactMessageContent {
     pub last_name: Option<String>,
 }
 
-// Represents a result of an inline query that was chosen by the user and sent to their chat partner.
+/// Represents a result of an inline query that was chosen by the user and sent to their chat
+/// partner.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ChosenInlineResult {
     pub result_id: String,
@@ -789,18 +849,18 @@ pub struct ChosenInlineResult {
     pub query: String,
 }
 
-// ---------------------
-// Payments
-// ---------------------
+/// ---------------------
+/// Payments
+/// ---------------------
 
-// This object represents a portion of the price for goods or services.
+/// This object represents a portion of the price for goods or services.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct LabeledPrice {
     pub label: String,
     pub amount: Integer,
 }
 
-// This object contains basic information about an invoice.
+/// This object contains basic information about an invoice.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Invoice {
     pub title: String,
@@ -810,7 +870,7 @@ pub struct Invoice {
     pub total_amount: Integer,
 }
 
-// This object represents a shipping address.
+/// This object represents a shipping address.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ShippingAddress {
     pub country_code: String,
@@ -821,7 +881,7 @@ pub struct ShippingAddress {
     pub post_code: String,
 }
 
-// This object represents information about an order.
+/// This object represents information about an order.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OrderInfo {
     pub name: Option<String>,
@@ -830,7 +890,7 @@ pub struct OrderInfo {
     pub shipping_address: Option<ShippingAddress>,
 }
 
-// This object represents one shipping option.
+/// This object represents one shipping option.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ShippingOption {
     pub id: String,
@@ -838,7 +898,7 @@ pub struct ShippingOption {
     pub prices: Vec<LabeledPrice>,
 }
 
-// This object contains basic information about a successful payment.
+/// This object contains basic information about a successful payment.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SuccessfulPayment {
     pub currency: String,
@@ -850,7 +910,7 @@ pub struct SuccessfulPayment {
     pub provider_payment_charge_id: String,
 }
 
-// This object contains information about an incoming shipping query.
+/// This object contains information about an incoming shipping query.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ShippingQuery {
     pub id: String,
@@ -859,7 +919,7 @@ pub struct ShippingQuery {
     pub shipping_address: ShippingAddress,
 }
 
-// This object contains information about an incoming pre-checkout query.
+/// This object contains information about an incoming pre-checkout query.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PreCheckoutQuery {
     pub id: String,
@@ -871,11 +931,12 @@ pub struct PreCheckoutQuery {
     pub order_info: Option<OrderInfo>,
 }
 
-// -----------------
-// Games
-// -----------------
+/// -----------------
+/// Games
+/// -----------------
 
-// This object represents a game. Use BotFather to create and edit games, their short names will act as unique identifiers.
+/// This object represents a game. Use BotFather to create and edit games, their short names will
+/// act as unique identifiers.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Game {
     pub title: String,
@@ -886,11 +947,13 @@ pub struct Game {
     pub animation: Option<Animation>,
 }
 
-// A placeholder, currently holds no information. Use BotFather to set up your game.
+/// A placeholder, currently holds no information. Use BotFather to set up your game.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CallbackGame;
 
-// You can provide an animation for your game so that it looks stylish in chats (check out Lumberjack for an example). This object represents an animation file to be displayed in the message containing a game.
+/// You can provide an animation for your game so that it looks stylish in chats (check out
+/// Lumberjack for an example). This object represents an animation file to be displayed in the
+/// message containing a game.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Animation {
     pub file_id: String,
@@ -900,7 +963,7 @@ pub struct Animation {
     pub file_size: Option<Integer>,
 }
 
-// This object represents one row of the high scores table for a game.
+/// This object represents one row of the high scores table for a game.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GameHighScore {
     pub position: Integer,
@@ -908,6 +971,7 @@ pub struct GameHighScore {
     pub score: Integer,
 }
 
+/// A JSON-serialized object
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ReplyMarkup {
     InlineKeyboardMarkup,

@@ -11,12 +11,12 @@ pub struct SendVenueParams {
     /// Longitude of the venue
     pub longitude: Float,
     /// Name of the venue
-    pub title:	String,
+    pub title: String,
     /// Address of the venue
-    pub address:	String,
+    pub address: String,
     /// Foursquare identifier of the venue
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub foursquare_id:	Option<String>,
+    pub foursquare_id: Option<String>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -30,7 +30,13 @@ pub struct SendVenueParams {
 }
 
 impl SendVenueParams {
-    pub fn new(chat_id: ChatID, latitude: Float, longitude: Float, title: String, address: String) -> Self {
+    pub fn new(
+        chat_id: ChatID,
+        latitude: Float,
+        longitude: Float,
+        title: String,
+        address: String,
+    ) -> Self {
         SendVenueParams {
             chat_id,
             latitude,

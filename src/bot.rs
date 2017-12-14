@@ -1,10 +1,10 @@
 use tokio_core::reactor::Core;
-use hyper::{Client, Body, Method, Request, Uri};
+use hyper::{Body, Client, Method, Request, Uri};
 use hyper_tls::HttpsConnector;
 use hyper::client::HttpConnector;
 use serde_json::{from_slice, from_value, Value};
 use hyper::header::{ContentLength, ContentType};
-use types::{Response, User, Update, Message};
+use types::{Message, Response, Update, User};
 use std::io;
 use futures::future::Future;
 use futures::Stream;
@@ -14,7 +14,7 @@ pub struct Bot {
     token: String,
     event_loop: Core,
     client: Client<HttpsConnector<HttpConnector>, Body>,
-//    user: Option<User>
+    //    user: Option<User>
 }
 
 impl Bot {
@@ -32,7 +32,8 @@ impl Bot {
 
     fn build_uri(&self, method: &'static str) -> Uri {
         let uri: Uri = format!("https://api.telegram.org/bot{}/{}", self.token, method)
-            .parse().unwrap();
+            .parse()
+            .unwrap();
         uri
     }
 
@@ -42,20 +43,13 @@ impl Bot {
         req.headers_mut().set(ContentType::json());
         req.headers_mut().set(ContentLength(values.len() as u64));
         req.set_body(values);
-        let work = self.client
-            .request(req)
-            .and_then(|res| res.body()
-                .concat2()
-                .and_then(move |body| {
-                    let v: Value = from_slice(&body).map_err(|e| {
-                        io::Error::new(
-                            io::ErrorKind::Other,
-                            e.to_string()
-                        )
-                    })?;
-                    Ok(v)
-                })
-            );
+        let work = self.client.request(req).and_then(|res| {
+            res.body().concat2().and_then(move |body| {
+                let v: Value = from_slice(&body)
+                    .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
+                Ok(v)
+            })
+        });
         let v: Value = self.event_loop.run(work).map_err(|e| e.to_string())?;
         let r: Response = from_value(v).map_err(|e| e.to_string())?;
         if r.ok {
