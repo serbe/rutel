@@ -1,12 +1,5 @@
 //! Telegram bot methods.
 
-///// Sends the message silently. Users will receive a notification with no sound.
-//#[proc_macro_derive(DisableNotification)]
-//pub fn disable_notification(&mut self, v: Boolean) -> &mut Self {
-//    self.disable_notification = Some(v);
-//    self
-//}
-
 pub mod get_updates;
 pub mod send_message;
 pub mod forward_message;

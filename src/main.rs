@@ -17,9 +17,11 @@ extern crate tokio_core;
 mod bot;
 pub mod types;
 pub mod methods;
+// pub mod funcs;
 
 pub use self::methods::*;
 
+// use funcs::json;
 use bot::Bot;
 
 fn main() {
