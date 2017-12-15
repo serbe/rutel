@@ -5,6 +5,9 @@
 #![cfg_attr(feature = "clippy", plugin(clippy))]
 
 #[macro_use]
+extern crate rutel_derive;
+
+#[macro_use]
 extern crate serde_derive;
 
 extern crate serde;
@@ -32,7 +35,9 @@ fn main() {
     let u = b.get_me();
     println!("{:?}", u);
     let mut params = GetUpdatesParams::new();
-    let u = b.get_updates(params.limit(2).json());
+    // ;
+    // println!("{:?}", params);    
+    let u = b.get_updates(params.limit(Some(2)).json());
 //    println!("{:?}", params.json());
     println!("{:?}", u);
 //    let params = SendMessageParams::new(types::ChatID::from(94_983_903), String::from("Привет"));

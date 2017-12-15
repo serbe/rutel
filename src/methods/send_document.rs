@@ -1,7 +1,7 @@
 use types::*;
 use serde_json::to_string;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, GetSet)]
 pub struct SendDocumentParams {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -35,29 +35,5 @@ impl SendDocumentParams {
             reply_to_message_id: None,
             reply_markup: None,
         }
-    }
-
-    pub fn caption(&mut self, v: String) -> &mut Self {
-        self.caption = Some(v);
-        self
-    }
-
-    pub fn disable_notification(&mut self, v: Boolean) -> &mut Self {
-        self.disable_notification = Some(v);
-        self
-    }
-
-    pub fn reply_to_message_id(&mut self, v: Integer) -> &mut Self {
-        self.reply_to_message_id = Some(v);
-        self
-    }
-
-    pub fn reply_markup(&mut self, v: ReplyMarkup) -> &mut Self {
-        self.reply_markup = Some(v);
-        self
-    }
-
-    pub fn json(&self) -> String {
-        to_string(self).unwrap()
     }
 }

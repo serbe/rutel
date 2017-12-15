@@ -1,7 +1,7 @@
 use types::*;
 use serde_json::to_string;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, GetSet)]
 pub struct ForwardMessageParams {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -24,14 +24,5 @@ impl ForwardMessageParams {
             disable_notification: None,
             message_id,
         }
-    }
-
-    pub fn disable_notification(&mut self, v: Boolean) -> &mut Self {
-        self.disable_notification = Some(v);
-        self
-    }
-
-    pub fn json(&self) -> String {
-        to_string(self).unwrap()
     }
 }

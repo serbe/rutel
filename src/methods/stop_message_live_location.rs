@@ -1,7 +1,7 @@
 use types::*;
 use serde_json::to_string;
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, GetSet)]
 pub struct StopMessageLiveLocationParams {
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or
     /// username of the target channel (in the format @channelusername)
@@ -22,29 +22,5 @@ pub struct StopMessageLiveLocationParams {
 impl StopMessageLiveLocationParams {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn chat_id(&mut self, v: ChatID) -> &mut Self {
-        self.chat_id = Some(v);
-        self
-    }
-
-    pub fn message_id(&mut self, v: Integer) -> &mut Self {
-        self.message_id = Some(v);
-        self
-    }
-
-    pub fn inline_message_id(&mut self, v: String) -> &mut Self {
-        self.inline_message_id = Some(v);
-        self
-    }
-
-    pub fn reply_markup(&mut self, v: InlineKeyboardMarkup) -> &mut Self {
-        self.reply_markup = Some(v);
-        self
-    }
-
-    pub fn json(&self) -> String {
-        to_string(self).unwrap()
     }
 }
