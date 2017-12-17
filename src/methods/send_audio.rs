@@ -14,7 +14,7 @@ pub struct SendAudioParams {
     /// Audio caption, 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    // Duration of the audio in seconds
+    /// Duration of the audio in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
     /// Performer

@@ -179,7 +179,7 @@ impl Bot {
         let resp = self.create_request("sendVenue", v)?;
         from_value(resp).map_err(|e| e.to_string())
     }
-    
+
     /// Use this method to send phone contacts. On success, the sent Message is returned.
     pub fn send_contact(&mut self, v: String) -> Result<Message, String> {
         let resp = self.create_request("sendContact", v)?;

@@ -12,7 +12,7 @@ pub struct SendContactParams {
     pub first_name: String,
     /// Contact's last name
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub last_name: Option<String>,	
+    pub last_name: Option<String>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
