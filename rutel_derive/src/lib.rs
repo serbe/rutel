@@ -16,9 +16,9 @@ pub fn qqq(input: TokenStream) -> TokenStream {
     let source = input.to_string();
     let ast = syn::parse_derive_input(&source).unwrap();
     let attrs = get_attributes(&ast.attrs);
-    let method: String = match attrs.get("method") {
-        Ok(v) => v,
-        _ => String::new(),
+    let method = match attrs.get("method") {
+        Some(v) => v,
+        _ => "",
     };
     let struct_name = &ast.ident;
     let struct_name2 = struct_name.clone();
@@ -79,8 +79,8 @@ pub fn qqq(input: TokenStream) -> TokenStream {
                     }
                 )*
 
-                pub fn method(&self) -> String {
-                    #method.to_string()
+                pub fn method(&self) -> &'static str {
+                    #method
                 }
 
                 pub fn json(&self) -> String {
@@ -88,7 +88,7 @@ pub fn qqq(input: TokenStream) -> TokenStream {
                 }
             }
         };
-        println!("{:?}", quoted_code);
+//        println!("{:?}", quoted_code);
         return quoted_code.parse().unwrap();
     }
     "".parse().unwrap()
