@@ -8,6 +8,7 @@ use types::{Message, Response, Update, User};
 use std::io;
 use futures::future::Future;
 use futures::Stream;
+use types::*;
 
 #[derive(Debug)]
 pub struct Bot {
@@ -189,12 +190,12 @@ impl Bot {
     /// Use this method when you need to tell the user that something is happening on the bot's
     /// side. The status is set for 5 seconds or less (when a message arrives from your bot,
     /// Telegram clients clear its typing status). Returns True on success.
-    /// 
+    ///
     /// Example: The ImageBot needs some time to process a request and upload the image. Instead
     /// of sending a text message along the lines of “Retrieving image, please wait…”, the bot may
     /// use sendChatAction with action = upload_photo. The user will see a “sending photo” status
     /// for the bot.
-    /// 
+    ///
     /// We only recommend using this method when a response from the bot will take a noticeable
     /// amount of time to arrive.
     pub fn send_chat_action(&mut self, v: String) -> Result<Boolean, String> {
@@ -215,7 +216,7 @@ impl Bot {
     /// https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the
     /// response. It is guaranteed that the link will be valid for at least 1 hour. When the link
     /// expires, a new one can be requested by calling getFile again.
-    /// 
+    ///
     /// Note: This function may not preserve the original file name and MIME type. You should save
     /// the file's MIME type and name (if available) when the File object is received.
     pub fn get_file(&mut self, v: String) -> Result<File, String> {
