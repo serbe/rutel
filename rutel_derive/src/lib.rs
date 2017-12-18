@@ -1,4 +1,3 @@
-#![recursion_limit = "128"]
 #![crate_type = "proc-macro"]
 
 extern crate proc_macro;
@@ -26,17 +25,13 @@ pub fn qqq(input: TokenStream) -> TokenStream {
         let field_names: Vec<_> = s.fields().iter().map(|ref x| x.ident.clone().unwrap()).collect();
         let field_names_opt: Vec<_> = s.fields().iter().filter(|ref x| {
             match x.ty.clone() {
-                syn::Ty::Path(_, path) => {
-                    "Option" == format!("{}", path.segments[0].ident)
-                }
+                syn::Ty::Path(_, path) => "Option" == path.segments[0].ident.to_string(),
                 _ => false,
             }
         }).map(|ref x| x.ident.clone().unwrap()).collect();
         let field_names_no_opt: Vec<_> = s.fields().iter().filter(|ref x| {
             match x.ty.clone() {
-                syn::Ty::Path(_, path) => {
-                    "Option" != format!("{}", path.segments[0].ident)
-                }
+                syn::Ty::Path(_, path) => "Option" != path.segments[0].ident.to_string(),
                 _ => false,
             }
         }).map(|ref x| x.ident.clone().unwrap()).collect();
@@ -47,9 +42,7 @@ pub fn qqq(input: TokenStream) -> TokenStream {
         let field_types: Vec<_> = s.fields().iter().map(|ref x| x.ty.clone()).collect();
         let field_types_no_opt: Vec<_> = s.fields().iter().filter(|ref x| {
             match x.ty.clone() {
-                syn::Ty::Path(_, path) => {
-                    "Option" != format!("{}", path.segments[0].ident)
-                }
+                syn::Ty::Path(_, path) => "Option" != path.segments[0].ident.to_string(),
                 _ => false,
             }
         }).map(|ref x| x.ty.clone()).collect();
@@ -95,13 +88,24 @@ pub fn qqq(input: TokenStream) -> TokenStream {
 }
 
 fn get_attributes(attributes: &[syn::Attribute]) -> BTreeMap<String, String> {
-    attributes.iter().fold(BTreeMap::new(), |mut btm, attr| {
+    attributes.iter().fold(BTreeMap::new(), |mut result, attr| {
         if let syn::MetaItem::NameValue(ref name, ref value) = attr.value {
             if let syn::Lit::Str(val, _) = value.clone() {
-                println!("{} {}" , name.to_string(), val.clone());
-                btm.insert(name.to_string(), val.clone());
+                println!("{} {}", name.to_string(), val.clone());
+                result.insert(name.to_string(), val.clone());
             };
         };
-        btm
+        result
     })
+}
+
+fn to_snake_case(s: &str) -> String {
+    let mut result = String::new();
+    for (i, c) in s.char_indices() {
+        if i > 0 && c.is_uppercase() {
+            result.push('_');
+        }
+        result.push(c.to_ascii_lowercase());
+    }
+    result
 }
