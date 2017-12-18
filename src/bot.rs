@@ -185,4 +185,54 @@ impl Bot {
         let resp = self.create_request("sendContact", v)?;
         from_value(resp).map_err(|e| e.to_string())
     }
+
+    /// Use this method when you need to tell the user that something is happening on the bot's
+    /// side. The status is set for 5 seconds or less (when a message arrives from your bot,
+    /// Telegram clients clear its typing status). Returns True on success.
+    /// 
+    /// Example: The ImageBot needs some time to process a request and upload the image. Instead
+    /// of sending a text message along the lines of “Retrieving image, please wait…”, the bot may
+    /// use sendChatAction with action = upload_photo. The user will see a “sending photo” status
+    /// for the bot.
+    /// 
+    /// We only recommend using this method when a response from the bot will take a noticeable
+    /// amount of time to arrive.
+    pub fn send_chat_action(&mut self, v: String) -> Result<Boolean, String> {
+        let resp = self.create_request("sendChatAction", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos
+    /// object.
+    pub fn get_user_profile_photos(&mut self, v: String) -> Result<UserProfilePhotos, String> {
+        let resp = self.create_request("getUserProfilePhotos", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to get basic info about a file and prepare it for downloading. For the
+    /// moment, bots can download files of up to 20MB in size. On success, a File object is
+    /// returned. The file can then be downloaded via the link
+    /// https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the
+    /// response. It is guaranteed that the link will be valid for at least 1 hour. When the link
+    /// expires, a new one can be requested by calling getFile again.
+    /// 
+    /// Note: This function may not preserve the original file name and MIME type. You should save
+    /// the file's MIME type and name (if available) when the File object is received.
+    pub fn get_file(&mut self, v: String) -> Result<File, String> {
+        let resp = self.create_request("getFile", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to kick a user from a group, a supergroup or a channel. In the case of
+    /// supergroups and channels, the user will not be able to return to the group on their own
+    /// using invite links, etc., unless unbanned first. The bot must be an administrator in the
+    /// chat for this to work and must have the appropriate admin rights. Returns True on success.
+    ///
+    /// Note: In regular groups (non-supergroups), this method will only work if the ‘All Members
+    /// Are Admins’ setting is off in the target group. Otherwise members may only be removed by
+    /// the group's creator or by the member that added them.
+    pub fn kick_chat_member(&mut self, v: String) -> Result<Boolean, String> {
+        let resp = self.create_request("kickChatMember", v)?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
 }

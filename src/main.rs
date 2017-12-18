@@ -19,12 +19,10 @@ extern crate tokio_core;
 
 mod bot;
 pub mod types;
-pub mod methods;
-// pub mod funcs;
+pub mod params;
 
-pub use self::methods::*;
+pub use self::params::*;
 
-// use funcs::json;
 use bot::Bot;
 
 fn main() {
