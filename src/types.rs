@@ -43,6 +43,12 @@ impl From<File> for FilePtr {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct InputFile {
+    pub name: String,
+    pub source: Vec<u8>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Response {
     pub ok: Boolean,
     pub description: Option<String>,
