@@ -3,7 +3,7 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use std::collections::BTreeMap;
+// use std::collections::BTreeMap;
 
 extern crate syn;
 
@@ -14,11 +14,11 @@ extern crate quote;
 pub fn qqq(input: TokenStream) -> TokenStream {
     let source = input.to_string();
     let ast = syn::parse_derive_input(&source).unwrap();
-    let attrs = get_attributes(&ast.attrs);
-    let method = match attrs.get("method") {
-        Some(v) => v,
-        _ => "",
-    };
+    // let attrs = get_attributes(&ast.attrs);
+    // let method = match attrs.get("method") {
+    //     Some(v) => v,
+    //     _ => "",
+    // };
     let struct_name = &ast.ident;
     let struct_name2 = struct_name.clone();
     if let syn::Body::Struct(s) = ast.body {
@@ -72,9 +72,9 @@ pub fn qqq(input: TokenStream) -> TokenStream {
                     }
                 )*
 
-                pub fn method(&self) -> &'static str {
-                    #method
-                }
+                // pub fn method(&self) -> &'static str {
+                //     #method
+                // }
 
                 pub fn json(&self) -> String {
                     to_string(self).unwrap()
@@ -87,25 +87,25 @@ pub fn qqq(input: TokenStream) -> TokenStream {
     "".parse().unwrap()
 }
 
-fn get_attributes(attributes: &[syn::Attribute]) -> BTreeMap<String, String> {
-    attributes.iter().fold(BTreeMap::new(), |mut result, attr| {
-        if let syn::MetaItem::NameValue(ref name, ref value) = attr.value {
-            if let syn::Lit::Str(val, _) = value.clone() {
-                println!("{} {}", name.to_string(), val.clone());
-                result.insert(name.to_string(), val.clone());
-            };
-        };
-        result
-    })
-}
+// fn get_attributes(attributes: &[syn::Attribute]) -> BTreeMap<String, String> {
+//     attributes.iter().fold(BTreeMap::new(), |mut result, attr| {
+//         if let syn::MetaItem::NameValue(ref name, ref value) = attr.value {
+//             if let syn::Lit::Str(val, _) = value.clone() {
+//                 println!("{} {}", name.to_string(), val.clone());
+//                 result.insert(name.to_string(), val.clone());
+//             };
+//         };
+//         result
+//     })
+// }
 
-fn to_snake_case(s: &str) -> String {
-    let mut result = String::new();
-    for (i, c) in s.char_indices() {
-        if i > 0 && c.is_uppercase() {
-            result.push('_');
-        }
-        result.push(c.to_ascii_lowercase());
-    }
-    result
-}
+// fn to_snake_case(s: &str) -> String {
+//     let mut result = String::new();
+//     for (i, c) in s.char_indices() {
+//         if i > 0 && c.is_uppercase() {
+//             result.push('_');
+//         }
+//         result.push(c.to_ascii_lowercase());
+//     }
+//     result
+// }
