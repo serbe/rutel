@@ -43,6 +43,25 @@ impl From<File> for FilePtr {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(untagged)]
+pub enum TrueMessage {
+    Message(Message),
+    Boolean(Boolean),
+}
+
+impl From<Message> for TrueMessage {
+    fn from(message: Message) -> Self {
+        TrueMessage::Message(message)
+    }
+}
+
+impl From<Boolean> for TrueMessage {
+    fn from(bool: Boolean) -> Self {
+        TrueMessage::Boolean(bool)
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct InputFile {
     pub name: String,
     pub source: Vec<u8>,
