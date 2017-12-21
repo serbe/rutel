@@ -30,12 +30,12 @@ fn main() {
 
     let mut b: Bot = Bot::new(TOKEN);
     println!("{:?}", b);
-    let u = b.get_me();
+    let u = b.getMe();
     println!("{:?}", u);
     let mut params = GetUpdatesParams::new();
     // ;
     // println!("{:?}", params);
-    let u = b.get_updates(params.limit(Some(2)).json());
+    let u = b.getUpdates(params.limit(Some(2)));
     //    println!("{:?}", params.json());
     println!("{:?}", u);
     //    let params = SendMessageParams::new(types::ChatID::from(94_983_903), String::from("Привет"));
