@@ -72,11 +72,11 @@ pub fn qqq(input: TokenStream) -> TokenStream {
                     }
                 )*
 
-                // pub fn method(&self) -> &'static str {
-                //     #method
-                // }
+//                pub fn method(&self) -> String {
+//                    #method.to_string()
+//                }
 
-                pub fn json(&self) -> String {
+                pub fn to_string(&self) -> String {
                     to_string(self).unwrap()
                 }
             }
