@@ -67,7 +67,7 @@ impl Bot {
 
     /// A simple method for testing your bot's auth token. Requires no parameters. Returns basic
     /// information about the bot in form of a User object.
-    pub fn getMe(&mut self) -> Result<User, String> {
+    pub fn get_me(&mut self) -> Result<User, String> {
         let resp = self.create_request("getMe", String::new())?;
         let user: User = from_value(resp).map_err(|e| e.to_string()).unwrap();
         self.user = Some(user.clone());
@@ -78,12 +78,12 @@ impl Bot {
     /// objects is returned.
     ///
     /// Please note that this parameter doesn't affect updates created before the call to the
-    /// getUpdates, so unwanted updates may be received for a short period of time.
+    /// get_updates, so unwanted updates may be received for a short period of time.
     /// Notes
     /// 1. This method will not work if an outgoing webhook is set up.
     /// 2. In order to avoid getting duplicate updates, recalculate offset after each server
     /// response.
-    pub fn getUpdates(&mut self, v: &mut params::GetUpdatesParams) -> Result<Vec<Update>, String> {
+    pub fn get_updates(&mut self, v: &mut params::GetUpdatesParams) -> Result<Vec<Update>, String> {
         let resp = self.create_request("getUpdates", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -106,7 +106,7 @@ impl Bot {
     /// is a member in the group where he was mentioned.
     ///
     /// Markdown style
-    /// To use this mode, pass Markdown in the parse_mode field when using sendMessage. Use the
+    /// To use this mode, pass Markdown in the parse_mode field when using send_message. Use the
     /// following syntax in your message:
     /// *bold text*
     /// _italic text_
@@ -118,7 +118,7 @@ impl Bot {
     /// ```
     ///
     /// HTML style
-    /// To use this mode, pass HTML in the parse_mode field when using sendMessage. The following
+    /// To use this mode, pass HTML in the parse_mode field when using send_message. The following
     /// tags are currently supported:
     ///
     /// <b>bold</b>, <strong>bold</strong>
@@ -137,19 +137,19 @@ impl Bot {
     /// All numerical HTML entities are supported.
     /// The API currently supports only the following named HTML entities: &lt;, &gt;, &amp; and
     /// &quot;.
-    pub fn sendMessage(&mut self, v: &mut params::SendMessageParams) -> Result<Message, String> {
+    pub fn send_message(&mut self, v: &mut params::SendMessageParams) -> Result<Message, String> {
         let resp = self.create_request("sendMessage", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to forward messages of any kind. On success, the sent Message is returned.
-    pub fn forwardMessage(&mut self, v: &mut params::ForwardMessageParams) -> Result<Message, String> {
+    pub fn forward_message(&mut self, v: &mut params::ForwardMessageParams) -> Result<Message, String> {
         let resp = self.create_request("forwardMessage", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     ///Use this method to send photos. On success, the sent Message is returned.
-    pub fn sendPhoto(&mut self, v: &mut params::SendPhotoParams) -> Result<Message, String> {
+    pub fn send_photo(&mut self, v: &mut params::SendPhotoParams) -> Result<Message, String> {
         let resp = self.create_request("sendPhoto", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -160,7 +160,7 @@ impl Bot {
     /// changed in the future.
     ///
     /// For sending voice messages, use the sendVoice method instead.
-    pub fn sendAudio(&mut self, v: &mut params::SendAudioParams) -> Result<Message, String> {
+    pub fn send_audio(&mut self, v: &mut params::SendAudioParams) -> Result<Message, String> {
         let resp = self.create_request("sendAudio", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -168,7 +168,7 @@ impl Bot {
     /// Use this method to send general files. On success, the sent Message is returned. Bots can
     /// currently send files of any type of up to 50 MB in size, this limit may be changed in the
     /// future.
-    pub fn sendDocument(&mut self, v: &mut params::SendDocumentParams) -> Result<Message, String> {
+    pub fn send_document(&mut self, v: &mut params::SendDocumentParams) -> Result<Message, String> {
         let resp = self.create_request("sendDocument", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -176,7 +176,7 @@ impl Bot {
     /// Use this method to send video files, Telegram clients support mp4 videos (other formats may
     /// be sent as Document). On success, the sent Message is returned. Bots can currently send
     /// video files of up to 50 MB in size, this limit may be changed in the future.
-    pub fn sendVideo(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
+    pub fn send_video(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
         let resp = self.create_request("sendVideo", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -186,27 +186,27 @@ impl Bot {
     /// OPUS (other formats may be sent as Audio or Document). On success, the sent Message is
     /// returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be
     /// changed in the future.
-    pub fn sendVoice(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
+    pub fn send_voice(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
         let resp = self.create_request("sendVoice", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1 minute long. Use
     /// this method to send video messages. On success, the sent Message is returned.
-    pub fn sendVideoNote(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
+    pub fn send_video_note(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
         let resp = self.create_request("sendVideoNote", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to send a group of photos or videos as an album. On success, an array of
     /// the sent Messages is returned.
-    pub fn sendMediaGroup(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
+    pub fn send_media_group(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
         let resp = self.create_request("sendMediaGroup", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to send point on the map. On success, the sent Message is returned.
-    pub fn sendLocation(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
+    pub fn send_location(&mut self, v: &mut params::SendVideoParams) -> Result<Message, String> {
         let resp = self.create_request("sendLocation", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -215,7 +215,7 @@ impl Bot {
     /// bots). A location can be edited until its live_period expires or editing is explicitly
     /// disabled by a call to stopMessageLiveLocation. On success, if the edited message was sent
     /// by the bot, the edited Message is returned, otherwise True is returned.
-    pub fn editMessageLiveLocation(&mut self, v: &mut params::SendVideoParams) -> Result<TrueMessage, String> {
+    pub fn edit_message_live_location(&mut self, v: &mut params::SendVideoParams) -> Result<TrueMessage, String> {
         let resp = self.create_request("editMessageLiveLocation", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -223,19 +223,19 @@ impl Bot {
     /// Use this method to stop updating a live location message sent by the bot or via the bot
     /// (for inline bots) before live_period expires. On success, if the message was sent by the
     /// bot, the sent Message is returned, otherwise True is returned.
-    pub fn stopMessageLiveLocation(&mut self, v: &mut params::StopMessageLiveLocationParams) -> Result<TrueMessage, String> {
+    pub fn stop_message_live_location(&mut self, v: &mut params::StopMessageLiveLocationParams) -> Result<TrueMessage, String> {
         let resp = self.create_request("stopMessageLiveLocation", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to send information about a venue. On success, the sent Message is returned.
-    pub fn sendVenue(&mut self, v: &mut params::SendVenueParams) -> Result<Message, String> {
+    pub fn send_venue(&mut self, v: &mut params::SendVenueParams) -> Result<Message, String> {
         let resp = self.create_request("sendVenue", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to send phone contacts. On success, the sent Message is returned.
-    pub fn sendContact(&mut self, v: &mut params::SendContactParams) -> Result<Message, String> {
+    pub fn send_contact(&mut self, v: &mut params::SendContactParams) -> Result<Message, String> {
         let resp = self.create_request("sendContact", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -251,14 +251,14 @@ impl Bot {
     ///
     /// We only recommend using this method when a response from the bot will take a noticeable
     /// amount of time to arrive.
-    pub fn sendChatAction(&mut self, v: &mut params::SendChatAction) -> Result<Boolean, String> {
+    pub fn send_chat_action(&mut self, v: &mut params::SendChatAction) -> Result<Boolean, String> {
         let resp = self.create_request("sendChatAction", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos
     /// object.
-    pub fn getUserProfilePhotos(&mut self, v: &mut params::GetUserProfilePhotosParams) -> Result<Message, String> {
+    pub fn get_user_profile_photos(&mut self, v: &mut params::GetUserProfilePhotosParams) -> Result<Message, String> {
         let resp = self.create_request("getUserProfilePhotos", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -272,7 +272,7 @@ impl Bot {
     ///
     /// Note: This function may not preserve the original file name and MIME type. You should save
     /// the file's MIME type and name (if available) when the File object is received.
-    pub fn getFile(&mut self, v: &mut params::GetFileParams) -> Result<File, String> {
+    pub fn get_file(&mut self, v: &mut params::GetFileParams) -> Result<File, String> {
         let resp = self.create_request("getFile", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -285,7 +285,7 @@ impl Bot {
     /// Note: In regular groups (non-supergroups), this method will only work if the ‘All Members
     /// Are Admins’ setting is off in the target group. Otherwise members may only be removed by
     /// the group's creator or by the member that added them.
-    pub fn kickChatMember(&mut self, v: &mut params::KickChatMemberParams) -> Result<Boolean, String> {
+    pub fn kick_chat_member(&mut self, v: &mut params::KickChatMemberParams) -> Result<Boolean, String> {
         let resp = self.create_request("kickChatMember", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -293,7 +293,7 @@ impl Bot {
     /// Use this method to unban a previously kicked user in a supergroup or channel. The user will
     /// not return to the group or channel automatically, but will be able to join via link, etc.
     /// The bot must be an administrator for this to work. Returns True on success.
-    pub fn unbanChatMember(&mut self, v: &mut params::UnbanChatMemberParams) -> Result<Boolean, String> {
+    pub fn unban_chat_member(&mut self, v: &mut params::UnbanChatMemberParams) -> Result<Boolean, String> {
         let resp = self.create_request("unbanChatMember", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -301,7 +301,7 @@ impl Bot {
     /// Use this method to restrict a user in a supergroup. The bot must be an administrator in the
     /// supergroup for this to work and must have the appropriate admin rights. Pass True for all
     /// boolean parameters to lift restrictions from a user. Returns True on success.
-    pub fn restrictChatMember(&mut self, v: &mut params::RestrictChatMemberParams) -> Result<Boolean, String> {
+    pub fn restrict_chat_member(&mut self, v: &mut params::RestrictChatMemberParams) -> Result<Boolean, String> {
         let resp = self.create_request("restrictChatMember", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -309,7 +309,7 @@ impl Bot {
     /// Use this method to promote or demote a user in a supergroup or a channel. The bot must be
     /// an administrator in the chat for this to work and must have the appropriate admin rights.
     /// Pass False for all boolean parameters to demote a user. Returns True on success.
-    pub fn promoteChatMember(&mut self, v: &mut params::PromoteChatMemberParams) -> Result<Boolean, String> {
+    pub fn promote_chat_member(&mut self, v: &mut params::PromoteChatMemberParams) -> Result<Boolean, String> {
         let resp = self.create_request("promoteChatMember", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -317,7 +317,7 @@ impl Bot {
     /// Use this method to export an invite link to a supergroup or a channel. The bot must be an
     /// administrator in the chat for this to work and must have the appropriate admin rights.
     /// Returns exported invite link as String on success.
-    pub fn exportChatInviteLink(&mut self, v: &mut params::ExportChatInviteLinkParams) -> Result<String, String> {
+    pub fn export_chat_invite_link(&mut self, v: &mut params::ExportChatInviteLinkParams) -> Result<String, String> {
         let resp = self.create_request("exportChatInviteLink", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -328,7 +328,7 @@ impl Bot {
     ///
     /// Note: In regular groups (non-supergroups), this method will only work if the ‘All Members
     /// Are Admins’ setting is off in the target group.
-    pub fn setChatPhoto(&mut self, v: &mut params::SetChatPhotoParams) -> Result<Boolean, String> {
+    pub fn set_chat_photo(&mut self, v: &mut params::SetChatPhotoParams) -> Result<Boolean, String> {
         let resp = self.create_request("setChatPhoto", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -339,7 +339,7 @@ impl Bot {
     ///
     /// Note: In regular groups (non-supergroups), this method will only work if the ‘All Members
     /// Are Admins’ setting is off in the target group.
-    pub fn deleteChatPhoto(&mut self, v: &mut params::DeleteChatPhotoParams) -> Result<Boolean, String> {
+    pub fn delete_chat_photo(&mut self, v: &mut params::DeleteChatPhotoParams) -> Result<Boolean, String> {
         let resp = self.create_request("deleteChatPhoto", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -350,7 +350,7 @@ impl Bot {
     ///
     /// Note: In regular groups (non-supergroups), this method will only work if the ‘All Members
     /// Are Admins’ setting is off in the target group.
-    pub fn setChatTitle(&mut self, v: &mut params::SetChatTitleParams) -> Result<Boolean, String> {
+    pub fn set_chat_title(&mut self, v: &mut params::SetChatTitleParams) -> Result<Boolean, String> {
         let resp = self.create_request("setChatTitle", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -358,7 +358,7 @@ impl Bot {
     /// Use this method to change the description of a supergroup or a channel. The bot must be an
     /// administrator in the chat for this to work and must have the appropriate admin rights.
     /// Returns True on success.
-    pub fn setChatDescription(&mut self, v: &mut params::SetChatDescriptionParams) -> Result<Boolean, String> {
+    pub fn set_chat_description(&mut self, v: &mut params::SetChatDescriptionParams) -> Result<Boolean, String> {
         let resp = self.create_request("setChatDescription", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -367,7 +367,7 @@ impl Bot {
     /// administrator in the chat for this to work and must have the ‘can_pin_messages’ admin right
     /// in the supergroup or ‘can_edit_messages’ admin right in the channel. Returns True on
     /// success.
-    pub fn pinChatMessage(&mut self, v: &mut params::PinChatMessageParams) -> Result<Boolean, String> {
+    pub fn pin_chat_message(&mut self, v: &mut params::PinChatMessageParams) -> Result<Boolean, String> {
         let resp = self.create_request("pinChatMessage", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -376,14 +376,14 @@ impl Bot {
     /// administrator in the chat for this to work and must have the ‘can_pin_messages’ admin right
     /// in the supergroup or ‘can_edit_messages’ admin right in the channel. Returns True on
     /// success.
-    pub fn unpinChatMessage(&mut self, v: &mut params::UnpinChatMessageParams) -> Result<Boolean, String> {
+    pub fn unpin_chat_message(&mut self, v: &mut params::UnpinChatMessageParams) -> Result<Boolean, String> {
         let resp = self.create_request("unpinChatMessage", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method for your bot to leave a group, supergroup or channel. Returns True on
     /// success.
-    pub fn leaveChat(&mut self, v: &mut params::LeaveChatParams) -> Result<Boolean, String> {
+    pub fn leave_chat(&mut self, v: &mut params::LeaveChatParams) -> Result<Boolean, String> {
         let resp = self.create_request("leaveChat", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -391,7 +391,7 @@ impl Bot {
     /// Use this method to get up to date information about the chat (current name of the user for
     /// one-on-one conversations, current username of a user, group or channel, etc.). Returns a
     /// Chat object on success.
-    pub fn getChat(&mut self, v: &mut params::GetChatParams) -> Result<Chat, String> {
+    pub fn get_chat(&mut self, v: &mut params::GetChatParams) -> Result<Chat, String> {
         let resp = self.create_request("getChat", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -400,20 +400,20 @@ impl Bot {
     /// ChatMember objects that contains information about all chat administrators except other
     /// bots. If the chat is a group or a supergroup and no administrators were appointed, only the
     /// creator will be returned.
-    pub fn getChatAdministrators(&mut self, v: &mut params::GetChatAdministratorsParams) -> Result<Vec<ChatMember>, String> {
+    pub fn get_chat_administrators(&mut self, v: &mut params::GetChatAdministratorsParams) -> Result<Vec<ChatMember>, String> {
         let resp = self.create_request("getChatAdministrators", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to get the number of members in a chat. Returns Int on success.
-    pub fn getChatMembersCount(&mut self, v: &mut params::GetChatMembersCountParams) -> Result<Integer, String> {
+    pub fn get_chat_members_count(&mut self, v: &mut params::GetChatMembersCountParams) -> Result<Integer, String> {
         let resp = self.create_request("getChatMembersCount", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to get information about a member of a chat. Returns a ChatMember object on
     /// success.
-    pub fn getChatMember(&mut self, v: &mut params::GetChatMemberParams) -> Result<ChatMember, String> {
+    pub fn get_chat_member(&mut self, v: &mut params::GetChatMemberParams) -> Result<ChatMember, String> {
         let resp = self.create_request("getChatMember", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -422,7 +422,7 @@ impl Bot {
     /// administrator in the chat for this to work and must have the appropriate admin rights. Use
     /// the field can_set_sticker_set optionally returned in getChat requests to check if the bot
     /// can use this method. Returns True on success.
-    pub fn setChatStickerSet(&mut self, v: &mut params::SetChatStickerSetParams) -> Result<Boolean, String> {
+    pub fn set_chat_sticker_set(&mut self, v: &mut params::SetChatStickerSetParams) -> Result<Boolean, String> {
         let resp = self.create_request("setChatStickerSet", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -431,7 +431,7 @@ impl Bot {
     /// administrator in the chat for this to work and must have the appropriate admin rights. Use
     /// the field can_set_sticker_set optionally returned in getChat requests to check if the bot
     /// can use this method. Returns True on success.
-    pub fn deleteChatStickerSet(&mut self, v: &mut params::DeleteChatPhotoParams) -> Result<Boolean, String> {
+    pub fn delete_chat_sticker_set(&mut self, v: &mut params::DeleteChatPhotoParams) -> Result<Boolean, String> {
         let resp = self.create_request("deleteChatStickerSet", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -447,7 +447,7 @@ impl Bot {
     ///
     /// Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a
     /// parameter.
-    pub fn answerCallbackQuery(&mut self, v: &mut params::AnswerCallbackQueryParams) -> Result<Message, String> {
+    pub fn answer_callback_query(&mut self, v: &mut params::AnswerCallbackQueryParams) -> Result<Message, String> {
         let resp = self.create_request("answerCallbackQuery", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -455,7 +455,7 @@ impl Bot {
     /// Use this method to edit text and game messages sent by the bot or via the bot (for inline
     /// bots). On success, if edited message is sent by the bot, the edited Message is returned,
     /// otherwise True is returned.
-    pub fn editMessageText(&mut self, v: &mut params::EditMessageTextParams) -> Result<TrueMessage, String> {
+    pub fn edit_message_text(&mut self, v: &mut params::EditMessageTextParams) -> Result<TrueMessage, String> {
         let resp = self.create_request("editMessageText", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -463,7 +463,7 @@ impl Bot {
     /// Use this method to edit captions of messages sent by the bot or via the bot (for inline
     /// bots). On success, if edited message is sent by the bot, the edited Message is returned,
     /// otherwise True is returned.
-    pub fn editMessageCaption(&mut self, v: &mut params::EditMessageCaptionParams) -> Result<Message, String> {
+    pub fn edit_message_caption(&mut self, v: &mut params::EditMessageCaptionParams) -> Result<Message, String> {
         let resp = self.create_request("editMessageCaption", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -471,7 +471,7 @@ impl Bot {
     /// Use this method to edit only the reply markup of messages sent by the bot or via the bot
     /// (for inline bots). On success, if edited message is sent by the bot, the edited Message is
     /// returned, otherwise True is returned.
-    pub fn editMessageReplyMarkup(&mut self, v: &mut params::EditMessageReplyMarkupParams) -> Result<Message, String> {
+    pub fn edit_message_reply_markup(&mut self, v: &mut params::EditMessageReplyMarkupParams) -> Result<Message, String> {
         let resp = self.create_request("editMessageReplyMarkup", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -484,7 +484,7 @@ impl Bot {
     /// - If the bot is an administrator of a group, it can delete any message there.
     /// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
     /// Returns True on success.
-    pub fn deleteMessage(&mut self, v: &mut params::DeleteMessageParams) -> Result<Boolean, String> {
+    pub fn delete_message(&mut self, v: &mut params::DeleteMessageParams) -> Result<Boolean, String> {
         let resp = self.create_request("deleteMessage", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
