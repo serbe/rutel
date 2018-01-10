@@ -1,8 +1,7 @@
-#![allow(non_camel_case_types)]
 #![allow(dead_code)]
-#![allow(unused_attributes)]
-#![cfg_attr(feature = "clippy", feature(plugin))]
-#![cfg_attr(feature = "clippy", plugin(clippy))]
+//#![allow(unused_attributes)]
+//#![cfg_attr(feature = "clippy", feature(plugin))]
+//#![cfg_attr(feature = "clippy", plugin(clippy))]
 
 #[macro_use]
 extern crate rutel_derive;

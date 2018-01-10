@@ -1000,7 +1000,7 @@ pub struct GameHighScore {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum ReplyMarkup {
     InlineKeyboardMarkup,
-    pubReplyKeyboardMarkup,
+    PubReplyKeyboardMarkup,
     ReplyKeyboardRemove,
     ForceReply,
 }
