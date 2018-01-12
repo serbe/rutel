@@ -45,13 +45,13 @@ impl From<File> for FilePtr {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum TrueMessage {
-    Message(Message),
+    Message(Box<Message>),
     Boolean(Boolean),
 }
 
 impl From<Message> for TrueMessage {
     fn from(message: Message) -> Self {
-        TrueMessage::Message(message)
+        TrueMessage::Message(Box::new(message))
     }
 }
 
