@@ -13,7 +13,7 @@ serde_derive = "1.0"
 serde_json = "1.0"
 #clippy = {version = "*", optional = true}
 # rutel_derive = {version = "0.1.0", path = "./rutel_derive/"}
-rutel_derive = { version = "0.1.0", git = "https://github.com/serbe/rutel-derive.git" }
+rutel_derive = { version = "0.1.0", git = "https://github.com/serbe/rutel_derive.git" }
 clippy = "*"
 
 # [features]
