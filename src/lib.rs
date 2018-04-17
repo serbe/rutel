@@ -1,9 +1,10 @@
 #![allow(dead_code)]
-#![allow(doc_markdown)]
+//#![allow(doc_markdown)]
+//#![allow(empty_line_after_outer_attr)]
 //#![allow(unused_attributes)]
 
-#![feature(plugin)]
-#![plugin(clippy)]
+//#![feature(plugin)]
+//#![plugin(clippy)]
 
 #[macro_use]
 extern crate rutel_derive;
