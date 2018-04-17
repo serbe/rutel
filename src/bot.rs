@@ -21,7 +21,7 @@ pub struct Bot {
 }
 
 impl Bot {
-    pub fn new(token: &'static str) -> Self {
+    pub fn new(token: &str) -> Self {
         let core = Core::new().unwrap();
         let client = Client::configure()
             .connector(HttpsConnector::new(4, &core.handle()).unwrap())
