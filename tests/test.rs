@@ -1,8 +1,8 @@
 extern crate rutel;
 
 use rutel::bot::Bot;
-use rutel::types;
-use rutel::params::*;
+//use rutel::types;
+//use rutel::params::*;
 
 use std::env;
 
@@ -12,15 +12,14 @@ fn get_token() {
     assert!(token.is_ok());
 }
 
-//#[test]
-//fn test_get_me() {
-//    let token = env::var("TOKEN").unwrap();
-//    let TOKEN = &token.clone();
-//
-//    let mut b: Bot = Bot::new(TOKEN);
-//    println!("{:?}", b);
-//    let u = b.get_me();
-//    println!("{:?}", u);
+#[test]
+fn test_get_me() {
+    let token: String = env::var("TOKEN").unwrap();
+
+    let mut b: Bot = Bot::new(&token);
+    println!("{:?}", b);
+    let u = b.get_me();
+    println!("{:?}", u);
 //    let mut params = GetUpdatesParams::new();
 //    // ;
 //        // println!("{:?}", params);
@@ -35,4 +34,4 @@ fn get_token() {
 //        //    let u = b.forward_message(params.disable_notification(true).json());
 //        //    println!("{:?}", u);
 //        //    println!("{:?}", params.json());
-//}
+}
