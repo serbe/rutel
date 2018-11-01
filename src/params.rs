@@ -76,10 +76,14 @@ pub struct SendPhotoParams {
     /// Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers
     /// (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet,
     /// or upload a new photo using multipart/form-data. More info on Sending Files »
-    pub photo: FilePtr,
+    pub photo: InputFileString,
     /// Photo caption (may also be used when resending photos by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or 
+    /// inline URLs in the media caption.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<String>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -101,10 +105,14 @@ pub struct SendAudioParams {
     /// Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio
     /// file from the Internet, or upload a new one using multipart/form-data. More info on Sending
     /// Files »
-    pub audio: FilePtr,
+    pub audio: InputFileString,
     /// Audio caption, 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or 
+    /// inline URLs in the media caption.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<String>,
     /// Duration of the audio in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
@@ -114,6 +122,13 @@ pub struct SendAudioParams {
     /// Track name
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size.
+    /// A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using 
+    /// multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you 
+    /// can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data 
+    /// under <file_attach_name>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thumb: Option<InputFileString>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -134,10 +149,21 @@ pub struct SendDocumentParams {
     /// File to send. Pass a file_id as String to send a file that exists on the Telegram servers
     /// (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet,
     /// or upload a new one using multipart/form-data. More info on Sending Files »
-    pub document: FilePtr,
+    pub document: InputFileString,
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size.
+    /// A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using 
+    /// multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you 
+    /// can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data 
+    /// under <file_attach_name>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thumb: Option<InputFileString>,
     /// Document caption (may also be used when resending documents by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or 
+    /// inline URLs in the media caption.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<String>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -158,7 +184,7 @@ pub struct SendVideoParams {
     /// Video to send. Pass a file_id as String to send a video that exists on the Telegram servers
     /// (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet,
     /// or upload a new video using multipart/form-data. More info on Sending Files »
-    pub video: FilePtr,
+    pub video: InputFileString,
     /// Duration of sent video in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
@@ -168,9 +194,23 @@ pub struct SendVideoParams {
     /// Video height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<Integer>,
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size.
+    /// A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using 
+    /// multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you 
+    /// can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data 
+    /// under <file_attach_name>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thumb: Option<InputFileString>,
     /// Video caption (may also be used when resending videos by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or 
+    /// inline URLs in the media caption.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<String>,
+    /// Pass True, if the uploaded video is suitable for streaming
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub supports_streaming: Option<Boolean>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -184,6 +224,52 @@ pub struct SendVideoParams {
 }
 
 #[derive(Serialize, Debug, GetSet)]
+pub struct SendAnimationParams {
+    /// Unique identifier for the target chat or username of the target channel (in the format 
+    /// @channelusername)
+    pub chat_id: ChatID,
+    /// Animation to send. Pass a file_id as String to send an animation that exists on the 
+    /// Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an 
+    /// animation from the Internet, or upload a new animation using multipart/form-data. More 
+    /// info on Sending Files »
+    pub animation: InputFileString,
+    /// Duration of sent animation in seconds
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duration: Option<Integer>,
+    /// Animation width
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width: Option<Integer>,
+    /// Animation height
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub height: Option<Integer>,
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB 
+    /// in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is 
+    /// not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only 
+    /// uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail 
+    /// was uploaded using multipart/form-data under <file_attach_name>. More info on Sending 
+    /// Files »
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thumb: Option<InputFileString>,
+    /// Animation caption (may also be used when resending animation by file_id), 0-1024 characters
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub caption: Option<String>,
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text 
+    /// or inline URLs in the media caption.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<String>,
+    /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification: Option<Boolean>,
+    /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_to_message_id: Option<Integer>,
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom 
+    /// reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup: Option<ReplyMarkup>,
+}
+
+#[derive(Serialize, Debug, GetSet)]
 pub struct SendVoiceParams {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -191,10 +277,14 @@ pub struct SendVoiceParams {
     /// Audio file to send. Pass a file_id as String to send a file that exists on the Telegram
     /// servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the
     /// Internet, or upload a new one using multipart/form-data. More info on Sending Files »
-    pub voice: FilePtr,
+    pub voice: InputFileString,
     /// Voice message caption, 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text 
+    /// or inline URLs in the media caption.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<String>,
     /// Duration of the voice message in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
@@ -218,13 +308,21 @@ pub struct SendVideoNoteParams {
     /// Video note to send. Pass a file_id as String to send a video note that exists on the
     /// Telegram servers (recommended) or upload a new video using multipart/form-data. More info
     /// on Sending Files ». Sending video notes by a URL is currently unsupported
-    pub video_note: FilePtr,
+    pub video_note: InputFileString,
     /// Duration of sent video in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
     /// Video width and height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub length: Option<Integer>,
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB 
+    /// in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is 
+    /// not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only 
+    /// uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail 
+    /// was uploaded using multipart/form-data under <file_attach_name>. More info on Sending 
+    /// Files »
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thumb: Option<InputFileString>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -329,6 +427,10 @@ pub struct SendVenueParams {
     /// Foursquare identifier of the venue
     #[serde(skip_serializing_if = "Option::is_none")]
     pub foursquare_id: Option<String>,
+    /// Foursquare type of the venue, if known. (For example, “arts_entertainment/default”, 
+    /// “arts_entertainment/aquarium” or “food/icecream”.)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub foursquare_type: Option<String>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -353,6 +455,9 @@ pub struct SendContactParams {
     /// Contact's last name
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_name: Option<String>,
+    /// Additional data about the contact in the form of a vCard, 0-2048 bytes
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub vcard: Option<String>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -366,7 +471,7 @@ pub struct SendContactParams {
 }
 
 #[derive(Serialize, Debug, GetSet)]
-pub struct SendChatAction {
+pub struct SendChatActionParams {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
     pub chat_id: ChatID,
@@ -650,7 +755,8 @@ pub struct EditMessageTextParams {
 pub struct EditMessageCaptionParams {
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or
     /// username of the target channel (in the format @channelusername)
-    pub chat_id: ChatID,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_id: Option<ChatID>,
     /// Required if inline_message_id is not specified. Identifier of the sent message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message_id: Option<Integer>,
@@ -661,6 +767,25 @@ pub struct EditMessageCaptionParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// A JSON-serialized object for an inline keyboard.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup: Option<InlineKeyboardMarkup>,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct EditMessageMediaParams {
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat 
+    /// or username of the target channel (in the format @channelusername)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_id: Option<ChatID>,
+    /// Required if inline_message_id is not specified. Identifier of the sent message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_id: Option<Integer>,
+    /// Required if chat_id and message_id are not specified. Identifier of the inline message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub inline_message_id: Option<String>,
+    /// A JSON-serialized object for a new media content of the message
+    pub media: InputMedia,
+    /// A JSON-serialized object for a new inline keyboard.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
@@ -688,4 +813,130 @@ pub struct DeleteMessageParams {
     pub chat_id: ChatID,
     /// Identifier of the message to delete
     pub message_id: Integer,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct SendStickerParams {
+    /// Unique identifier for the target chat or username of the target channel (in the format 
+    /// @channelusername)
+    pub chat_id: ChatID,
+    /// Sticker to send. Pass a file_id as String to send a file that exists on the Telegram 
+    /// servers (recommended), pass an HTTP URL as a String for Telegram to get a .webp file 
+    /// from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
+    pub sticker: InputFileString,
+    /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification : Option<Boolean>,
+    /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_to_message_id: Option<Integer>,
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply 
+    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup: Option<ReplyMarkup>,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct GetStickerSetParams {
+    /// Name of the sticker set
+    pub name: String,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct UploadStickerFileParams {
+    /// User identifier of sticker file owner
+    pub user_id: Integer,
+    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 
+    /// 512px, and either width or height must be exactly 512px. More info on Sending Files »
+    pub png_sticker: InputFile,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct CreateNewStickerSetParams{
+    /// User identifier of created sticker set owner
+    pub user_id: Integer,
+    /// Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain 
+    /// only english letters, digits and underscores. Must begin with a letter, can't contain 
+    /// consecutive underscores and must end in “_by_<bot username>”. <bot_username> is case 
+    /// insensitive. 1-64 characters.
+    pub name: String,
+    /// Sticker set title, 1-64 characters
+    pub title: String,
+    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 
+    /// 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send 
+    /// a file that already exists on the Telegram servers, pass an HTTP URL as a String for 
+    /// Telegram to get a file from the Internet, or upload a new one using multipart/form-data. 
+    /// More info on Sending Files »
+    pub png_sticker: InputFileString,
+    /// One or more emoji corresponding to the sticker
+    pub emojis: String,
+    /// Pass True, if a set of mask stickers should be created
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub contains_masks: Option<Boolean>,
+    /// A JSON-serialized object for position where the mask should be placed on faces
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mask_position: Option<MaskPosition>,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct AddStickerToSetParams {
+    /// User identifier of sticker set owner
+    pub user_id: Integer,
+    /// Sticker set name
+    pub name: String,
+    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 
+    /// 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send 
+    /// a file that already exists on the Telegram servers, pass an HTTP URL as a String for 
+    /// Telegram to get a file from the Internet, or upload a new one using multipart/form-data. 
+    /// More info on Sending Files »
+    pub png_sticker: InputFileString,
+    /// One or more emoji corresponding to the sticker
+    pub emojis: String,
+    /// A JSON-serialized object for position where the mask should be placed on faces
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mask_position: Option<MaskPosition>,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct SetStickerPositionInSetParams {
+    /// File identifier of the sticker
+    pub sticker: String,
+    /// New sticker position in the set, zero-based
+    pub position: Integer,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct DeleteStickerFromSetParams {
+    /// File identifier of the sticker
+    pub sticker: String,
+}
+
+#[derive(Serialize, Debug, GetSet)]
+pub struct AnswerInlineQueryParams {
+    /// Unique identifier for the answered query
+    pub inline_query_id: String,
+    /// A JSON-serialized array of results for the inline query
+    pub results: Vec<InlineQueryResult>,
+    /// The maximum amount of time in seconds that the result of the inline query may be cached on 
+    /// the server. Defaults to 300.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cache_time: Option<Integer>,
+    /// Pass True, if results may be cached on the server side only for the user that sent the 
+    /// query. By default, results may be returned to any user who sends the same query
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_personal: Option<Boolean>,
+    /// Pass the offset that a client should send in the next query with the same text to receive 
+    /// more results. Pass an empty string if there are no more results or if you don‘t support 
+    /// pagination. Offset length can’t exceed 64 bytes.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub next_offset: Option<String>,
+    /// If passed, clients will display a button with specified text that switches the user to a 
+    /// private chat with the bot and sends the bot a start message with the parameter 
+    /// switch_pm_parameter
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub switch_pm_text: Option<String>,
+    /// Deep-linking parameter for the /start message sent to the bot when user presses the switch 
+    /// button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub switch_pm_parameter: Option<String>,
 }

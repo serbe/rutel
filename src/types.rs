@@ -25,20 +25,20 @@ impl From<Integer> for ChatID {
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(untagged)]
-pub enum FilePtr {
+pub enum InputFileString {
     String(String),
     File(File),
 }
 
-impl From<String> for FilePtr {
+impl From<String> for InputFileString {
     fn from(url: String) -> Self {
-        FilePtr::String(url)
+        InputFileString::String(url)
     }
 }
 
-impl From<File> for FilePtr {
+impl From<File> for InputFileString {
     fn from(file: File) -> Self {
-        FilePtr::File(file)
+        InputFileString::File(file)
     }
 }
 
@@ -126,8 +126,8 @@ pub struct Chat {
 pub struct Message {
     pub message_id: Integer,
     pub from: Option<User>,
-    pub date: Option<Integer>,
-    pub chat: Option<Box<Chat>>,
+    pub date: Integer,
+    pub chat: Box<Chat>,
     pub forward_from: Option<User>,
     pub forward_from_chat: Option<Chat>,
     pub forward_from_message_id: Option<Integer>,
@@ -142,6 +142,7 @@ pub struct Message {
     pub caption_entities: Option<Vec<MessageEntity>>,
     pub audio: Option<Audio>,
     pub document: Option<Document>,
+    pub animation: Option<Animation>,
     pub game: Option<Game>,
     pub photo: Option<Vec<PhotoSize>>,
     pub sticker: Option<Sticker>,
@@ -169,6 +170,8 @@ pub struct Message {
     pub pinned_message: Option<Box<Message>>,
     pub invoice: Option<Invoice>,
     pub successful_payment: Option<SuccessfulPayment>,
+    pub connected_website: Option<String>,
+    pub passport_data: Option<PassportData>,
 }
 
 /// This object represents one special entity in a text message. For example, hashtags, usernames,
@@ -201,6 +204,7 @@ pub struct Audio {
     pub title: Option<String>,
     pub mime_type: Option<String>,
     pub file_size: Option<Integer>,
+    pub thumb: Option<PhotoSize>,
 }
 
 /// This object represents a general file (as opposed to photos, voice messages and audio files).
@@ -221,6 +225,19 @@ pub struct Video {
     pub height: Integer,
     pub duration: Integer,
     pub thumb: Option<PhotoSize>,
+    pub mime_type: Option<String>,
+    pub file_size: Option<Integer>,
+}
+
+/// This object represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Animation {
+    pub file_id: String,
+    pub width: Integer,
+    pub height: Integer,
+    pub duration: Integer,
+    pub thumb: Option<PhotoSize>,
+    pub file_name: Option<String>,
     pub mime_type: Option<String>,
     pub file_size: Option<Integer>,
 }
@@ -251,6 +268,7 @@ pub struct Contact {
     pub first_name: String,
     pub last_name: Option<String>,
     pub user_id: Option<Integer>,
+    pub vcard: Option<String>,
 }
 
 /// This object represents a point on the map.
@@ -267,6 +285,7 @@ pub struct Venue {
     pub title: String,
     pub address: String,
     pub foursquare_id: Option<String>,
+    pub foursquare_type: Option<String>,
 }
 
 /// This object represent a user's profile pictures.
@@ -401,6 +420,9 @@ pub struct ResponseParameters {
 /// InputMediaPhoto InputMediaVideo
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum InputMedia {
+    InputMediaAnimation,
+    InputMediaDocument,
+    InputMediaAudio,
     InputMediaPhoto,
     InputMediaVideo,
 }
@@ -412,6 +434,7 @@ pub struct InputMediaPhoto {
     pub kind: String,
     pub media: String,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
 }
 
 /// Represents a video to be sent.
@@ -420,10 +443,52 @@ pub struct InputMediaVideo {
     #[serde(rename = "type")]
     pub kind: String,
     pub media: String,
+    pub thumb: Option<InputFileString>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub width: Option<Integer>,
     pub height: Option<Integer>,
     pub duration: Option<Integer>,
+    pub supports_streaming: Option<Boolean>,
+}
+
+/// Represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct InputMediaAnimation {
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub media: String,
+    pub thumb: Option<InputFileString>,
+    pub caption: Option<String>,
+    pub parse_mode: Option<String>,
+    pub width: Option<Integer>,
+    height: Option<Integer>,
+    duration: Option<Integer>,
+}
+
+/// Represents an audio file to be treated as music to be sent.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct InputMediaAudio {
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub media: String,
+    pub thumb: Option<InputFileString>,
+    pub caption: Option<String>,
+    pub parse_mode: Option<String>,
+    pub duration: Option<Integer>,
+    pub performer: Option<String>,
+    pub title: Option<String>,
+}
+
+/// Represents a general file to be sent.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct InputMediaDocument {
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub media: String,
+    pub thumb: Option<InputFileString>,
+    pub caption: Option<String>,
+    pub parse_mode: Option<String>,
 }
 
 /// This object represents the contents of a file to be uploaded. Must be posted using
@@ -481,6 +546,32 @@ pub struct InlineQuery {
     pub offset: String,
 }
 
+/// This object represents one result of an inline query. Telegram clients currently support 
+/// results of the following 20 types:
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum InlineQueryResult {
+    InlineQueryResultCachedAudio,
+    InlineQueryResultCachedDocument,
+    InlineQueryResultCachedGif,
+    InlineQueryResultCachedMpeg4Gif,
+    InlineQueryResultCachedPhoto,
+    InlineQueryResultCachedSticker,
+    InlineQueryResultCachedVideo,
+    InlineQueryResultCachedVoice,
+    InlineQueryResultArticle,
+    InlineQueryResultAudio,
+    InlineQueryResultContact,
+    InlineQueryResultGame,
+    InlineQueryResultDocument,
+    InlineQueryResultGif,
+    InlineQueryResultLocation,
+    InlineQueryResultMpeg4Gif,
+    InlineQueryResultPhoto,
+    InlineQueryResultVenue,
+    InlineQueryResultVideo,
+    InlineQueryResultVoice,
+}
+
 /// Represents a link to an article or web page.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultArticle {
@@ -513,6 +604,7 @@ pub struct InlineQueryResultPhoto {
     pub title: Option<String>,
     pub description: Option<String>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -532,6 +624,7 @@ pub struct InlineQueryResultGif {
     pub thumb_url: String,
     pub title: Option<String>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -552,6 +645,7 @@ pub struct InlineQueryResultMpeg4Gif {
     pub thumb_url: String,
     pub title: Option<String>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -571,6 +665,7 @@ pub struct InlineQueryResultVideo {
     pub thumb_url: String,
     pub title: String,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub video_width: Option<Integer>,
     pub video_height: Option<Integer>,
     pub video_duration: Option<Integer>,
@@ -590,6 +685,7 @@ pub struct InlineQueryResultAudio {
     pub audio_url: String,
     pub title: String,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub performer: Option<String>,
     pub audio_duration: Option<Integer>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -607,6 +703,7 @@ pub struct InlineQueryResultVoice {
     pub voice_url: String,
     pub title: String,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub voice_duration: Option<Integer>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
@@ -622,6 +719,7 @@ pub struct InlineQueryResultDocument {
     pub id: String,
     pub title: String,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub document_url: String,
     pub mime_type: String,
     pub description: Option<String>,
@@ -663,6 +761,7 @@ pub struct InlineQueryResultVenue {
     pub title: String,
     pub address: String,
     pub foursquare_id: Option<String>,
+    pub foursquare_type: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
     pub thumb_url: Option<String>,
@@ -681,6 +780,7 @@ pub struct InlineQueryResultContact {
     pub phone_number: String,
     pub first_name: String,
     pub last_name: Option<String>,
+    pub vcard: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
     pub thumb_url: Option<String>,
@@ -710,6 +810,7 @@ pub struct InlineQueryResultCachedPhoto {
     pub title: Option<String>,
     pub description: Option<String>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -725,6 +826,7 @@ pub struct InlineQueryResultCachedGif {
     pub gif_file_id: String,
     pub title: Option<String>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -741,6 +843,7 @@ pub struct InlineQueryResultCachedMpeg4Gif {
     pub mpeg4_file_id: String,
     pub title: Option<String>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -770,6 +873,7 @@ pub struct InlineQueryResultCachedDocument {
     pub document_file_id: String,
     pub description: Option<String>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -786,6 +890,7 @@ pub struct InlineQueryResultCachedVideo {
     pub title: String,
     pub description: Option<String>,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -801,6 +906,7 @@ pub struct InlineQueryResultCachedVoice {
     pub voice_file_id: String,
     pub title: String,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -815,6 +921,7 @@ pub struct InlineQueryResultCachedAudio {
     pub id: String,
     pub audio_file_id: String,
     pub caption: Option<String>,
+    pub parse_mode: Option<String>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -853,6 +960,7 @@ pub struct InputVenueMessageContent {
     pub title: String,
     pub address: String,
     pub foursquare_id: Option<String>,
+    pub foursquare_type: Option<String>,
 }
 
 /// Represents the content of a contact message to be sent as the result of an inline query.
@@ -861,6 +969,7 @@ pub struct InputContactMessageContent {
     pub phone_number: String,
     pub first_name: String,
     pub last_name: Option<String>,
+    pub vcard: Option<String>,
 }
 
 /// Represents a result of an inline query that was chosen by the user and sent to their chat
@@ -976,18 +1085,6 @@ pub struct Game {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct CallbackGame;
 
-/// You can provide an animation for your game so that it looks stylish in chats (check out
-/// Lumberjack for an example). This object represents an animation file to be displayed in the
-/// message containing a game.
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct Animation {
-    pub file_id: String,
-    pub thumb: Option<PhotoSize>,
-    pub file_name: Option<String>,
-    pub mime_type: Option<String>,
-    pub file_size: Option<Integer>,
-}
-
 /// This object represents one row of the high scores table for a game.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct GameHighScore {
@@ -1003,4 +1100,51 @@ pub enum ReplyMarkup {
     PubReplyKeyboardMarkup,
     ReplyKeyboardRemove,
     ForceReply,
+}
+
+
+
+
+
+/// Contains information about Telegram Passport data shared with the bot by the user.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportData {
+    pub data: Vec<EncryptedPassportElement>,
+    pub credentials: EncryptedCredentials,
+}
+
+/// This object represents a file uploaded to Telegram Passport. Currently all Telegram 
+/// Passport files are in JPEG format when decrypted and don't exceed 10MB.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportFile {
+    pub file_id: String,
+    pub file_size: Integer,
+    pub file_date: Integer,
+}
+
+/// Contains information about documents or other Telegram Passport elements shared with 
+/// the bot by the user.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct EncryptedPassportElement {
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub data: Option<String>,
+    pub phone_number: Option<String>,
+    pub email: Option<String>,
+    pub files: Option<Vec<PassportFile>>,
+    pub front_side: Option<PassportFile>,
+    pub reverse_side: Option<PassportFile>,
+    pub selfie: Option<PassportFile>,
+    pub translation: Option<Vec<PassportFile>>,
+    pub hash: String,
+}
+
+/// Contains data required for decrypting and authenticating EncryptedPassportElement. 
+/// See the Telegram Passport Documentation for a complete description of the data decryption 
+/// and authentication processes.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct EncryptedCredentials {
+    pub data: String,
+    pub hash: String,
+    pub secret: String,
 }

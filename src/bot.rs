@@ -1,60 +1,36 @@
-use tokio_core::reactor::Core;
-use hyper::{Body, Client, Method, Request, Uri};
-use hyper_tls::HttpsConnector;
-use hyper::client::HttpConnector;
-use serde_json::{from_slice, from_value, Value};
-use hyper::header::{ContentLength, ContentType};
-use types::{Message, Response, Update, User};
-use std::io;
-use futures::future::Future;
-use futures::Stream;
+// use types::{Message, Response, Update, User};
+use serde_json::{from_value, Value};
 use types::*;
+use tsocks::post_json;
 
 use params;
 
 #[derive(Debug)]
 pub struct Bot {
     token: String,
-    event_loop: Core,
-    client: Client<HttpsConnector<HttpConnector>, Body>,
+    proxy: String,
+    // stream: SocksStream,
     user: Option<User>
 }
 
 impl Bot {
-    pub fn new(token: &str) -> Self {
-        let core = Core::new().unwrap();
-        let client = Client::configure()
-            .connector(HttpsConnector::new(4, &core.handle()).unwrap())
-            .build(&core.handle());
+    pub fn new(token: &str, proxy: &str) -> Self {
         Bot {
             token: token.to_string(),
-            event_loop: core,
-            client,
+            proxy: proxy.to_string(),
+            // stream,
             user: None,
         }
     }
 
-    fn build_uri(&self, method: &'static str) -> Uri {
-        let uri: Uri = format!("https://api.telegram.org/bot{}/{}", self.token, method)
-            .parse()
-            .unwrap();
-        uri
+    fn build_uri(&self, method: &'static str) -> String {
+        format!("https://api.telegram.org/bot{}/{}", self.token, method)
     }
 
     fn create_request(&mut self, method: &'static str, values: String) -> Result<Value, String> {
         let uri = self.build_uri(method);
-        let mut req = Request::new(Method::Post, uri);
-        req.headers_mut().set(ContentType::json());
-        req.headers_mut().set(ContentLength(values.len() as u64));
-        req.set_body(values);
-        let work = self.client.request(req).and_then(|res| {
-            res.body().concat2().and_then(move |body| {
-                let v: Value = from_slice(&body)
-                    .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
-                Ok(v)
-            })
-        });
-        let v: Value = self.event_loop.run(work).map_err(|e| e.to_string())?;
+        let response = post_json(&self.proxy, &uri, &values).map_err(|e| e.to_string())?;
+        let v: Value = Value::from(response);
         let r: Response = from_value(v).map_err(|e| e.to_string())?;
         if r.ok {
             let res: Value = r.result.ok_or("result is none")?;
@@ -181,6 +157,14 @@ impl Bot {
         from_value(resp).map_err(|e| e.to_string())
     }
 
+    /// Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On 
+    /// success, the sent Message is returned. Bots can currently send animation files of up to 50 
+    /// MB in size, this limit may be changed in the future.
+    pub fn send_animation(&mut self, v: &mut params::SendAnimationParams) -> Result<Message, String> {
+        let resp = self.create_request("sendAnimation", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
     /// Use this method to send audio files, if you want Telegram clients to display the file as a
     /// playable voice message. For this to work, your audio must be in an .ogg file encoded with
     /// OPUS (other formats may be sent as Audio or Document). On success, the sent Message is
@@ -251,14 +235,14 @@ impl Bot {
     ///
     /// We only recommend using this method when a response from the bot will take a noticeable
     /// amount of time to arrive.
-    pub fn send_chat_action(&mut self, v: &mut params::SendChatAction) -> Result<Boolean, String> {
+    pub fn send_chat_action(&mut self, v: &mut params::SendChatActionParams) -> Result<Boolean, String> {
         let resp = self.create_request("sendChatAction", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos
     /// object.
-    pub fn get_user_profile_photos(&mut self, v: &mut params::GetUserProfilePhotosParams) -> Result<Message, String> {
+    pub fn get_user_profile_photos(&mut self, v: &mut params::GetUserProfilePhotosParams) -> Result<UserProfilePhotos, String> {
         let resp = self.create_request("getUserProfilePhotos", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -447,7 +431,7 @@ impl Bot {
     ///
     /// Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a
     /// parameter.
-    pub fn answer_callback_query(&mut self, v: &mut params::AnswerCallbackQueryParams) -> Result<Message, String> {
+    pub fn answer_callback_query(&mut self, v: &mut params::AnswerCallbackQueryParams) -> Result<Boolean, String> {
         let resp = self.create_request("answerCallbackQuery", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -463,15 +447,25 @@ impl Bot {
     /// Use this method to edit captions of messages sent by the bot or via the bot (for inline
     /// bots). On success, if edited message is sent by the bot, the edited Message is returned,
     /// otherwise True is returned.
-    pub fn edit_message_caption(&mut self, v: &mut params::EditMessageCaptionParams) -> Result<Message, String> {
+    pub fn edit_message_caption(&mut self, v: &mut params::EditMessageCaptionParams) -> Result<TrueMessage, String> {
         let resp = self.create_request("editMessageCaption", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to edit audio, document, photo, or video messages. If a message is a part 
+    /// of a message album, then it can be edited only to a photo or a video. Otherwise, message 
+    /// type can be changed arbitrarily. When inline message is edited, new file can't be uploaded. 
+    /// Use previously uploaded file via its file_id or specify a URL. On success, if the edited 
+    /// message was sent by the bot, the edited Message is returned, otherwise True is returned.
+    pub fn edit_message_media(&mut self, v: &mut params::EditMessageMediaParams) -> Result<TrueMessage, String> {
+        let resp = self.create_request("editMessageMedia", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
 
     /// Use this method to edit only the reply markup of messages sent by the bot or via the bot
     /// (for inline bots). On success, if edited message is sent by the bot, the edited Message is
     /// returned, otherwise True is returned.
-    pub fn edit_message_reply_markup(&mut self, v: &mut params::EditMessageReplyMarkupParams) -> Result<Message, String> {
+    pub fn edit_message_reply_markup(&mut self, v: &mut params::EditMessageReplyMarkupParams) -> Result<TrueMessage, String> {
         let resp = self.create_request("editMessageReplyMarkup", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
@@ -488,4 +482,56 @@ impl Bot {
         let resp = self.create_request("deleteMessage", v.to_string())?;
         from_value(resp).map_err(|e| e.to_string())
     }
+
+    /// Use this method to send .webp stickers. On success, the sent Message is returned.
+    pub fn send_sticker(&mut self, v: &mut params::SendStickerParams) -> Result<Message, String> {
+        let resp = self.create_request("sendSticker", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to get a sticker set. On success, a StickerSet object is returned.
+    pub fn get_sticker_set(&mut self, v: &mut params::GetStickerSetParams) -> Result<StickerSet, String> {
+        let resp = self.create_request("getStickerSet", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to upload a .png file with a sticker for later use in createNewStickerSet and 
+    /// addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
+    pub fn upload_sticker_file(&mut self, v: &mut params::UploadStickerFileParams) -> Result<File, String> {
+        let resp = self.create_request("uploadStickerFile", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to create new sticker set owned by a user. The bot will be able to edit the 
+    /// created sticker set. Returns True on success.
+    pub fn create_new_sticker_set(&mut self, v: &mut params::CreateNewStickerSetParams) -> Result<Boolean, String> {
+        let resp = self.create_request("createNewStickerSet", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    // Use this method to add a new sticker to a set created by the bot. Returns True on success.
+    pub fn add_sticker_to_set(&mut self, v: &mut params::AddStickerToSetParams) -> Result<Boolean, String> {
+        let resp = self.create_request("addStickerToSet", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to move a sticker in a set created by the bot to a specific position . Returns True on success.
+    pub fn set_sticker_position_in_set(&mut self, v: &mut params::SetStickerPositionInSetParams) -> Result<Boolean, String> {
+        let resp = self.create_request("setStickerPositionInSet", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to delete a sticker from a set created by the bot. Returns True on success.
+    pub fn delete_sticker_from_set(&mut self, v: &mut params::DeleteStickerFromSetParams) -> Result<Boolean, String> {
+        let resp = self.create_request("deleteStickerFromSet", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
+    /// Use this method to send answers to an inline query. On success, True is returned.
+    /// No more than 50 results per query are allowed.
+    pub fn answer_inline_query(&mut self, v: &mut params::AnswerInlineQueryParams) -> Result<Boolean, String> {
+        let resp = self.create_request("answerInlineQuery", v.to_string())?;
+        from_value(resp).map_err(|e| e.to_string())
+    }
+
 }
