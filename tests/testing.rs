@@ -1,12 +1,11 @@
 extern crate rutel;
 
 use rutel::bot::Bot;
-use rutel::params::*;
 use rutel::types;
 
 // use std::env;
 
-#[test]
+// #[test]
 // fn get_token() {
 //     let token = env::var("TOKEN");
 //     assert!(token.is_ok());

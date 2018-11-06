@@ -3,9 +3,6 @@
 //#![allow(empty_line_after_outer_attr)]
 //#![allow(unused_attributes)]
 
-//#![feature(plugin)]
-//#![plugin(clippy)]
-
 #[macro_use]
 extern crate rutel_derive;
 
@@ -18,10 +15,8 @@ extern crate serde_json;
 
 pub mod bot;
 pub mod types;
-pub mod params;
 
-use bot::Bot;
-use params::*;
+use bot::*;
 // use crate::types;
 
 fn main() {
@@ -31,13 +26,13 @@ fn main() {
     println!("bot {:?}", b);
     let u = b.get_me();
     println!("get me {:?}", u);
-    let mut params = GetUpdatesParams::new();
+    let mut params = GetUpdates::new();
     //    // ;
     println!("GetUpdatesParams {:?}", params);
     let u = b.get_updates(params.limit(Some(2)));
     //        //    println!("{:?}", params.json());
     println!("get_updates {:?}", u);
-    let mut params = SendMessageParams::new(
+    let mut params = SendMessage::new(
         types::ChatID::from(94_983_903),
         String::from("Привет"),
     );
