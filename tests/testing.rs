@@ -1,7 +1,6 @@
-extern crate rutel;
+use std::env;
 
 use rutel::bot;
-use std::env;
 
 #[test]
 fn get_token() {

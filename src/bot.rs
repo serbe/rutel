@@ -1,7 +1,35 @@
 // use types::{Message, Response, Update, User};
 use serde_json::{from_slice, from_value, to_string, Value};
-use tsocks::post_json;
-use types::*;
+use serde::{Serialize};
+
+use rutel_derive::Response;
+
+use crate::types::*;
+
+fn post_json(proxy: &str, target: &str, body: &str) -> io::Result<Vec<u8>> {
+    let mut stream = SocksStream::connect(proxy, target)?;
+    let body = if !body.is_empty() {
+        format!("Content-Length: {}\r\n\r\n{}", body.len(), body)
+    } else {
+        String::new()
+    };
+    let request = format!(
+        "POST {} HTTP/1.0\r\nHost: {}\r\nContent-Type: application/json\r\n{}\r\n",
+        stream.target.path(),
+        stream.target.host()?,
+        body
+    )
+    .into_bytes();
+    stream.write_all(&request)?;
+    let mut response = vec![];
+    stream.read_to_end(&mut response)?;
+    let pos = response
+        .windows(4)
+        .position(|x| x == b"\r\n\r\n")
+        .ok_or_else(|| Error::new(ErrorKind::Other, "wrong http"))?;
+    let body = &response[pos + 4..response.len()];
+    Ok(body.to_vec())
+  }
 
 #[derive(Debug)]
 pub struct Bot {
@@ -55,8 +83,8 @@ impl Bot {
 
 /// Use this method to receive incoming updates using long polling (wiki). An Array of Update
 /// objects is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Vec<Update>")]
+#[response = "Vec<Update>"]
+#[derive(Serialize, Debug, Response)]
 pub struct GetUpdates {
     /// Identifier of the first update to be returned. Must be greater by one than the highest
     /// among the identifiers of previously received updates. By default, updates starting with the
@@ -87,8 +115,8 @@ pub struct GetUpdates {
 // getWebhookInfo
 
 /// Use this method to send text messages. On success, the sent Message is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -115,8 +143,8 @@ pub struct SendMessage {
 }
 
 /// Use this method to forward messages of any kind. On success, the sent Message is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct ForwardMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -132,8 +160,8 @@ pub struct ForwardMessage {
 }
 
 /// Use this method to send photos. On success, the sent Message is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendPhoto {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -166,8 +194,8 @@ pub struct SendPhoto {
 /// can currently send audio files of up to 50 MB in size, this limit may be changed in the future.
 ///
 /// For sending voice messages, use the sendVoice method instead.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendAudio {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -214,8 +242,8 @@ pub struct SendAudio {
 
 /// Use this method to send general files. On success, the sent Message is returned. Bots can currently
 /// send files of any type of up to 50 MB in size, this limit may be changed in the future.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendDocument {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -253,8 +281,8 @@ pub struct SendDocument {
 /// Use this method to send video files, Telegram clients support mp4 videos (other formats may be
 /// sent as Document). On success, the sent Message is returned. Bots can currently send video files
 /// of up to 50 MB in size, this limit may be changed in the future.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendVideo {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -304,8 +332,8 @@ pub struct SendVideo {
 /// Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On
 /// success, the sent Message is returned. Bots can currently send animation files of up to
 /// 50 MB in size, this limit may be changed in the future.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendAnimation {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -356,8 +384,8 @@ pub struct SendAnimation {
 /// OPUS (other formats may be sent as Audio or Document). On success, the sent Message is
 /// returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be
 /// changed in the future.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendVoice {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -390,8 +418,8 @@ pub struct SendVoice {
 
 /// As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1 minute long. Use
 /// this method to send video messages. On success, the sent Message is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendVideoNote {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -428,8 +456,8 @@ pub struct SendVideoNote {
 
 /// Use this method to send a group of photos or videos as an album. On success, an array of the
 /// sent Messages is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Vec<Message>")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<Message>"]
 pub struct SendMediaGroup {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -445,8 +473,8 @@ pub struct SendMediaGroup {
 }
 
 /// Use this method to send point on the map. On success, the sent Message is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendLocation {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -475,8 +503,8 @@ pub struct SendLocation {
 /// A location can be edited until its live_period expires or editing is explicitly disabled by a
 /// call to stopMessageLiveLocation. On success, if the edited message was sent by the bot, the
 /// edited Message is returned, otherwise True is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "TrueMessage")]
+#[derive(Serialize, Debug, Response)]
+#[response = "TrueMessage"]
 pub struct EditMessageLiveLocation {
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or
     /// username of the target channel (in the format @channelusername)
@@ -499,8 +527,8 @@ pub struct EditMessageLiveLocation {
 /// Use this method to stop updating a live location message sent by the bot or via the bot (for
 /// inline bots) before live_period expires. On success, if the message was sent by the bot, the
 /// sent Message is returned, otherwise True is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "TrueMessage")]
+#[derive(Serialize, Debug, Response)]
+#[response = "TrueMessage"]
 pub struct StopMessageLiveLocation {
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or
     /// username of the target channel (in the format @channelusername)
@@ -517,8 +545,8 @@ pub struct StopMessageLiveLocation {
 }
 
 /// Use this method to send information about a venue. On success, the sent Message is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendVenue {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -551,8 +579,8 @@ pub struct SendVenue {
 }
 
 /// Use this method to send phone contacts. On success, the sent Message is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendContact {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -582,8 +610,8 @@ pub struct SendContact {
 /// Use this method when you need to tell the user that something is happening on the bot's side.
 /// The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients
 /// clear its typing status). Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct SendChatAction {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -596,8 +624,8 @@ pub struct SendChatAction {
 }
 
 /// Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos object.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "UserProfilePhotos")]
+#[derive(Serialize, Debug, Response)]
+#[response = "UserProfilePhotos"]
 pub struct GetUserProfilePhotos {
     /// Unique identifier of the target user
     pub user_id: Integer,
@@ -615,8 +643,8 @@ pub struct GetUserProfilePhotos {
 /// can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>, where
 /// <file_path> is taken from the response. It is guaranteed that the link will be valid for at
 /// least 1 hour. When the link expires, a new one can be requested by calling getFile again.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "File")]
+#[derive(Serialize, Debug, Response)]
+#[response = "File"]
 pub struct GetFile {
     /// File identifier to get info about
     pub file_id: String,
@@ -626,8 +654,8 @@ pub struct GetFile {
 /// and channels, the user will not be able to return to the group on their own using invite links,
 /// etc., unless unbanned first. The bot must be an administrator in the chat for this to work and
 /// must have the appropriate admin rights. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct KickChatMember {
     /// Unique identifier for the target group or username of the target supergroup or channel (in
     /// the format @channelusername)
@@ -643,8 +671,8 @@ pub struct KickChatMember {
 /// Use this method to unban a previously kicked user in a supergroup or channel. The user will not
 /// return to the group or channel automatically, but will be able to join via link, etc. The bot
 /// must be an administrator for this to work. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct UnbanChatMember {
     /// Unique identifier for the target group or username of the target supergroup or channel (in
     /// the format @username)
@@ -656,8 +684,8 @@ pub struct UnbanChatMember {
 /// Use this method to restrict a user in a supergroup. The bot must be an administrator in the
 /// supergroup for this to work and must have the appropriate admin rights. Pass True for all
 /// boolean parameters to lift restrictions from a user. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct RestrictChatMember {
     /// Unique identifier for the target chat or username of the target supergroup (in the format
     /// @supergroupusername)
@@ -689,8 +717,8 @@ pub struct RestrictChatMember {
 /// Use this method to promote or demote a user in a supergroup or a channel. The bot must be an
 /// administrator in the chat for this to work and must have the appropriate admin rights. Pass
 /// False for all boolean parameters to demote a user. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct PromoteChatMember {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -729,8 +757,8 @@ pub struct PromoteChatMember {
 /// Use this method to generate a new invite link for a chat; any previously generated link is
 /// revoked. The bot must be an administrator in the chat for this to work and must have the
 /// appropriate admin rights. Returns the new invite link as String on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "String")]
+#[derive(Serialize, Debug, Response)]
+#[response = "String"]
 pub struct ExportChatInviteLink {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -740,8 +768,8 @@ pub struct ExportChatInviteLink {
 /// Use this method to set a new profile photo for the chat. Photos can't be changed for private
 /// chats. The bot must be an administrator in the chat for this to work and must have the appropriate
 /// admin rights. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct SetChatPhoto {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -753,8 +781,8 @@ pub struct SetChatPhoto {
 /// Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must
 /// be an administrator in the chat for this to work and must have the appropriate admin rights.
 /// Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct DeleteChatPhoto {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -764,8 +792,8 @@ pub struct DeleteChatPhoto {
 /// Use this method to change the title of a chat. Titles can't be changed for private chats.
 /// The bot must be an administrator in the chat for this to work and must have the appropriate
 /// admin rights. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct SetChatTitle {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -777,8 +805,8 @@ pub struct SetChatTitle {
 /// Use this method to change the description of a supergroup or a channel. The bot must be an
 /// administrator in the chat for this to work and must have the appropriate admin rights.
 /// Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct SetChatDescription {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -791,8 +819,8 @@ pub struct SetChatDescription {
 /// Use this method to pin a message in a supergroup or a channel. The bot must be an
 /// administrator in the chat for this to work and must have the ‘can_pin_messages’ admin right
 /// in the supergroup or ‘can_edit_messages’ admin right in the channel. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct PinChatMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -808,8 +836,8 @@ pub struct PinChatMessage {
 /// Use this method to unpin a message in a supergroup or a channel. The bot must be an
 /// administrator in the chat for this to work and must have the ‘can_pin_messages’ admin right
 /// in the supergroup or ‘can_edit_messages’ admin right in the channel. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct UnpinChatMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -817,8 +845,8 @@ pub struct UnpinChatMessage {
 }
 
 /// Use this method for your bot to leave a group, supergroup or channel. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct LeaveChat {
     /// Unique identifier for the target chat or username of the target supergroup or channel (in
     /// the format @channelusername)
@@ -828,8 +856,8 @@ pub struct LeaveChat {
 /// Use this method to get up to date information about the chat (current name of the user for
 /// one-on-one conversations, current username of a user, group or channel, etc.). Returns a Chat
 /// object on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Chat")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Chat"]
 pub struct GetChat {
     /// Unique identifier for the target chat or username of the target supergroup or channel (in
     /// the format @channelusername)
@@ -840,8 +868,8 @@ pub struct GetChat {
 /// ChatMember objects that contains information about all chat administrators except other bots.
 /// If the chat is a group or a supergroup and no administrators were appointed, only the creator
 /// will be returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Vec<ChatMember>")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<ChatMember>"]
 pub struct GetChatAdministrators {
     /// Unique identifier for the target chat or username of the target supergroup or channel (in
     /// the format @channelusername)
@@ -849,8 +877,8 @@ pub struct GetChatAdministrators {
 }
 
 /// Use this method to get the number of members in a chat. Returns Int on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "u64")]
+#[derive(Serialize, Debug, Response)]
+#[response = "u64"]
 pub struct GetChatMembersCount {
     /// Unique identifier for the target chat or username of the target supergroup or channel (in
     /// the format @channelusername)
@@ -858,8 +886,8 @@ pub struct GetChatMembersCount {
 }
 
 /// Use this method to get information about a member of a chat. Returns a ChatMember object on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "ChatMember")]
+#[derive(Serialize, Debug, Response)]
+#[response = "ChatMember"]
 pub struct GetChatMember {
     /// Unique identifier for the target chat or username of the target supergroup or channel (in
     /// the format @channelusername)
@@ -872,8 +900,8 @@ pub struct GetChatMember {
 /// in the chat for this to work and must have the appropriate admin rights. Use the field
 /// can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method.
 /// Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct SetChatStickerSet {
     /// Unique identifier for the target chat or username of the target supergroup (in the format
     /// @supergroupusername)
@@ -886,8 +914,8 @@ pub struct SetChatStickerSet {
 /// in the chat for this to work and must have the appropriate admin rights. Use the field
 /// can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method.
 /// Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct DeleteChatStickerSet {
     /// Unique identifier for the target chat or username of the target supergroup (in the format
     /// @supergroupusername)
@@ -897,8 +925,8 @@ pub struct DeleteChatStickerSet {
 /// Use this method to send answers to callback queries sent from inline keyboards. The answer will be
 /// displayed to the user as a notification at the top of the chat screen or as an alert. On success,
 /// True is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct AnswerCallbackQuery {
     /// Unique identifier for the query to be answered
     pub callback_query_id: String,
@@ -924,8 +952,8 @@ pub struct AnswerCallbackQuery {
 /// Use this method to edit text and game messages sent by the bot or via the bot (for inline bots).
 /// On success, if edited message is sent by the bot, the edited Message is returned, otherwise
 /// True is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "TrueMessage")]
+#[derive(Serialize, Debug, Response)]
+#[response = "TrueMessage"]
 pub struct EditMessageText {
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or
     /// username of the target channel (in the format @channelusername)
@@ -953,8 +981,8 @@ pub struct EditMessageText {
 /// Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
 /// On success, if edited message is sent by the bot, the edited Message is returned, otherwise
 /// True is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "TrueMessage")]
+#[derive(Serialize, Debug, Response)]
+#[response = "TrueMessage"]
 pub struct EditMessageCaption {
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or
     /// username of the target channel (in the format @channelusername)
@@ -979,8 +1007,8 @@ pub struct EditMessageCaption {
 /// type can be changed arbitrarily. When inline message is edited, new file can't be uploaded.
 /// Use previously uploaded file via its file_id or specify a URL. On success, if the edited
 /// message was sent by the bot, the edited Message is returned, otherwise True is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "TrueMessage")]
+#[derive(Serialize, Debug, Response)]
+#[response = "TrueMessage"]
 pub struct EditMessageMedia {
     /// Required if inline_message_id is not specified. Unique identifier for the target chat
     /// or username of the target channel (in the format @channelusername)
@@ -1002,8 +1030,8 @@ pub struct EditMessageMedia {
 /// Use this method to edit only the reply markup of messages sent by the bot or via the bot
 /// (for inline bots). On success, if edited message is sent by the bot, the edited Message
 /// is returned, otherwise True is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "TrueMessage")]
+#[derive(Serialize, Debug, Response)]
+#[response = "TrueMessage"]
 pub struct EditMessageReplyMarkup {
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or
     /// username of the target channel (in the format @channelusername)
@@ -1026,8 +1054,8 @@ pub struct EditMessageReplyMarkup {
 /// - If the bot is an administrator of a group, it can delete any message there.
 /// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
 /// Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct DeleteMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -1037,8 +1065,8 @@ pub struct DeleteMessage {
 }
 
 /// Use this method to send .webp stickers. On success, the sent Message is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Message")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
 pub struct SendSticker {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
@@ -1060,8 +1088,8 @@ pub struct SendSticker {
 }
 
 /// Use this method to get a sticker set. On success, a StickerSet object is returned.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "StickerSet")]
+#[derive(Serialize, Debug, Response)]
+#[response = "StickerSet"]
 pub struct GetStickerSet {
     /// Name of the sticker set
     pub name: String,
@@ -1069,8 +1097,8 @@ pub struct GetStickerSet {
 
 /// Use this method to upload a .png file with a sticker for later use in createNewStickerSet and
 /// addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "File")]
+#[derive(Serialize, Debug, Response)]
+#[response = "File"]
 pub struct UploadStickerFile {
     /// User identifier of sticker file owner
     pub user_id: Integer,
@@ -1081,8 +1109,8 @@ pub struct UploadStickerFile {
 
 /// Use this method to create new sticker set owned by a user. The bot will be able to edit the
 /// created sticker set. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct CreateNewStickerSetParams {
     /// User identifier of created sticker set owner
     pub user_id: Integer,
@@ -1110,8 +1138,8 @@ pub struct CreateNewStickerSetParams {
 }
 
 /// Use this method to add a new sticker to a set created by the bot. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct AddStickerToSet {
     /// User identifier of sticker set owner
     pub user_id: Integer,
@@ -1132,8 +1160,8 @@ pub struct AddStickerToSet {
 
 /// Use this method to move a sticker in a set created by the bot to a specific position . Returns
 /// True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct SetStickerPositionInSet {
     /// File identifier of the sticker
     pub sticker: String,
@@ -1142,8 +1170,8 @@ pub struct SetStickerPositionInSet {
 }
 
 /// Use this method to delete a sticker from a set created by the bot. Returns True on success.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct DeleteStickerFromSet {
     /// File identifier of the sticker
     pub sticker: String,
@@ -1151,8 +1179,8 @@ pub struct DeleteStickerFromSet {
 
 /// Use this method to send answers to an inline query. On success, True is returned.
 /// No more than 50 results per query are allowed.
-#[derive(Serialize, Debug, GetSet)]
-#[response(result = "Boolean")]
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct AnswerInlineQuery {
     /// Unique identifier for the answered query
     pub inline_query_id: String,
