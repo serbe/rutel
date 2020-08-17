@@ -1,34 +1,19 @@
 // use types::{Message, Response, Update, User};
+use std::io;
+
 use serde_json::{from_slice, from_value, to_string, Value};
 use serde::{Serialize};
 
 use rutel_derive::Response;
+use rpc::client::{Client};
 
 use crate::types::*;
 
-fn post_json(proxy: &str, target: &str, body: &str) -> io::Result<Vec<u8>> {
-    let mut stream = SocksStream::connect(proxy, target)?;
-    let body = if !body.is_empty() {
-        format!("Content-Length: {}\r\n\r\n{}", body.len(), body)
-    } else {
-        String::new()
-    };
-    let request = format!(
-        "POST {} HTTP/1.0\r\nHost: {}\r\nContent-Type: application/json\r\n{}\r\n",
-        stream.target.path(),
-        stream.target.host()?,
-        body
-    )
-    .into_bytes();
-    stream.write_all(&request)?;
-    let mut response = vec![];
-    stream.read_to_end(&mut response)?;
-    let pos = response
-        .windows(4)
-        .position(|x| x == b"\r\n\r\n")
-        .ok_or_else(|| Error::new(ErrorKind::Other, "wrong http"))?;
-    let body = &response[pos + 4..response.len()];
-    Ok(body.to_vec())
+async fn post_json(target: &str, body: &str) -> io::Result<Vec<u8>> {
+    let client = Client::builder().post(target).body(body.as_bytes()).header("Content-Type", "application/json").build().await?;
+    let _response = client.send().await?;
+    let body = client.text().await?;
+    Ok(body.as_bytes().to_vec())
   }
 
 #[derive(Debug)]
