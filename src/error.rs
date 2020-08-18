@@ -18,4 +18,8 @@ pub enum Error {
     Parameters(String),
     #[error("RPC error")]
     RPC(#[from] rpc::error::Error),
+    #[error("Error Response: {0}")]
+    Description(String),
+    #[error("Error Response with no description")]
+    NoDescription,
 }

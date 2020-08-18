@@ -54,8 +54,8 @@ impl Bot {
             let res: Value = r.result.ok_or(Error::NoResult)?;
             Ok(res)
         } else {
-            let parameters = r.parameters.ok_or(Error::NoParameters)?;
-            Err(Error::Parameters(parameters.to_string()))
+            let description = r.description.ok_or(Error::NoDescription)?;
+            Err(Error::Description(description.to_string()))
         }
     }
 
