@@ -24,6 +24,15 @@ impl From<Integer> for ChatID {
     }
 }
 
+/// A JSON-serialized object
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum ReplyMarkup {
+    InlineKeyboardMarkup,
+    PubReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+    ForceReply,
+}
+
 #[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum InputFileString {
@@ -1187,43 +1196,6 @@ pub struct PreCheckoutQuery {
     pub order_info: Option<OrderInfo>,
 }
 
-/// -----------------
-/// Games
-/// -----------------
-
-/// This object represents a game. Use BotFather to create and edit games, their short names will
-/// act as unique identifiers.
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct Game {
-    pub title: String,
-    pub description: String,
-    pub photo: Vec<PhotoSize>,
-    pub text: Option<String>,
-    pub text_entities: Vec<Option<MessageEntity>>,
-    pub animation: Option<Animation>,
-}
-
-/// A placeholder, currently holds no information. Use BotFather to set up your game.
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct CallbackGame;
-
-/// This object represents one row of the high scores table for a game.
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct GameHighScore {
-    pub position: Integer,
-    pub user: User,
-    pub score: Integer,
-}
-
-/// A JSON-serialized object
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub enum ReplyMarkup {
-    InlineKeyboardMarkup,
-    PubReplyKeyboardMarkup,
-    ReplyKeyboardRemove,
-    ForceReply,
-}
-
 /// Contains information about Telegram Passport data shared with the bot by the user.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PassportData {
@@ -1236,6 +1208,7 @@ pub struct PassportData {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PassportFile {
     pub file_id: String,
+    pub file_unique_id: String,
     pub file_size: Integer,
     pub file_date: Integer,
 }
@@ -1265,4 +1238,142 @@ pub struct EncryptedCredentials {
     pub data: String,
     pub hash: String,
     pub secret: String,
+}
+
+/// This object represents an error in the Telegram Passport element which was submitted that
+/// should be resolved by the user. It should be one of:
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum PassportElementError {
+    PassportElementErrorDataField,
+    PassportElementErrorFrontSide,
+    PassportElementErrorReverseSide,
+    PassportElementErrorSelfie,
+    PassportElementErrorFile,
+    PassportElementErrorFiles,
+    PassportElementErrorTranslationFile,
+    PassportElementErrorTranslationFiles,
+    PassportElementErrorUnspecified,
+}
+
+/// Represents an issue in one of the data fields that was provided by the user. The error is
+/// considered resolved when the field's value changes.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorDataField {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub field_name: String,
+    pub data_hash: String,
+    pub message: String,
+}
+
+/// Represents an issue with the front side of a document. The error is considered resolved when
+/// the file with the front side of the document changes.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorFrontSide {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub file_hash: String,
+    pub message: String,
+}
+
+/// Represents an issue with the reverse side of a document. The error is considered resolved when
+/// the file with reverse side of the document changes.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorReverseSide {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub file_hash: String,
+    pub message: String,
+}
+
+/// Represents an issue with the selfie with a document. The error is considered resolved when the
+/// file with the selfie changes.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorSelfie {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub file_hash: String,
+    pub message: String,
+}
+
+/// Represents an issue with a document scan. The error is considered resolved when the file with
+/// the document scan changes.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorFile {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub file_hash: String,
+    pub message: String,
+}
+
+/// Represents an issue with a list of scans. The error is considered resolved when the list of
+/// files containing the scans changes.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorFiles {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub file_hash: String,
+    pub message: String,
+}
+
+/// Represents an issue with one of the files that constitute the translation of a document.
+/// The error is considered resolved when the file changes.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorTranslationFile {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub file_hash: String,
+    pub message: String,
+}
+
+/// Represents an issue with the translated version of a document. The error is considered
+/// resolved when a file with the document translation change.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorTranslationFiles {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub file_hash: String,
+    pub message: String,
+}
+
+/// Represents an issue in an unspecified place. The error is considered resolved when new data is added.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PassportElementErrorUnspecified {
+    pub source: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub file_hash: String,
+    pub message: String,
+}
+
+/// This object represents a game. Use BotFather to create and edit games, their short names will
+/// act as unique identifiers.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Game {
+    pub title: String,
+    pub description: String,
+    pub photo: Vec<PhotoSize>,
+    pub text: Option<String>,
+    pub text_entities: Vec<Option<MessageEntity>>,
+    pub animation: Option<Animation>,
+}
+
+/// A placeholder, currently holds no information. Use BotFather to set up your game.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct CallbackGame;
+
+/// This object represents one row of the high scores table for a game.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct GameHighScore {
+    pub position: Integer,
+    pub user: User,
+    pub score: Integer,
 }

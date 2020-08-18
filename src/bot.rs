@@ -1447,3 +1447,112 @@ pub struct AnswerShippingQuery {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error_message: Option<String>,
 }
+
+/// Once the user has confirmed their payment and shipping details, the Bot API sends the final
+/// confirmation in the form of an Update with the field pre_checkout_query. Use this method to
+/// respond to such pre-checkout queries. On success, True is returned. Note: The Bot API must
+/// receive an answer within 10 seconds after the pre-checkout query was sent.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct AnswerPreCheckoutQuery {
+    /// Unique identifier for the query to be answered
+    pub pre_checkout_query_id: String,
+    /// Specify True if everything is alright (goods are available, etc.) and the bot is ready to
+    /// proceed with the order. Use False if there are any problems.
+    pub ok: Boolean,
+    /// Required if ok is False. Error message in human readable form that explains the reason for
+    /// failure to proceed with the checkout (e.g. "Sorry, somebody just bought the last of our
+    /// amazing black T-shirts while you were busy filling out your payment details. Please choose
+    /// a different color or garment!"). Telegram will display this message to the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error_message: Option<String>,
+}
+
+/// Informs a user that some of the Telegram Passport elements they provided contains errors.
+/// The user will not be able to re-submit their Passport to you until the errors are fixed (the
+/// contents of the field for which you returned the error must change). Returns True on success.
+///
+/// Use this if the data submitted by the user doesn't satisfy the standards your service requires
+/// for any reason. For example, if a birthday date seems invalid, a submitted document is blurry,
+/// a scan shows evidence of tampering, etc. Supply some details in the error message to make sure
+/// the user knows how to correct the issues.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetPassportDataErrors {
+    /// User identifier
+    pub user_id: Integer,
+    /// A JSON-serialized array describing the errors
+    pub errors: Vec<PassportElementError>,
+}
+
+/// Use this method to send a game. On success, the sent Message is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
+pub struct SendGame {
+    /// Unique identifier for the target chat
+    pub chat_id: Integer,
+    /// Short name of the game, serves as the unique identifier for the game. Set up your games
+    /// via Botfather.
+    pub game_short_name: String,
+    /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification: Option<Boolean>,
+    /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_to_message_id: Option<Integer>,
+    /// A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title'
+    /// button will be shown. If not empty, the first button must launch the game.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup: Option<InlineKeyboardMarkup>,
+}
+
+/// Use this method to set the score of the specified user in a game. On success, if the message
+/// was sent by the bot, returns the edited Message, otherwise returns True. Returns an error,
+/// if the new score is not greater than the user's current score in the chat and force is False.
+#[derive(Serialize, Debug, Response)]
+#[response = "TrueMessage"]
+pub struct SetGameScore {
+    /// User identifier
+    user_id: Integer,
+    /// New score, must be non-negative
+    score: Integer,
+    /// Pass True, if the high score is allowed to decrease. This can be useful when fixing mistakes
+    /// or banning cheaters
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub force: Option<Boolean>,
+    /// Pass True, if the game message should not be automatically edited to include the current
+    /// scoreboard
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_edit_message: Option<Boolean>,
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_id: Option<Integer>,
+    /// Required if inline_message_id is not specified. Identifier of the sent message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_id: Option<Integer>,
+    /// Required if chat_id and message_id are not specified. Identifier of the inline message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub inline_message_id: Option<String>,
+}
+
+/// Use this method to get data for high score tables. Will return the score of the specified user
+/// and several of their neighbors in a game. On success, returns an Array of GameHighScore objects.
+///
+/// This method will currently return scores for the target user, plus two of their closest
+/// neighbors on each side. Will also return the top three users if the user and his neighbors
+/// are not among them. Please note that this behavior is subject to change.
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<GameHighScore>"]
+pub struct GetGameHighScores {
+    /// Target user id
+    user_id: Integer,
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_id: Option<Integer>,
+    /// Required if inline_message_id is not specified. Identifier of the sent message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_id: Option<Integer>,
+    /// Required if chat_id and message_id are not specified. Identifier of the inline message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub inline_message_id: Option<String>,
+}
