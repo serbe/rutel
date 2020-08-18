@@ -1,5 +1,3 @@
-use std::env;
-
 use dotenv;
 use rutel::bot;
 
@@ -9,10 +7,10 @@ fn get_token() {
     assert!(token.is_ok());
 }
 
-#[test]
-fn test_get_me() {
+#[tokio::test]
+async fn test_get_me() {
     let token: String = dotenv::var("TOKEN").unwrap();
-    let mut b = bot::Bot::new(&token, "127.0.0.1:9050");
-    let u = b.get_me();
-    println!("{:?}", u);
+    let mut b = bot::Bot::new(&token);
+    let u = b.get_me().await.unwrap();
+    assert!(u.is_bot, true);
 }

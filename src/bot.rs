@@ -1,35 +1,26 @@
 // use types::{Message, Response, Update, User};
-use std::io;
-
-use serde_json::{from_slice, from_value, to_string, Value};
-use serde::{Serialize};
-
+use dotenv;
+use rpc::client::Client;
 use rutel_derive::Response;
-use rpc::client::{Client};
+use serde::Serialize;
+use serde_json::{from_slice, from_value, to_string, Value};
 
+use crate::error::{Error, Result};
 use crate::types::*;
-
-async fn post_json(target: &str, body: &str) -> io::Result<Vec<u8>> {
-    let client = Client::builder().post(target).body(body.as_bytes()).header("Content-Type", "application/json").build().await?;
-    let _response = client.send().await?;
-    let body = client.text().await?;
-    Ok(body.as_bytes().to_vec())
-  }
 
 #[derive(Debug)]
 pub struct Bot {
     token: String,
-    proxy: String,
-    // stream: SocksStream,
+    proxy: Option<String>,
     user: Option<User>,
 }
 
 impl Bot {
-    pub fn new(token: &str, proxy: &str) -> Self {
+    pub fn new(token: &str) -> Self {
+        let proxy = dotenv::var("PROXY").ok();
         Bot {
             token: token.to_string(),
-            proxy: proxy.to_string(),
-            // stream,
+            proxy: proxy,
             user: None,
         }
     }
@@ -38,33 +29,61 @@ impl Bot {
         format!("https://api.telegram.org/bot{}/{}", self.token, method)
     }
 
-    pub fn create_request(
-        &mut self,
-        method: &'static str,
-        values: String,
-    ) -> Result<Value, String> {
+    pub async fn create_request(&mut self, method: &'static str, values: String) -> Result<Value> {
         let uri = self.build_uri(method);
-        let response = post_json(&self.proxy, &uri, &values).map_err(|e| e.to_string())?;
-        let v: Value = from_slice(&response).map_err(|e| e.to_string())?;
-        let r: Response = from_value(v).map_err(|e| e.to_string())?;
+
+        let client_builder = if let Some(proxy) = &self.proxy {
+            Client::builder().proxy(&proxy)
+        } else {
+            Client::builder()
+        };
+
+        let mut client = client_builder
+            .post(&uri)
+            .body(values.as_bytes())
+            .header("Content-Type", "application/json")
+            .build()
+            .await?;
+        let _response = client.send().await?;
+        let body = client.text().await?;
+        let response = body.as_bytes().to_vec();
+
+        let v: Value = from_slice(&response)?;
+        let r: Response = from_value(v)?;
         if r.ok {
-            let res: Value = r.result.ok_or("result is none")?;
+            let res: Value = r.result.ok_or(Error::NoResult)?;
             Ok(res)
         } else {
-            let par = r.parameters.ok_or("Error but parameters is none")?;
-            Err(par.to_string())
+            let parameters = r.parameters.ok_or(Error::NoParameters)?;
+            Err(Error::Parameters(parameters.to_string()))
         }
     }
 
     /// A simple method for testing your bot's auth token. Requires no parameters. Returns basic
     /// information about the bot in form of a User object.
-    pub fn get_me(&mut self) -> Result<User, String> {
-        let resp = self.create_request("getMe", String::new())?;
-        let user: User = from_value(resp).map_err(|e| e.to_string()).unwrap();
+    pub async fn get_me(&mut self) -> Result<User> {
+        let resp = self.create_request("getMe", String::new()).await?;
+        let user: User = from_value(resp)?;
         self.user = Some(user.clone());
         Ok(user)
     }
+
+    // async fn post_json(&mut self, target: &str, body: &str) -> Result<Vec<u8>> {
+    //     let mut client = Client::builder()
+    //         .post(target)
+    //         .body(body.as_bytes())
+    //         .header("Content-Type", "application/json")
+    //         .build()
+    //         .await?;
+    //     let _response = client.send().await?;
+    //     let body = client.text().await?;
+    //     Ok(body.as_bytes().to_vec())
+    // }
 }
+
+// // setwebhook
+// // deleteWebhook
+// // getWebhookInfo
 
 /// Use this method to receive incoming updates using long polling (wiki). An Array of Update
 /// objects is returned.
@@ -94,10 +113,6 @@ pub struct GetUpdates {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allowed_updates: Option<Vec<String>>,
 }
-
-// setwebhook
-// deleteWebhook
-// getWebhookInfo
 
 /// Use this method to send text messages. On success, the sent Message is returned.
 #[derive(Serialize, Debug, Response)]
@@ -592,6 +607,80 @@ pub struct SendContact {
     pub reply_markup: Option<ReplyMarkup>,
 }
 
+/// Use this method to send a native poll. On success, the sent Message is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
+pub struct SendPoll {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Poll question, 1-255 characters
+    pub question: String,
+    /// A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
+    pub options: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    /// True, if the poll needs to be anonymous, defaults to True
+    pub is_anonymous: Option<Boolean>,
+    /// Poll type, “quiz” or “regular”, defaults to “regular”
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "type")]
+    pub kind: Option<String>,
+    /// True, if the poll allows multiple answers, ignored for polls in quiz mode, defaults to False
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub allows_multiple_answers: Option<Boolean>,
+    /// 0-based identifier of the correct answer option, required for polls in quiz mode
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub correct_option_id: Option<Integer>,
+    /// Text that is shown when a user chooses an incorrect answer or taps on the lamp icon in a quiz-style poll,
+    /// 0-200 characters with at most 2 line feeds after entities parsing
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub explanation: Option<String>,
+    /// Mode for parsing entities in the explanation. See formatting options for more details.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub explanation_parse_mode: Option<String>,
+    /// Amount of time in seconds the poll will be active after creation, 5-600. Can't be used together with close_date.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub open_period: Option<Integer>,
+    /// Point in time (Unix timestamp) when the poll will be automatically closed. Must be at least 5
+    /// and no more than 600 seconds in the future. Can't be used together with open_period.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub close_date: Option<Integer>,
+    /// Pass True, if the poll needs to be immediately closed. This can be useful for poll preview.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_closed: Option<Boolean>,
+    /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification: Option<Boolean>,
+    /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_to_message_id: Option<Integer>,
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
+    /// instructions to remove reply keyboard or to force a reply from the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup: Option<ReplyMarkup>,
+}
+
+/// Use this method to send an animated emoji that will display a random value. On success, the sent Message is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
+pub struct SendDice {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, or “🏀”.
+    /// Dice can have values 1-6 for “🎲” and “🎯”, and values 1-5 for “🏀”. Defaults to “🎲”
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub emoji: Option<String>,
+    /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification: Option<Boolean>,
+    /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_to_message_id: Option<Integer>,
+    /// 	Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
+    /// instructions to remove reply keyboard or to force a reply from the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup: Option<ReplyMarkup>,
+}
+
 /// Use this method when you need to tell the user that something is happening on the bot's side.
 /// The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients
 /// clear its typing status). Returns True on success.
@@ -677,26 +766,13 @@ pub struct RestrictChatMember {
     pub chat_id: ChatID,
     /// Unique identifier of the target user
     pub user_id: Integer,
+    /// A JSON-serialized object for new user permissions
+    pub permissions: ChatPermissions,
     /// Date when restrictions will be lifted for the user, unix time. If user is restricted for
     /// more than 366 days or less than 30 seconds from the current time, they are considered to be
     /// restricted forever
     #[serde(skip_serializing_if = "Option::is_none")]
     pub until_date: Option<Integer>,
-    /// Pass True, if the user can send text messages, contacts, locations and venues
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_send_messages: Option<Boolean>,
-    /// Pass True, if the user can send audios, documents, photos, videos, video notes and voice
-    /// notes, implies can_send_messages
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_send_media_messages: Option<Boolean>,
-    /// Pass True, if the user can send animations, games, stickers and use inline bots, implies
-    /// can_send_media_messages
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_send_other_messages: Option<Boolean>,
-    /// Pass True, if the user may add web page previews to their messages, implies
-    /// can_send_media_messages
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_add_web_page_previews: Option<Boolean>,
 }
 
 /// Use this method to promote or demote a user in a supergroup or a channel. The bot must be an
@@ -737,6 +813,31 @@ pub struct PromoteChatMember {
     /// by administrators that were appointed by him)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_promote_members: Option<Boolean>,
+}
+
+/// Use this method to set a custom title for an administrator in a supergroup promoted by the bot.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetChatAdministratorCustomTitle {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// Unique identifier of the target user
+    pub user_id: Integer,
+    /// New custom title for the administrator; 0-16 characters, emoji are not allowed
+    pub custom_title: String,
+}
+
+/// Use this method to set default chat permissions for all members. The bot must be an administrator
+/// in the group or a supergroup for this to work and must have the can_restrict_members admin rights.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetChatPermissions {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// New default chat permissions
+    pub permissions: ChatPermissions,
 }
 
 /// Use this method to generate a new invite link for a chat; any previously generated link is
@@ -934,6 +1035,21 @@ pub struct AnswerCallbackQuery {
     pub cache_time: Option<Integer>,
 }
 
+/// Use this method to change the list of the bot's commands. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetMyCommands {
+    /// A JSON-serialized list of bot commands to be set as the list of the bot's commands.
+    /// At most 100 commands can be specified.
+    pub commands: Vec<BotCommand>,
+}
+
+/// Use this method to get the current list of the bot's commands. Requires no parameters.
+/// Returns Array of BotCommand on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<BotCommand>"]
+pub struct GetMyCommands {}
+
 /// Use this method to edit text and game messages sent by the bot or via the bot (for inline bots).
 /// On success, if edited message is sent by the bot, the edited Message is returned, otherwise
 /// True is returned.
@@ -982,6 +1098,9 @@ pub struct EditMessageCaption {
     /// New caption of the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// Mode for parsing entities in the message caption. See formatting options for more details.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode: Option<String>,
     /// A JSON-serialized object for an inline keyboard.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -1027,6 +1146,20 @@ pub struct EditMessageReplyMarkup {
     /// Required if chat_id and message_id are not specified. Identifier of the inline message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inline_message_id: Option<String>,
+    /// A JSON-serialized object for an inline keyboard.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup: Option<InlineKeyboardMarkup>,
+}
+
+/// Use this method to stop a poll which was sent by the bot. On success,
+/// the stopped Poll with the final results is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Poll"]
+pub struct StopPoll {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Identifier of the original message with the poll
+    pub message_id: Integer,
     /// A JSON-serialized object for an inline keyboard.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -1096,7 +1229,7 @@ pub struct UploadStickerFile {
 /// created sticker set. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
-pub struct CreateNewStickerSetParams {
+pub struct CreateNewStickerSet {
     /// User identifier of created sticker set owner
     pub user_id: Integer,
     /// Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain
@@ -1112,6 +1245,10 @@ pub struct CreateNewStickerSetParams {
     /// Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
     /// More info on Sending Files »
     pub png_sticker: InputFileString,
+    /// TGS animation with the sticker, uploaded using multipart/form-data.
+    /// See https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tgs_sticker: Option<InputFile>,
     /// One or more emoji corresponding to the sticker
     pub emojis: String,
     /// Pass True, if a set of mask stickers should be created
@@ -1136,6 +1273,10 @@ pub struct AddStickerToSet {
     /// Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
     /// More info on Sending Files »
     pub png_sticker: InputFileString,
+    // TGS animation with the sticker, uploaded using multipart/form-data.
+    /// See https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tgs_sticker: Option<InputFile>,
     /// One or more emoji corresponding to the sticker
     pub emojis: String,
     /// A JSON-serialized object for position where the mask should be placed on faces
@@ -1160,6 +1301,26 @@ pub struct SetStickerPositionInSet {
 pub struct DeleteStickerFromSet {
     /// File identifier of the sticker
     pub sticker: String,
+}
+
+/// Use this method to set the thumbnail of a sticker set. Animated thumbnails can be set
+/// for animated sticker sets only. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetStickerSetThumb {
+    /// Sticker set name
+    pub name: String,
+    /// User identifier of the sticker set owner
+    pub user_id: Integer,
+    /// A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height
+    /// exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size;
+    /// see https://core.telegram.org/animated_stickers#technical-requirements for animated sticker
+    /// technical requirements. Pass a file_id as a String to send a file that already exists on the
+    /// Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet,
+    /// or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker
+    /// set thumbnail can't be uploaded via HTTP URL.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thumb: Option<InputFileString>,
 }
 
 /// Use this method to send answers to an inline query. On success, True is returned.
@@ -1193,4 +1354,96 @@ pub struct AnswerInlineQuery {
     /// button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub switch_pm_parameter: Option<String>,
+}
+
+/// Use this method to send invoices. On success, the sent Message is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
+pub struct SendInvoice {
+    /// Unique identifier for the target private chat
+    pub chat_id: Integer,
+    /// Product name, 1-32 characters
+    pub title: String,
+    /// Product description, 1-255 characters
+    pub description: String,
+    /// Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
+    pub payload: String,
+    /// Payments provider token, obtained via Botfather
+    pub provider_token: String,
+    /// Unique deep-linking parameter that can be used to generate this invoice when used as a start parameter
+    pub start_parameter: String,
+    /// Three-letter ISO 4217 currency code, see more on currencies
+    pub currency: String,
+    /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount,
+    /// delivery cost, delivery tax, bonus, etc.)
+    pub prices: Vec<LabeledPrice>,
+    /// A JSON-serialized data about the invoice, which will be shared with the payment provider.
+    /// A detailed description of required fields should be provided by the payment provider.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub provider_data: Option<String>,
+    /// URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
+    /// People like it better when they see what they are paying for.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo_url: Option<String>,
+    /// Photo size
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo_size: Option<Integer>,
+    /// Photo width
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo_width: Option<Integer>,
+    /// Photo height
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo_height: Option<Integer>,
+    /// Pass True, if you require the user's full name to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub need_name: Option<Boolean>,
+    /// Pass True, if you require the user's phone number to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub need_phone_number: Option<Boolean>,
+    /// Pass True, if you require the user's email address to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub need_email: Option<Boolean>,
+    /// Pass True, if you require the user's shipping address to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub need_shipping_address: Option<Boolean>,
+    /// Pass True, if user's phone number should be sent to provider
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub send_phone_number_to_provider: Option<Boolean>,
+    /// Pass True, if user's email address should be sent to provider
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub send_email_to_provider: Option<Boolean>,
+    /// Pass True, if the final price depends on the shipping method
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_flexible: Option<Boolean>,
+    /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification: Option<Boolean>,
+    /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_to_message_id: Option<Integer>,
+    /// A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown.
+    // If not empty, the first button must be a Pay button.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup: Option<InlineKeyboardMarkup>,
+}
+
+/// If you sent an invoice requesting a shipping address and the parameter is_flexible was specified,
+/// the Bot API will send an Update with a shipping_query field to the bot. Use this method to reply
+/// to shipping queries. On success, True is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct AnswerShippingQuery {
+    /// Unique identifier for the query to be answered
+    pub shipping_query_id: String,
+    /// Specify True if delivery to the specified address is possible and False if there are any problems
+    /// (for example, if delivery to the specified address is not possible)
+    pub ok: Boolean,
+    /// Required if ok is True. A JSON-serialized array of available shipping options.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub shipping_options: Option<Vec<ShippingOption>>,
+    /// Required if ok is False. Error message in human readable form that explains why it is impossible
+    /// to complete the order (e.g. "Sorry, delivery to your desired address is unavailable').
+    /// Telegram will display this message to the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error_message: Option<String>,
 }

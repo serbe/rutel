@@ -1,5 +1,5 @@
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use serde::{Serialize, Deserialize};
 
 pub type Integer = u64;
 pub type Float = f64;
@@ -89,6 +89,20 @@ pub struct Update {
     pub callback_query: Option<CallbackQuery>,
     pub shipping_query: Option<ShippingQuery>,
     pub pre_checkout_query: Option<PreCheckoutQuery>,
+    pub poll: Option<Poll>,
+    pub poll_answer: Option<PollAnswer>,
+}
+
+/// Contains information about the current status of a webhook.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct WebhookInfo {
+    pub url: String,
+    pub has_custom_certificate: Boolean,
+    pub pending_update_count: Integer,
+    pub last_error_date: Option<Integer>,
+    pub last_error_message: Option<String>,
+    pub max_connections: Option<Integer>,
+    pub allowed_updates: Option<Vec<String>>,
 }
 
 /// This object represents a Telegram user or bot.
@@ -100,8 +114,10 @@ pub struct User {
     pub last_name: Option<String>,
     pub username: Option<String>,
     pub language_code: Option<String>,
+    pub can_join_groups: Option<Boolean>,
+    pub can_read_all_group_messages: Option<Boolean>,
+    pub supports_inline_queries: Option<Boolean>,
 }
-
 
 /// This object represents a chat.
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -113,11 +129,12 @@ pub struct Chat {
     pub username: Option<String>,
     pub first_name: Option<String>,
     pub last_name: Option<String>,
-    pub all_members_are_administrators: Option<Boolean>,
     pub photo: Option<ChatPhoto>,
     pub description: Option<String>,
     pub invite_link: Option<String>,
     pub pinned_message: Option<Box<Message>>,
+    pub permissions: Option<ChatPermissions>,
+    pub slow_mode_delay: Option<Integer>,
     pub sticker_set_name: Option<String>,
     pub can_set_sticker_set: Option<Boolean>,
 }
@@ -133,27 +150,31 @@ pub struct Message {
     pub forward_from_chat: Option<Chat>,
     pub forward_from_message_id: Option<Integer>,
     pub forward_signature: Option<String>,
+    pub forward_sender_name: Option<String>,
     pub forward_date: Option<Integer>,
     pub reply_to_message: Option<Box<Message>>,
+    pub via_bot: Option<User>,
     pub edit_date: Option<Integer>,
     pub media_group_id: Option<String>,
     pub author_signature: Option<String>,
     pub text: Option<String>,
     pub entities: Option<Vec<MessageEntity>>,
-    pub caption_entities: Option<Vec<MessageEntity>>,
+    pub animation: Option<Animation>,
     pub audio: Option<Audio>,
     pub document: Option<Document>,
-    pub animation: Option<Animation>,
-    pub game: Option<Game>,
     pub photo: Option<Vec<PhotoSize>>,
     pub sticker: Option<Sticker>,
     pub video: Option<Video>,
-    pub voice: Option<Voice>,
     pub video_note: Option<VideoNote>,
+    pub voice: Option<Voice>,
     pub caption: Option<String>,
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub contact: Option<Contact>,
-    pub location: Option<Location>,
+    pub dice: Option<Dice>,
+    pub game: Option<Game>,
+    pub poll: Option<Poll>,
     pub venue: Option<Venue>,
+    pub location: Option<Location>,
     pub new_chat_members: Option<Vec<User>>,
     pub left_chat_member: Option<User>,
     pub new_chat_title: Option<String>,
@@ -173,6 +194,7 @@ pub struct Message {
     pub successful_payment: Option<SuccessfulPayment>,
     pub connected_website: Option<String>,
     pub passport_data: Option<PassportData>,
+    pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
 /// This object represents one special entity in a text message. For example, hashtags, usernames,
@@ -185,14 +207,30 @@ pub struct MessageEntity {
     pub length: Integer,
     pub url: Option<String>,
     pub user: Option<User>,
+    pub language: Option<String>,
 }
 
 /// This object represents one size of a photo or a file / sticker thumbnail.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PhotoSize {
     pub file_id: String,
+    pub file_unique_id: String,
     pub width: Integer,
     pub height: Integer,
+    pub file_size: Option<Integer>,
+}
+
+/// This object represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Animation {
+    pub file_id: String,
+    pub file_unique_id: String,
+    pub width: Integer,
+    pub height: Integer,
+    pub duration: Integer,
+    pub thumb: Option<PhotoSize>,
+    pub file_name: Option<String>,
+    pub mime_type: Option<String>,
     pub file_size: Option<Integer>,
 }
 
@@ -200,6 +238,7 @@ pub struct PhotoSize {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Audio {
     pub file_id: String,
+    pub file_unique_id: String,
     pub duration: Integer,
     pub performer: Option<String>,
     pub title: Option<String>,
@@ -212,6 +251,7 @@ pub struct Audio {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Document {
     pub file_id: String,
+    pub file_unique_id: String,
     pub thumb: Option<PhotoSize>,
     pub file_name: Option<String>,
     pub mime_type: Option<String>,
@@ -222,32 +262,11 @@ pub struct Document {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Video {
     pub file_id: String,
+    pub file_unique_id: String,
     pub width: Integer,
     pub height: Integer,
     pub duration: Integer,
     pub thumb: Option<PhotoSize>,
-    pub mime_type: Option<String>,
-    pub file_size: Option<Integer>,
-}
-
-/// This object represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct Animation {
-    pub file_id: String,
-    pub width: Integer,
-    pub height: Integer,
-    pub duration: Integer,
-    pub thumb: Option<PhotoSize>,
-    pub file_name: Option<String>,
-    pub mime_type: Option<String>,
-    pub file_size: Option<Integer>,
-}
-
-/// This object represents a voice note.
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct Voice {
-    pub file_id: String,
-    pub duration: Integer,
     pub mime_type: Option<String>,
     pub file_size: Option<Integer>,
 }
@@ -256,9 +275,20 @@ pub struct Voice {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct VideoNote {
     pub file_id: String,
+    pub file_unique_id: String,
     pub length: Integer,
     pub duration: Integer,
     pub thumb: Option<PhotoSize>,
+    pub file_size: Option<Integer>,
+}
+
+/// This object represents a voice note.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Voice {
+    pub file_id: String,
+    pub file_unique_id: String,
+    pub duration: Integer,
+    pub mime_type: Option<String>,
     pub file_size: Option<Integer>,
 }
 
@@ -270,6 +300,47 @@ pub struct Contact {
     pub last_name: Option<String>,
     pub user_id: Option<Integer>,
     pub vcard: Option<String>,
+}
+
+/// This object represents an animated emoji that displays a random value.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Dice {
+    pub emoji: String,
+    pub value: Integer,
+}
+
+/// This object contains information about one answer option in a poll.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PollOption {
+    pub text: String,
+    pub voter_count: Integer,
+}
+
+/// This object represents an answer of a user in a non-anonymous poll.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PollAnswer {
+    pub poll_id: String,
+    pub user: User,
+    pub option_ids: Vec<Integer>,
+}
+
+/// This object contains information about a poll.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Poll {
+    pub id: String,
+    pub question: String,
+    pub options: Vec<PollOption>,
+    pub total_voter_count: Integer,
+    pub is_closed: Boolean,
+    pub is_anonymous: Boolean,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub allows_multiple_answers: Boolean,
+    pub correct_option_id: Option<Integer>,
+    pub explanation: Option<String>,
+    pub explanation_entities: Option<Vec<MessageEntity>>,
+    pub open_period: Option<Integer>,
+    pub close_date: Option<Integer>,
 }
 
 /// This object represents a point on the map.
@@ -303,6 +374,7 @@ pub struct UserProfilePhotos {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct File {
     pub file_id: String,
+    pub file_unique_id: String,
     pub file_size: Option<Integer>,
     pub file_path: Option<String>,
 }
@@ -325,6 +397,14 @@ pub struct KeyboardButton {
     pub text: String,
     pub request_contact: Option<Boolean>,
     pub request_location: Option<Boolean>,
+    pub request_poll: Option<KeyboardButtonPollType>,
+}
+
+/// This object represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct KeyboardButtonPollType {
+    #[serde(rename = "type")]
+    pub kind: Option<String>,
 }
 
 /// Upon receiving a message with this object, Telegram clients will remove the current custom
@@ -349,11 +429,23 @@ pub struct InlineKeyboardMarkup {
 pub struct InlineKeyboardButton {
     pub text: String,
     pub url: Option<String>,
+    pub login_url: Option<LoginUrl>,
     pub callback_data: Option<String>,
     pub switch_inline_query: Option<String>,
     pub switch_inline_query_current_chat: Option<String>,
     pub callback_game: Option<CallbackGame>,
     pub pay: Option<Boolean>,
+}
+
+/// This object represents a parameter of the inline keyboard button used to automatically authorize a user.
+/// Serves as a great replacement for the Telegram Login Widget when the user is coming from Telegram. All
+/// the user needs to do is tap/click a button and confirm that they want to log in: https://core.telegram.org/file/811140015/1734/8VZFkwWXalM.97872/6127fa62d8a0bf2b3c
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct LoginUrl {
+    pub url: String,
+    pub forward_text: Option<String>,
+    pub bot_username: Option<String>,
+    pub request_write_access: Option<Boolean>,
 }
 
 /// This object represents an incoming callback query from a callback button in an inline keyboard.
@@ -386,7 +478,9 @@ pub struct ForceReply {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ChatPhoto {
     pub small_file_id: String,
+    pub small_file_unique_id: String,
     pub big_file_id: String,
+    pub big_file_unique_id: String,
 }
 
 /// This object contains information about one member of a chat.
@@ -394,20 +488,43 @@ pub struct ChatPhoto {
 pub struct ChatMember {
     pub user: User,
     pub status: String,
+    pub custom_title: Option<String>,
     pub until_date: Option<Integer>,
     pub can_be_edited: Option<Boolean>,
-    pub can_change_info: Option<Boolean>,
     pub can_post_messages: Option<Boolean>,
     pub can_edit_messages: Option<Boolean>,
     pub can_delete_messages: Option<Boolean>,
-    pub can_invite_users: Option<Boolean>,
     pub can_restrict_members: Option<Boolean>,
-    pub can_pin_messages: Option<Boolean>,
     pub can_promote_members: Option<Boolean>,
+    pub can_change_info: Option<Boolean>,
+    pub can_invite_users: Option<Boolean>,
+    pub can_pin_messages: Option<Boolean>,
+    pub is_member: Option<Boolean>,
     pub can_send_messages: Option<Boolean>,
     pub can_send_media_messages: Option<Boolean>,
+    pub can_send_polls: Option<Boolean>,
     pub can_send_other_messages: Option<Boolean>,
     pub can_add_web_page_previews: Option<Boolean>,
+}
+
+/// Describes actions that a non-administrator user is allowed to take in a chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatPermissions {
+    pub can_send_messages: Option<Boolean>,
+    pub can_send_media_messages: Option<Boolean>,
+    pub can_send_polls: Option<Boolean>,
+    pub can_send_other_messages: Option<Boolean>,
+    pub can_add_web_page_previews: Option<Boolean>,
+    pub can_change_info: Option<Boolean>,
+    pub can_invite_users: Option<Boolean>,
+    pub can_pin_messages: Option<Boolean>,
+}
+
+/// This object represents a bot command.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotCommand {
+    pub command: String,
+    pub description: String,
 }
 
 /// Contains information about why a request was unsuccessful.
@@ -463,8 +580,8 @@ pub struct InputMediaAnimation {
     pub caption: Option<String>,
     pub parse_mode: Option<String>,
     pub width: Option<Integer>,
-    height: Option<Integer>,
-    duration: Option<Integer>,
+    pub height: Option<Integer>,
+    pub duration: Option<Integer>,
 }
 
 /// Represents an audio file to be treated as music to be sent.
@@ -505,8 +622,10 @@ pub struct InputMediaDocument {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Sticker {
     pub file_id: String,
+    pub file_unique_id: String,
     pub width: Integer,
     pub height: Integer,
+    pub is_animated: Boolean,
     pub thumb: Option<PhotoSize>,
     pub emoji: Option<String>,
     pub set_name: Option<String>,
@@ -519,8 +638,10 @@ pub struct Sticker {
 pub struct StickerSet {
     pub name: String,
     pub title: String,
+    pub is_animated: Boolean,
     pub contains_masks: Boolean,
     pub stickers: Vec<Sticker>,
+    pub thumb: Option<PhotoSize>,
 }
 
 /// This object describes the position on faces where a mask should be placed by default.
@@ -547,7 +668,7 @@ pub struct InlineQuery {
     pub offset: String,
 }
 
-/// This object represents one result of an inline query. Telegram clients currently support 
+/// This object represents one result of an inline query. Telegram clients currently support
 /// results of the following 20 types:
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum InlineQueryResult {
@@ -1103,10 +1224,6 @@ pub enum ReplyMarkup {
     ForceReply,
 }
 
-
-
-
-
 /// Contains information about Telegram Passport data shared with the bot by the user.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PassportData {
@@ -1114,7 +1231,7 @@ pub struct PassportData {
     pub credentials: EncryptedCredentials,
 }
 
-/// This object represents a file uploaded to Telegram Passport. Currently all Telegram 
+/// This object represents a file uploaded to Telegram Passport. Currently all Telegram
 /// Passport files are in JPEG format when decrypted and don't exceed 10MB.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PassportFile {
@@ -1123,7 +1240,7 @@ pub struct PassportFile {
     pub file_date: Integer,
 }
 
-/// Contains information about documents or other Telegram Passport elements shared with 
+/// Contains information about documents or other Telegram Passport elements shared with
 /// the bot by the user.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct EncryptedPassportElement {
@@ -1140,8 +1257,8 @@ pub struct EncryptedPassportElement {
     pub hash: String,
 }
 
-/// Contains data required for decrypting and authenticating EncryptedPassportElement. 
-/// See the Telegram Passport Documentation for a complete description of the data decryption 
+/// Contains data required for decrypting and authenticating EncryptedPassportElement.
+/// See the Telegram Passport Documentation for a complete description of the data decryption
 /// and authentication processes.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct EncryptedCredentials {
