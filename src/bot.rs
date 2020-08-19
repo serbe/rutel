@@ -10,9 +10,9 @@ use crate::types::*;
 
 #[derive(Debug)]
 pub struct Bot {
-    token: String,
-    proxy: Option<String>,
-    user: Option<User>,
+    pub token: String,
+    pub proxy: Option<String>,
+    pub user: Option<User>,
 }
 
 impl Bot {
@@ -25,7 +25,7 @@ impl Bot {
         }
     }
 
-    fn build_uri(&self, method: &'static str) -> String {
+    pub fn build_uri(&self, method: &'static str) -> String {
         format!("https://api.telegram.org/bot{}/{}", self.token, method)
     }
 
