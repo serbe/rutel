@@ -24,6 +24,12 @@ impl From<Integer> for ChatID {
     }
 }
 
+impl From<i32> for ChatID {
+    fn from(id: i32) -> Self {
+        ChatID::Integer(id as i64)
+    }
+}
+
 /// A JSON-serialized object
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum ReplyMarkup {

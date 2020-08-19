@@ -32,6 +32,9 @@ impl Bot {
     pub async fn create_request(&mut self, method: &'static str, values: String) -> Result<Value> {
         let uri = self.build_uri(method);
 
+        dbg!(&method);
+        dbg!(&values);
+
         let client_builder = if let Some(proxy) = &self.proxy {
             Client::builder().proxy(&proxy)
         } else {
