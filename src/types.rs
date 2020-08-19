@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-pub type Integer = u64;
+pub type Integer = i64;
 pub type Float = f64;
 pub type Boolean = bool;
 
