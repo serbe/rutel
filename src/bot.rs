@@ -1,9 +1,8 @@
-// use types::{Message, Response, Update, User};
 use dotenv;
 use rpc::client::Client;
 use rutel_derive::Response;
 use serde::Serialize;
-use serde_json::{from_slice, from_value, to_string, Value};
+use serde_json::{from_slice, from_value, Value};
 
 use crate::error::{Error, Result};
 use crate::types::*;
@@ -12,7 +11,7 @@ use crate::types::*;
 pub struct Bot {
     pub token: String,
     pub proxy: Option<String>,
-    pub user: Option<User>,
+    // pub user: Option<User>,
 }
 
 impl Bot {
@@ -21,7 +20,7 @@ impl Bot {
         Bot {
             token: token.to_string(),
             proxy: proxy,
-            user: None,
+            // user: None,
         }
     }
 
@@ -61,28 +60,13 @@ impl Bot {
             Err(Error::Description(description.to_string()))
         }
     }
-
-    /// A simple method for testing your bot's auth token. Requires no parameters. Returns basic
-    /// information about the bot in form of a User object.
-    pub async fn get_me(&mut self) -> Result<User> {
-        let resp = self.create_request("getMe", String::new()).await?;
-        let user: User = from_value(resp)?;
-        self.user = Some(user.clone());
-        Ok(user)
-    }
-
-    // async fn post_json(&mut self, target: &str, body: &str) -> Result<Vec<u8>> {
-    //     let mut client = Client::builder()
-    //         .post(target)
-    //         .body(body.as_bytes())
-    //         .header("Content-Type", "application/json")
-    //         .build()
-    //         .await?;
-    //     let _response = client.send().await?;
-    //     let body = client.text().await?;
-    //     Ok(body.as_bytes().to_vec())
-    // }
 }
+
+// A simple method for testing your bot's auth token. Requires no parameters. Returns basic
+/// information about the bot in form of a User object.
+#[response = "User"]
+#[derive(Serialize, Debug, Response)]
+pub struct GetMe {}
 
 // // setwebhook
 // // deleteWebhook
