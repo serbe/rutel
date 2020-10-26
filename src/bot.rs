@@ -1,5 +1,4 @@
-use dotenv;
-use rpc::client::Client;
+use netc::client::Client;
 use rutel_derive::Response;
 use serde::Serialize;
 use serde_json::{from_slice, from_value, Value};
@@ -16,12 +15,15 @@ pub struct Bot {
 
 impl Bot {
     pub fn new(token: &str) -> Self {
-        let proxy = dotenv::var("PROXY").ok();
         Bot {
             token: token.to_string(),
-            proxy: proxy,
+            proxy: None,
             // user: None,
         }
+    }
+
+    pub fn proxy(&mut self, proxy: String) {
+        self.proxy = Some(proxy);
     }
 
     pub fn build_uri(&self, method: &'static str) -> String {
@@ -32,22 +34,22 @@ impl Bot {
         let uri = self.build_uri(method);
 
         dbg!(&uri);
-        dbg!(&values);
+        // dbg!(&values);
 
         let client_builder = if let Some(proxy) = &self.proxy {
-            Client::builder().proxy(&proxy)
+            Client::builder().proxy(proxy)
         } else {
             Client::builder()
         };
 
         let mut client = client_builder
             .post(&uri)
-            .body(values.as_bytes())
+            .body(values)
             .header("Content-Type", "application/json")
             .build()
             .await?;
-        let _response = client.send().await?;
-        let body = client.text().await?;
+        let response = client.send().await?;
+        let body = response.text()?;
         let response = body.as_bytes().to_vec();
 
         let v: Value = from_slice(&response)?;
