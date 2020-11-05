@@ -157,58 +157,114 @@ pub struct Chat {
 /// This object represents a message.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Message {
+    /// Unique message identifier inside this chat
     pub message_id: Integer,
+    /// Sender, empty for messages sent to channels
     pub from: Option<User>,
+    /// Sender of the message, sent on behalf of a chat. The channel itself for
+    /// channel messages. The supergroup itself for messages from anonymous group
+    /// administrators. The linked channel for messages automatically forwarded to
+    /// the discussion group
+    pub sender_chat: Option<Chat>,
+    /// Date the message was sent in Unix time
     pub date: Integer,
+    /// Conversation the message belongs to
     pub chat: Box<Chat>,
+    /// For forwarded messages, sender of the original message
     pub forward_from: Option<User>,
+    /// For messages forwarded from channels or from anonymous administrators, information about the original sender chat
     pub forward_from_chat: Option<Chat>,
+    /// For messages forwarded from channels, identifier of the original message in the channel
     pub forward_from_message_id: Option<Integer>,
+    /// For messages forwarded from channels, signature of the post author if present
     pub forward_signature: Option<String>,
+    /// Sender's name for messages forwarded from users who disallow adding a link to their account in forwarded messages
     pub forward_sender_name: Option<String>,
+    /// For forwarded messages, date the original message was sent in Unix time
     pub forward_date: Option<Integer>,
+    /// For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.
     pub reply_to_message: Option<Box<Message>>,
+    /// Bot through which the message was sent
     pub via_bot: Option<User>,
+    /// Date the message was last edited in Unix time
     pub edit_date: Option<Integer>,
+    /// The unique identifier of a media message group this message belongs to
     pub media_group_id: Option<String>,
+    /// Signature of the post author for messages in channels, or the custom title of an anonymous group administrator
     pub author_signature: Option<String>,
+    /// For text messages, the actual UTF-8 text of the message, 0-4096 characters
     pub text: Option<String>,
+    /// For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
     pub entities: Option<Vec<MessageEntity>>,
+    /// Message is an animation, information about the animation. For backward compatibility, when this field is set, the document field will also be set
     pub animation: Option<Animation>,
+    /// Message is an audio file, information about the file
     pub audio: Option<Audio>,
+    /// Message is a general file, information about the file
     pub document: Option<Document>,
+    /// Message is a photo, available sizes of the photo
     pub photo: Option<Vec<PhotoSize>>,
+    /// Message is a sticker, information about the sticker
     pub sticker: Option<Sticker>,
+    /// Message is a video, information about the video
     pub video: Option<Video>,
+    /// Message is a video note, information about the video message
     pub video_note: Option<VideoNote>,
+    /// Message is a voice message, information about the file
     pub voice: Option<Voice>,
+    /// Caption for the animation, audio, document, photo, video or voice, 0-1024 characters
     pub caption: Option<String>,
+    /// For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in the caption
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Message is a shared contact, information about the contact
     pub contact: Option<Contact>,
+    /// Message is a dice with random value from 1 to 6
     pub dice: Option<Dice>,
+    /// Message is a game, information about the game.
     pub game: Option<Game>,
+    /// Message is a native poll, information about the poll
     pub poll: Option<Poll>,
+    /// Message is a venue, information about the venue. For backward compatibility, when this field is set, the location field will also be set
     pub venue: Option<Venue>,
+    /// Message is a shared location, information about the location
     pub location: Option<Location>,
+    /// New members that were added to the group or supergroup and information about them (the bot itself may be one of these members)
     pub new_chat_members: Option<Vec<User>>,
+    /// A member was removed from the group, information about them (this member may be the bot itself)
     pub left_chat_member: Option<User>,
+    /// A chat title was changed to this value
     pub new_chat_title: Option<String>,
+    /// A chat photo was change to this value
     pub new_chat_photo: Option<Vec<PhotoSize>>,
-    // True
+    /// Service message: the chat photo was deleted
+    /// True
     pub delete_chat_photo: Option<Boolean>,
-    // True
+    /// Service message: the group has been created
+    /// True
     pub group_chat_created: Option<Boolean>,
-    // True
+    /// Service message: the supergroup has been created. This field can't be received in a message coming through updates, because bot can't be a member of a supergroup when it is created. It can only be found in reply_to_message if someone replies to a very first message in a directly created supergroup.
+    /// True
     pub supergroup_chat_created: Option<Boolean>,
-    // True
+    /// Service message: the channel has been created. This field can't be received in a message coming through updates, because bot can't be a member of a channel when it is created. It can only be found in reply_to_message if someone replies to a very first message in a channel.
+    /// True
     pub channel_chat_created: Option<Boolean>,
+    /// The group has been migrated to a supergroup with the specified identifier. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it is smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
     pub migrate_to_chat_id: Option<Integer>,
+    /// The supergroup has been migrated from a group with the specified identifier. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it is smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
     pub migrate_from_chat_id: Option<Integer>,
+    /// Specified message was pinned. Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply.
     pub pinned_message: Option<Box<Message>>,
+    /// Message is an invoice for a payment, information about the invoice.
     pub invoice: Option<Invoice>,
+    /// Message is a service message about a successful payment, information about the payment.
     pub successful_payment: Option<SuccessfulPayment>,
+    /// The domain name of the website on which the user has logged in.
     pub connected_website: Option<String>,
+    /// Telegram Passport data
     pub passport_data: Option<PassportData>,
+    /// Service message. A user in the chat triggered another user's proximity alert while sharing Live Location.
+    pub proximity_alert_triggered: Option<ProximityAlertTriggered>,
+    /// Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
@@ -257,6 +313,7 @@ pub struct Audio {
     pub duration: Integer,
     pub performer: Option<String>,
     pub title: Option<String>,
+    pub file_name: Option<String>,
     pub mime_type: Option<String>,
     pub file_size: Option<Integer>,
     pub thumb: Option<PhotoSize>,
@@ -282,6 +339,7 @@ pub struct Video {
     pub height: Integer,
     pub duration: Integer,
     pub thumb: Option<PhotoSize>,
+    pub file_name: Option<String>,
     pub mime_type: Option<String>,
     pub file_size: Option<Integer>,
 }
@@ -320,7 +378,9 @@ pub struct Contact {
 /// This object represents an animated emoji that displays a random value.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Dice {
+    /// Emoji on which the dice throw animation is based
     pub emoji: String,
+    /// Value of the dice, 1-6 for “🎲” and “🎯” base emoji, 1-5 for “🏀” and “⚽” base emoji, 1-64 for “🎰” base emoji
     pub value: Integer,
 }
 
@@ -363,16 +423,42 @@ pub struct Poll {
 pub struct Location {
     pub longitude: Float,
     pub latitude: Float,
+    pub horizontal_accuracy: Option<Float>,
+    pub live_period: Option<Integer>,
+    pub heading: Option<Integer>,
+    pub proximity_alert_radius: Option<Integer>,
 }
 
 /// This object represents a venue.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Venue {
+    /// Venue location. Can't be a live location
     pub location: Location,
+    /// Name of the venue
     pub title: String,
+    /// Address of the venue
     pub address: String,
+    /// Foursquare identifier of the venue
     pub foursquare_id: Option<String>,
+    /// Foursquare type of the venue. (For example, “arts_entertainment/default”,
+    /// “arts_entertainment/aquarium” or “food/icecream”.)
     pub foursquare_type: Option<String>,
+    /// Google Places identifier of the venue
+    pub google_place_id: Option<String>,
+    /// Google Places type of the venue. (See supported types.)
+    pub google_place_type: Option<String>,
+}
+
+/// This object represents the content of a service message, sent whenever a user in the chat
+/// triggers a proximity alert set by another user.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ProximityAlertTriggered {
+    /// User that triggered the alert
+    pub traveler: User,
+    /// User that set the alert
+    pub watcher: User,
+    /// The distance between the users
+    pub distance: Integer,
 }
 
 /// This object represent a user's profile pictures.
@@ -504,6 +590,8 @@ pub struct ChatMember {
     pub user: User,
     pub status: String,
     pub custom_title: Option<String>,
+    /// Owner and administrators only. True, if the user's presence in the chat is hidden
+    pub is_anonymous: Option<Boolean>,
     pub until_date: Option<Integer>,
     pub can_be_edited: Option<Boolean>,
     pub can_post_messages: Option<Boolean>,
@@ -567,7 +655,10 @@ pub struct InputMediaPhoto {
     pub kind: String,
     pub media: String,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
 }
 
 /// Represents a video to be sent.
@@ -578,7 +669,10 @@ pub struct InputMediaVideo {
     pub media: String,
     pub thumb: Option<InputFileString>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub width: Option<Integer>,
     pub height: Option<Integer>,
     pub duration: Option<Integer>,
@@ -593,7 +687,10 @@ pub struct InputMediaAnimation {
     pub media: String,
     pub thumb: Option<InputFileString>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub width: Option<Integer>,
     pub height: Option<Integer>,
     pub duration: Option<Integer>,
@@ -607,7 +704,10 @@ pub struct InputMediaAudio {
     pub media: String,
     pub thumb: Option<InputFileString>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub duration: Option<Integer>,
     pub performer: Option<String>,
     pub title: Option<String>,
@@ -621,7 +721,11 @@ pub struct InputMediaDocument {
     pub media: String,
     pub thumb: Option<InputFileString>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
+    pub disable_content_type_detection: Option<Boolean>,
 }
 
 /// This object represents the contents of a file to be uploaded. Must be posted using
@@ -741,7 +845,10 @@ pub struct InlineQueryResultPhoto {
     pub title: Option<String>,
     pub description: Option<String>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -761,7 +868,10 @@ pub struct InlineQueryResultGif {
     pub thumb_url: String,
     pub title: Option<String>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -782,7 +892,10 @@ pub struct InlineQueryResultMpeg4Gif {
     pub thumb_url: String,
     pub title: Option<String>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -802,7 +915,10 @@ pub struct InlineQueryResultVideo {
     pub thumb_url: String,
     pub title: String,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub video_width: Option<Integer>,
     pub video_height: Option<Integer>,
     pub video_duration: Option<Integer>,
@@ -822,7 +938,10 @@ pub struct InlineQueryResultAudio {
     pub audio_url: String,
     pub title: String,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub performer: Option<String>,
     pub audio_duration: Option<Integer>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -840,7 +959,10 @@ pub struct InlineQueryResultVoice {
     pub voice_url: String,
     pub title: String,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub voice_duration: Option<Integer>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
@@ -856,7 +978,10 @@ pub struct InlineQueryResultDocument {
     pub id: String,
     pub title: String,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub document_url: String,
     pub mime_type: String,
     pub description: Option<String>,
@@ -878,7 +1003,10 @@ pub struct InlineQueryResultLocation {
     pub latitude: Float,
     pub longitude: Float,
     pub title: String,
+    pub horizontal_accuracy: Option<Float>,
     pub live_period: Option<Integer>,
+    pub heading: Option<Integer>,
+    pub proximity_alert_radius: Option<Integer>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
     pub thumb_url: Option<String>,
@@ -890,19 +1018,37 @@ pub struct InlineQueryResultLocation {
 /// input_message_content to send a message with the specified content instead of the venue.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultVenue {
+    /// Type of the result, must be venue
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 Bytes
     pub id: String,
+    /// Latitude of the venue location in degrees
     pub latitude: Float,
+    /// Longitude of the venue location in degrees
     pub longitude: Float,
+    /// Title of the venue
     pub title: String,
+    /// Address of the venue
     pub address: String,
+    /// Foursquare identifier of the venue if known
     pub foursquare_id: Option<String>,
+    /// Foursquare type of the venue, if known. (For example, “arts_entertainment/default”,
+    /// “arts_entertainment/aquarium” or “food/icecream”.)
     pub foursquare_type: Option<String>,
+    /// Google Places identifier of the venue
+    pub google_place_id: Option<String>,
+    /// Google Places type of the venue. (See supported types.)
+    pub google_place_type: Option<String>,
+    /// Inline keyboard attached to the message
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Content of the message to be sent instead of the venue
     pub input_message_content: Option<InputMessageContent>,
+    /// Url of the thumbnail for the result
     pub thumb_url: Option<String>,
+    /// Thumbnail width
     pub thumb_width: Option<Integer>,
+    /// Thumbnail height
     pub thumb_height: Option<Integer>,
 }
 
@@ -947,7 +1093,10 @@ pub struct InlineQueryResultCachedPhoto {
     pub title: Option<String>,
     pub description: Option<String>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -963,7 +1112,10 @@ pub struct InlineQueryResultCachedGif {
     pub gif_file_id: String,
     pub title: Option<String>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -980,7 +1132,10 @@ pub struct InlineQueryResultCachedMpeg4Gif {
     pub mpeg4_file_id: String,
     pub title: Option<String>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1010,7 +1165,10 @@ pub struct InlineQueryResultCachedDocument {
     pub document_file_id: String,
     pub description: Option<String>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1027,7 +1185,10 @@ pub struct InlineQueryResultCachedVideo {
     pub title: String,
     pub description: Option<String>,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1043,7 +1204,10 @@ pub struct InlineQueryResultCachedVoice {
     pub voice_file_id: String,
     pub title: String,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1058,7 +1222,10 @@ pub struct InlineQueryResultCachedAudio {
     pub id: String,
     pub audio_file_id: String,
     pub caption: Option<String>,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub caption_entities: Option<Vec<MessageEntity>>,
     pub reply_markup: Option<InlineKeyboardMarkup>,
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1077,7 +1244,10 @@ pub enum InputMessageContent {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputTextMessageContent {
     pub message_text: String,
+    /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
     pub parse_mode: Option<String>,
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
+    pub entities: Option<Vec<MessageEntity>>,
     pub disable_web_page_preview: Option<Boolean>,
 }
 
@@ -1086,7 +1256,10 @@ pub struct InputTextMessageContent {
 pub struct InputLocationMessageContent {
     pub latitude: Float,
     pub longitude: Float,
+    pub horizontal_accuracy: Option<Float>,
     pub live_period: Option<Integer>,
+    pub heading: Option<Integer>,
+    pub proximity_alert_radius: Option<Integer>,
 }
 
 /// Represents the content of a venue message to be sent as the result of an inline query.
@@ -1098,6 +1271,10 @@ pub struct InputVenueMessageContent {
     pub address: String,
     pub foursquare_id: Option<String>,
     pub foursquare_type: Option<String>,
+    /// Google Places identifier of the venue
+    pub google_place_id: Option<String>,
+    /// Google Places type of the venue. (See supported types.)
+    pub google_place_type: Option<String>,
 }
 
 /// Represents the content of a contact message to be sent as the result of an inline query.
