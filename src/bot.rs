@@ -59,7 +59,7 @@ impl Bot {
             Ok(res)
         } else {
             let description = r.description.ok_or(Error::NoDescription)?;
-            Err(Error::Description(description.to_string()))
+            Err(Error::Description(description))
         }
     }
 }
@@ -192,7 +192,7 @@ pub struct CopyMessage {
     pub parse_mode: Option<String>,
     /// List of special entities that appear in the new caption, which can be specified instead of parse_mode
     pub caption_entities: Option<Vec<MessageEntity>>,
-    ///	Sends the message silently. Users will receive a notification with no sound.
+    /// Sends the message silently. Users will receive a notification with no sound.
     pub disable_notification: Option<Boolean>,
     /// If the message is a reply, ID of the original message
     pub reply_to_message_id: Option<Integer>,

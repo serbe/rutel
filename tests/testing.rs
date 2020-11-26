@@ -2,12 +2,6 @@ use dotenv;
 use rutel::bot;
 use rutel::types::ChatID;
 
-// #[test]
-// fn get_token() {
-//     let token = dotenv::var("TOKEN");
-//     assert!(token.is_ok());
-// }
-
 #[tokio::test]
 async fn test_get_me() {
     if let Ok(token) = dotenv::var("TG_TOKEN") {
