@@ -43,7 +43,7 @@ impl Bot {
         };
 
         let mut client = client_builder
-            .post(&uri)
+            .post(uri)
             .body(values)
             .header("Content-Type", "application/json")
             .build()
@@ -66,8 +66,8 @@ impl Bot {
 
 /// A simple method for testing your bot's auth token. Requires no parameters. Returns basic
 /// information about the bot in form of a User object.
-#[response = "User"]
 #[derive(Serialize, Debug, Response)]
+#[response = "User"]
 pub struct GetMe {}
 
 /// Use this method to log out from the cloud Bot API server before launching the bot locally.
@@ -75,16 +75,16 @@ pub struct GetMe {}
 /// the bot will receive updates. After a successful call, you can immediately log in on a
 /// local server, but will not be able to log in back to the cloud Bot API server for 10 minutes.
 /// Returns True on success. Requires no parameters.
-#[response = "Boolean"]
 #[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct LogOut {}
 
 /// Use this method to close the bot instance before moving it from one local server to another.
 /// You need to delete the webhook before calling this method to ensure that the bot isn't
 /// launched again after server restart. The method will return error 429 in the first 10 minutes
 /// after the bot is launched. Returns True on success. Requires no parameters.
-#[response = "Boolean"]
 #[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
 pub struct Close {}
 
 // // setwebhook
@@ -93,8 +93,8 @@ pub struct Close {}
 
 /// Use this method to receive incoming updates using long polling (wiki). An Array of Update
 /// objects is returned.
-#[response = "Vec<Update>"]
 #[derive(Serialize, Debug, Response)]
+#[response = "Vec<Update>"]
 pub struct GetUpdates {
     /// Identifier of the first update to be returned. Must be greater by one than the highest
     /// among the identifiers of previously received updates. By default, updates starting with the

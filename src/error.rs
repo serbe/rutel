@@ -7,9 +7,9 @@ pub type Result<T> = result::Result<T, Error>;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("io error: {0}")]
-    IO(#[from] io::Error),
+    Io(#[from] io::Error),
     #[error("json error: {0}")]
-    JSON(#[from] serde_json::Error),
+    Json(#[from] serde_json::Error),
     #[error("Response result is none")]
     NoResult,
     #[error("Error Response with no parameters")]
