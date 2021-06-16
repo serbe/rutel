@@ -796,38 +796,29 @@ pub struct SendPoll {
 pub struct SendDice {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, or “🏀”.
-    /// Dice can have values 1-6 for “🎲” and “🎯”, and values 1-5 for “🏀”. Defaults to “🎲”
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, “🏀”, “⚽”, “🎳”, or “🎰”. Dice can have values 1-6 for “🎲”, “🎯” and “🎳”, values 1-5 for “🏀” and “⚽”, and values 1-64 for “🎰”. Defaults to “🎲”
     pub emoji: Option<String>,
     /// Sends the message silently. Users will receive a notification with no sound.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
     /// If the message is a reply, ID of the original message
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_to_message_id: Option<Integer>,
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    /// instructions to remove reply keyboard or to force a reply from the user.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method when you need to tell the user that something is happening on the bot's side.
-/// The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients
-/// clear its typing status). Returns True on success.
+/// Use this method when you need to tell the user that something is happening on the bot's side. The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status). Returns True on success.
+///
+///    Example: The ImageBot needs some time to process a request and upload the image. Instead of sending a text message along the lines of “Retrieving image, please wait…”, the bot may use sendChatAction with action = upload_photo. The user will see a “sending photo” status for the bot.
+///
+/// We only recommend using this method when a response from the bot will take a noticeable amount of time to arrive.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SendChatAction {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Type of action to broadcast. Choose one, depending on what the user is about to receive:
-    /// typing for text messages, upload_photo for photos, record_video or upload_video for videos,
-    /// record_audio or upload_audio for audio files, upload_document for general files,
-    /// find_location for location data, record_video_note or upload_video_note for video notes.
+    /// Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, find_location for location data, record_video_note or upload_video_note for video notes.
     pub action: String,
 }
 
@@ -858,22 +849,18 @@ pub struct GetFile {
     pub file_id: String,
 }
 
-/// Use this method to kick a user from a group, a supergroup or a channel. In the case of supergroups
-/// and channels, the user will not be able to return to the group on their own using invite links,
-/// etc., unless unbanned first. The bot must be an administrator in the chat for this to work and
-/// must have the appropriate admin rights. Returns True on success.
+/// Use this method to kick a user from a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct KickChatMember {
-    /// Unique identifier for the target group or username of the target supergroup or channel (in
-    /// the format @channelusername)
+    /// Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Unique identifier of the target user
     pub user_id: Integer,
-    /// Date when the user will be unbanned, unix time. If user is banned for more than 366 days or
-    /// less than 30 seconds from the current time they are considered to be banned forever
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever
     pub until_date: Option<Integer>,
+    /// Pass True to delete all messages from the chat for the user that is being removed. If False, the user will be able to see messages in the group that were sent before the user was removed. Always True for supergroups and channels.
+    pub revoke_messages: Option<Boolean>,
 }
 
 /// Use this method to unban a previously kicked user in a supergroup or channel. The user will not
@@ -914,47 +901,36 @@ pub struct RestrictChatMember {
     pub until_date: Option<Integer>,
 }
 
-/// Use this method to promote or demote a user in a supergroup or a channel. The bot must be an
-/// administrator in the chat for this to work and must have the appropriate admin rights. Pass
-/// False for all boolean parameters to demote a user. Returns True on success.
+/// Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Pass False for all boolean parameters to demote a user. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct PromoteChatMember {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Unique identifier of the target user
     pub user_id: Integer,
     /// Pass True, if the administrator's presence in the chat is hidden
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub is_anonymous: Option<Boolean>,
-    /// Pass True, if the administrator can change chat title, photo and other settings
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_change_info: Option<Boolean>,
+    /// Pass True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+    pub can_manage_chat: Option<Boolean>,
     /// Pass True, if the administrator can create channel posts, channels only
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_post_messages: Option<Boolean>,
-    /// Pass True, if the administrator can edit messages of other users and can pin messages,
-    /// channels only
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Pass True, if the administrator can edit messages of other users and can pin messages, channels only
     pub can_edit_messages: Option<Boolean>,
     /// Pass True, if the administrator can delete messages of other users
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_delete_messages: Option<Boolean>,
-    /// Pass True, if the administrator can invite new users to the chat
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_invite_users: Option<Boolean>,
+    /// Pass True, if the administrator can manage voice chats
+    pub can_manage_voice_chats: Option<Boolean>,
     /// Pass True, if the administrator can restrict, ban or unban chat members
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_restrict_members: Option<Boolean>,
-    /// Pass True, if the administrator can pin messages, supergroups only
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_pin_messages: Option<Boolean>,
-    /// Pass True, if the administrator can add new administrators with a subset of his own
-    /// privileges or demote administrators that he has promoted, directly or indirectly (promoted
-    /// by administrators that were appointed by him)
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Pass True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
     pub can_promote_members: Option<Boolean>,
+    /// Pass True, if the administrator can change chat title, photo and other settings
+    pub can_change_info: Option<Boolean>,
+    /// Pass True, if the administrator can invite new users to the chat
+    pub can_invite_users: Option<Boolean>,
+    /// Pass True, if the administrator can pin messages, supergroups only
+    pub can_pin_messages: Option<Boolean>,
 }
 
 /// Use this method to set a custom title for an administrator in a supergroup promoted by the bot.
@@ -991,6 +967,45 @@ pub struct ExportChatInviteLink {
     /// Unique identifier for the target chat or username of the target channel (in the format
     /// @channelusername)
     pub chat_id: ChatID,
+}
+
+/// Use this method to create an additional invite link for a chat. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. The link can be revoked using the method revokeChatInviteLink. Returns the new invite link as ChatInviteLink object.
+/// Parameter 	Type 	Required 	Description
+/// chat_id 	Integer or String 	Yes 	Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+/// expire_date 	Integer 	Optional 	Point in time (Unix timestamp) when the link will expire
+/// member_limit 	Integer 	Optional 	Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
+#[derive(Serialize, Debug, Response)]
+#[response = "ChatInviteLink"]
+pub struct CreateChatInviteLink {
+    pub chat_id: ChatID,
+    pub expire_date: Option<Integer>,
+    pub member_limit: Option<Integer>,
+}
+
+/// Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the edited invite link as a ChatInviteLink object.
+/// Parameter 	Type 	Required 	Description
+/// chat_id 	Integer or String 	Yes 	Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+/// invite_link 	String 	Yes 	The invite link to edit
+/// expire_date 	Integer 	Optional 	Point in time (Unix timestamp) when the link will expire
+/// member_limit 	Integer 	Optional 	Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
+#[derive(Serialize, Debug, Response)]
+#[response = "ChatInviteLink"]
+pub struct EditChatInviteLink {
+    pub chat_id: ChatID,
+    pub invite_link: String,
+    pub expire_date: Option<Integer>,
+    pub member_limit: Option<Integer>,
+}
+
+/// Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is automatically generated. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the revoked invite link as ChatInviteLink object.
+/// Parameter 	Type 	Required 	Description
+/// chat_id 	Integer or String 	Yes 	Unique identifier of the target chat or username of the target channel (in the format @channelusername)
+/// invite_link 	String 	Yes 	The invite link to revoke
+#[derive(Serialize, Debug, Response)]
+#[response = "ChatInviteLink"]
+pub struct RevokeChatInviteLink {
+    pub chat_id: ChatID,
+    pub invite_link: String,
 }
 
 /// Use this method to set a new profile photo for the chat. Photos can't be changed for private
@@ -1536,63 +1551,47 @@ pub struct SendInvoice {
     pub payload: String,
     /// Payments provider token, obtained via Botfather
     pub provider_token: String,
-    /// Unique deep-linking parameter that can be used to generate this invoice when used as a start parameter
-    pub start_parameter: String,
     /// Three-letter ISO 4217 currency code, see more on currencies
     pub currency: String,
-    /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount,
-    /// delivery cost, delivery tax, bonus, etc.)
+    /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
     pub prices: Vec<LabeledPrice>,
-    /// A JSON-serialized data about the invoice, which will be shared with the payment provider.
-    /// A detailed description of required fields should be provided by the payment provider.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
+    pub max_tip_amount: Option<Integer>,
+    /// A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive, passed in a strictly increased order and must not exceed max_tip_amount.
+    pub suggested_tip_amounts: Option<Vec<Integer>>,
+    /// Unique deep-linking parameter. If left empty, forwarded copies of the sent message will have a Pay button, allowing multiple users to pay directly from the forwarded message, using the same invoice. If non-empty, forwarded copies of the sent message will have a URL button with a deep link to the bot (instead of a Pay button), with the value used as the start parameter
+    pub start_parameter: Option<String>,
+    /// A JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description of required fields should be provided by the payment provider.
     pub provider_data: Option<String>,
-    /// URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
-    /// People like it better when they see what they are paying for.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
     pub photo_url: Option<String>,
     /// Photo size
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_size: Option<Integer>,
     /// Photo width
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_width: Option<Integer>,
     /// Photo height
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_height: Option<Integer>,
     /// Pass True, if you require the user's full name to complete the order
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub need_name: Option<Boolean>,
     /// Pass True, if you require the user's phone number to complete the order
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub need_phone_number: Option<Boolean>,
     /// Pass True, if you require the user's email address to complete the order
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub need_email: Option<Boolean>,
     /// Pass True, if you require the user's shipping address to complete the order
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub need_shipping_address: Option<Boolean>,
     /// Pass True, if user's phone number should be sent to provider
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub send_phone_number_to_provider: Option<Boolean>,
     /// Pass True, if user's email address should be sent to provider
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub send_email_to_provider: Option<Boolean>,
     /// Pass True, if the final price depends on the shipping method
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub is_flexible: Option<Boolean>,
     /// Sends the message silently. Users will receive a notification with no sound.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
     /// If the message is a reply, ID of the original message
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_to_message_id: Option<Integer>,
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown.
-    // If not empty, the first button must be a Pay button.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 

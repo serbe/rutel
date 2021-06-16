@@ -92,6 +92,25 @@ pub struct Response {
     pub parameters: Option<Value>,
 }
 
+/// Update
+///
+/// This object represents an incoming update.
+/// At most one of the optional parameters can be present in any given update.
+/// Field 	Type 	Description
+/// update_id 	Integer 	The update's unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you're using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. If there are no new updates for at least a week, then identifier of the next update will be chosen randomly instead of sequentially.
+/// message 	Message 	Optional. New incoming message of any kind — text, photo, sticker, etc.
+/// edited_message 	Message 	Optional. New version of a message that is known to the bot and was edited
+/// channel_post 	Message 	Optional. New incoming channel post of any kind — text, photo, sticker, etc.
+/// edited_channel_post 	Message 	Optional. New version of a channel post that is known to the bot and was edited
+/// inline_query 	InlineQuery 	Optional. New incoming inline query
+/// chosen_inline_result 	ChosenInlineResult 	Optional. The result of an inline query that was chosen by a user and sent to their chat partner. Please see our documentation on the feedback collecting for details on how to enable these updates for your bot.
+/// callback_query 	CallbackQuery 	Optional. New incoming callback query
+/// shipping_query 	ShippingQuery 	Optional. New incoming shipping query. Only for invoices with flexible price
+/// pre_checkout_query 	PreCheckoutQuery 	Optional. New incoming pre-checkout query. Contains full information about checkout
+/// poll 	Poll 	Optional. New poll state. Bots receive only updates about stopped polls and polls, which are sent by the bot
+/// poll_answer 	PollAnswer 	Optional. A user changed their answer in a non-anonymous poll. Bots receive new votes only in polls that were sent by the bot itself.
+/// my_chat_member 	ChatMemberUpdated 	Optional. The bot's chat member status was updated in a chat. For private chats, this update is received only when the bot is blocked or unblocked by the user.
+/// chat_member 	ChatMemberUpdated 	Optional. A chat member's status was updated in a chat. The bot must be an administrator in the chat and must explicitly specify “chat_member” in the list of allowed_updates to receive these updates.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Update {
     pub update_id: Integer,
@@ -106,6 +125,8 @@ pub struct Update {
     pub pre_checkout_query: Option<PreCheckoutQuery>,
     pub poll: Option<Poll>,
     pub poll_answer: Option<PollAnswer>,
+    pub my_chat_member: Option<ChatMemberUpdated>,
+    pub chat_member: Option<ChatMemberUpdated>,
 }
 
 /// Contains information about the current status of a webhook.
@@ -161,10 +182,7 @@ pub struct Message {
     pub message_id: Integer,
     /// Sender, empty for messages sent to channels
     pub from: Option<User>,
-    /// Sender of the message, sent on behalf of a chat. The channel itself for
-    /// channel messages. The supergroup itself for messages from anonymous group
-    /// administrators. The linked channel for messages automatically forwarded to
-    /// the discussion group
+    /// Sender of the message, sent on behalf of a chat. The channel itself for channel messages. The supergroup itself for messages from anonymous group administrators. The linked channel for messages automatically forwarded to the discussion group
     pub sender_chat: Option<Chat>,
     /// Date the message was sent in Unix time
     pub date: Integer,
@@ -248,6 +266,8 @@ pub struct Message {
     /// Service message: the channel has been created. This field can't be received in a message coming through updates, because bot can't be a member of a channel when it is created. It can only be found in reply_to_message if someone replies to a very first message in a channel.
     /// True
     pub channel_chat_created: Option<Boolean>,
+    /// Service message: auto-delete timer settings changed in the chat
+    pub message_auto_delete_timer_changed: Option<MessageAutoDeleteTimerChanged>,
     /// The group has been migrated to a supergroup with the specified identifier. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it is smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
     pub migrate_to_chat_id: Option<Integer>,
     /// The supergroup has been migrated from a group with the specified identifier. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it is smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
@@ -264,6 +284,14 @@ pub struct Message {
     pub passport_data: Option<PassportData>,
     /// Service message. A user in the chat triggered another user's proximity alert while sharing Live Location.
     pub proximity_alert_triggered: Option<ProximityAlertTriggered>,
+    /// Service message: voice chat scheduled
+    pub voice_chat_scheduled: Option<VoiceChatScheduled>,
+    /// Service message: voice chat started
+    pub voice_chat_started: Option<VoiceChatStarted>,
+    /// Service message: voice chat ended
+    pub voice_chat_ended: Option<VoiceChatEnded>,
+    /// Service message: new participants invited to a voice chat
+    pub voice_chat_participants_invited: Option<VoiceChatParticipantsInvited>,
     /// Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
@@ -284,10 +312,15 @@ pub struct MessageEntity {
 /// This object represents one size of a photo or a file / sticker thumbnail.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PhotoSize {
+    /// Identifier for this file, which can be used to download or reuse the file
     pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub file_unique_id: String,
+    /// Photo width
     pub width: Integer,
+    /// Photo height
     pub height: Integer,
+    /// File size
     pub file_size: Option<Integer>,
 }
 
@@ -380,7 +413,7 @@ pub struct Contact {
 pub struct Dice {
     /// Emoji on which the dice throw animation is based
     pub emoji: String,
-    /// Value of the dice, 1-6 for “🎲” and “🎯” base emoji, 1-5 for “🏀” and “⚽” base emoji, 1-64 for “🎰” base emoji
+    /// Value of the dice, 1-6 for “🎲”, “🎯” and “🎳” base emoji, 1-5 for “🏀” and “⚽” base emoji, 1-64 for “🎰” base emoji
     pub value: Integer,
 }
 
@@ -449,8 +482,7 @@ pub struct Venue {
     pub google_place_type: Option<String>,
 }
 
-/// This object represents the content of a service message, sent whenever a user in the chat
-/// triggers a proximity alert set by another user.
+/// This object represents the content of a service message, sent whenever a user in the chat triggers a proximity alert set by another user.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ProximityAlertTriggered {
     /// User that triggered the alert
@@ -459,6 +491,38 @@ pub struct ProximityAlertTriggered {
     pub watcher: User,
     /// The distance between the users
     pub distance: Integer,
+}
+
+/// This object represents a service message about a change in auto-delete timer settings.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct MessageAutoDeleteTimerChanged {
+    /// New auto-delete time for messages in the chat
+    pub message_auto_delete_time: Integer,
+}
+
+/// This object represents a service message about a voice chat scheduled in the chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct VoiceChatScheduled {
+    /// Point in time (Unix timestamp) when the voice chat is supposed to be started by a chat administrator
+    pub start_date: Integer,
+}
+
+/// This object represents a service message about a voice chat started in the chat. Currently holds no information.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct VoiceChatStarted {}
+
+/// This object represents a service message about a voice chat ended in the chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct VoiceChatEnded {
+    /// Voice chat duration; in seconds
+    pub duration: Integer,
+}
+
+/// This object represents a service message about new members invited to a voice chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct VoiceChatParticipantsInvited {
+    /// New members that were invited to the voice chat
+    pub users: Option<Vec<User>>,
 }
 
 /// This object represent a user's profile pictures.
@@ -578,36 +642,98 @@ pub struct ForceReply {
 /// This object represents a chat photo.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ChatPhoto {
+    /// File identifier of small (160x160) chat photo. This file_id can be used only for photo download and only for as long as the photo is not changed.
     pub small_file_id: String,
+    /// Unique file identifier of small (160x160) chat photo, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub small_file_unique_id: String,
+    /// File identifier of big (640x640) chat photo. This file_id can be used only for photo download and only for as long as the photo is not changed.
     pub big_file_id: String,
+    /// Unique file identifier of big (640x640) chat photo, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub big_file_unique_id: String,
+}
+
+/// Represents an invite link for a chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatInviteLink {
+    /// The invite link. If the link was created by another chat administrator, then the second part of the link will be replaced with “…”.
+    pub invite_link: String,
+    /// Creator of the link
+    pub creator: User,
+    /// True, if the link is primary
+    pub is_primary: Boolean,
+    /// True, if the link is revoked
+    pub is_revoked: Boolean,
+    /// Point in time (Unix timestamp) when the link will expire or has been expired
+    pub expire_date: Option<Integer>,
+    /// Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
+    pub member_limit: Option<Integer>,
 }
 
 /// This object contains information about one member of a chat.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ChatMember {
+    /// Information about the user
     pub user: User,
+    /// The member's status in the chat. Can be “creator”, “administrator”, “member”, “restricted”, “left” or “kicked”
     pub status: String,
+    /// Owner and administrators only. Custom title for this user
     pub custom_title: Option<String>,
     /// Owner and administrators only. True, if the user's presence in the chat is hidden
     pub is_anonymous: Option<Boolean>,
-    pub until_date: Option<Integer>,
+    /// Administrators only. True, if the bot is allowed to edit administrator privileges of that user
     pub can_be_edited: Option<Boolean>,
+    /// Administrators only. True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+    pub can_manage_chat: Option<Boolean>,
+    /// Administrators only. True, if the administrator can post in the channel; channels only
     pub can_post_messages: Option<Boolean>,
+    /// Administrators only. True, if the administrator can edit messages of other users and can pin messages; channels only
     pub can_edit_messages: Option<Boolean>,
+    /// Administrators only. True, if the administrator can delete messages of other users
     pub can_delete_messages: Option<Boolean>,
+    /// Administrators only. True, if the administrator can manage voice chats
+    pub can_manage_voice_chats: Option<Boolean>,
+    /// Administrators only. True, if the administrator can restrict, ban or unban chat members
     pub can_restrict_members: Option<Boolean>,
+    /// Administrators only. True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user)
     pub can_promote_members: Option<Boolean>,
+    /// Administrators and restricted only. True, if the user is allowed to change the chat title, photo and other settings
     pub can_change_info: Option<Boolean>,
+    /// Administrators and restricted only. True, if the user is allowed to invite new users to the chat
     pub can_invite_users: Option<Boolean>,
+    /// Administrators and restricted only. True, if the user is allowed to pin messages; groups and supergroups only
     pub can_pin_messages: Option<Boolean>,
+    /// Restricted only. True, if the user is a member of the chat at the moment of the request
     pub is_member: Option<Boolean>,
+    /// Restricted only. True, if the user is allowed to send text messages, contacts, locations and venues
     pub can_send_messages: Option<Boolean>,
+    /// Restricted only. True, if the user is allowed to send audios, documents, photos, videos, video notes and voice notes
     pub can_send_media_messages: Option<Boolean>,
+    /// Restricted only. True, if the user is allowed to send polls
     pub can_send_polls: Option<Boolean>,
+    /// Restricted only. True, if the user is allowed to send animations, games, stickers and use inline bots
     pub can_send_other_messages: Option<Boolean>,
+    /// Optional. Restricted only. True, if the user is allowed to add web page previews to their messages
     pub can_add_web_page_previews: Option<Boolean>,
+    /// Restricted and kicked only. Date when restrictions will be lifted for this user; unix time
+    pub until_date: Option<Integer>,
+}
+
+/// This object represents changes in the status of a chat member.
+/// Field 	Type 	Description
+/// chat 	Chat 	Chat the user belongs to
+/// from 	User 	Performer of the action, which resulted in the change
+/// date 	Integer 	Date the change was done in Unix time
+/// old_chat_member 	ChatMember 	Previous information about the chat member
+/// new_chat_member 	ChatMember 	New information about the chat member
+/// invite_link 	ChatInviteLink 	Optional. Chat invite link, which was used by the user to join the chat; for joining by invite link events only.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatMemberUpdated {
+    pub chat: Chat,
+    pub from: User,
+    pub date: Integer,
+    pub old_chat_member: ChatMember,
+    pub new_chat_member: ChatMember,
+    pub invite_link: Option<ChatInviteLink>,
 }
 
 /// Describes actions that a non-administrator user is allowed to take in a chat.
@@ -776,15 +902,21 @@ pub struct MaskPosition {
 /// Inline mode
 /// ---------------------------------
 
-/// This object represents an incoming inline query. When the user sends an empty query, your bot
-/// could return some default or trending results.
+/// This object represents an incoming inline query. When the user sends an empty query, your bot could return some default or trending results.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQuery {
+    /// Unique identifier for this query
     pub id: String,
+    /// Sender
     pub from: User,
-    pub location: Option<Location>,
+    /// Text of the query (up to 256 characters)
     pub query: String,
+    /// Offset of the results to be returned, can be controlled by the bot
     pub offset: String,
+    /// Type of the chat, from which the inline query was sent. Can be either “sender” for a private chat with the inline query sender, “private”, “group”, “supergroup”, or “channel”. The chat type should be always known for requests sent from official clients and most third-party clients, unless the request was sent from a secret chat
+    pub chat_type: Option<String>,
+    /// Sender location, only for bots that request user location
+    pub location: Option<Location>,
 }
 
 /// This object represents one result of an inline query. Telegram clients currently support
@@ -1280,10 +1412,59 @@ pub struct InputVenueMessageContent {
 /// Represents the content of a contact message to be sent as the result of an inline query.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputContactMessageContent {
+    /// Contact's phone number
     pub phone_number: String,
+    /// Contact's first name
     pub first_name: String,
+    /// Contact's last name
     pub last_name: Option<String>,
+    /// Additional data about the contact in the form of a vCard, 0-2048 bytes
     pub vcard: Option<String>,
+}
+
+/// Represents the content of an invoice message to be sent as the result of an inline query.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct InputInvoiceMessageContent {
+    /// Product name, 1-32 characters
+    pub title: String,
+    /// Product description, 1-255 characters
+    pub description: String,
+    /// Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
+    pub payload: String,
+    /// Payment provider token, obtained via Botfather
+    pub provider_token: String,
+    /// Three-letter ISO 4217 currency code, see more on currencies
+    pub currency: String,
+    /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
+    pub prices: Vec<LabeledPrice>,
+    /// The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
+    pub max_tip_amount: Option<Integer>,
+    /// A JSON-serialized array of suggested amounts of tip in the smallest units of the currency (integer, not float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive, passed in a strictly increased order and must not exceed max_tip_amount.
+    pub suggested_tip_amounts: Option<Vec<Integer>>,
+    /// A JSON-serialized object for data about the invoice, which will be shared with the payment provider. A detailed description of the required fields should be provided by the payment provider.
+    pub provider_data: Option<String>,
+    /// URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
+    pub photo_url: Option<String>,
+    /// Photo size
+    pub photo_size: Option<Integer>,
+    /// Photo width
+    pub photo_width: Option<Integer>,
+    /// Photo height
+    pub photo_height: Option<Integer>,
+    /// Pass True, if you require the user's full name to complete the order
+    pub need_name: Option<Boolean>,
+    /// Pass True, if you require the user's phone number to complete the order
+    pub need_phone_number: Option<Boolean>,
+    /// Pass True, if you require the user's email address to complete the order
+    pub need_email: Option<Boolean>,
+    /// Pass True, if you require the user's shipping address to complete the order
+    pub need_shipping_address: Option<Boolean>,
+    /// Pass True, if user's phone number should be sent to provider
+    pub send_phone_number_to_provider: Option<Boolean>,
+    /// Pass True, if user's email address should be sent to provider
+    pub send_email_to_provider: Option<Boolean>,
+    /// Pass True, if the final price depends on the shipping method
+    pub is_flexible: Option<Boolean>,
 }
 
 /// Represents a result of an inline query that was chosen by the user and sent to their chat
