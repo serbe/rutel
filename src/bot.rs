@@ -64,25 +64,17 @@ impl Bot {
     }
 }
 
-/// A simple method for testing your bot's auth token. Requires no parameters. Returns basic
-/// information about the bot in form of a User object.
+/// A simple method for testing your bot's auth token. Requires no parameters. Returns basic information about the bot in form of a User object.
 #[derive(Serialize, Debug, Response)]
 #[response = "User"]
 pub struct GetMe {}
 
-/// Use this method to log out from the cloud Bot API server before launching the bot locally.
-/// You must log out the bot before running it locally, otherwise there is no guarantee that
-/// the bot will receive updates. After a successful call, you can immediately log in on a
-/// local server, but will not be able to log in back to the cloud Bot API server for 10 minutes.
-/// Returns True on success. Requires no parameters.
+/// Use this method to log out from the cloud Bot API server before launching the bot locally. You must log out the bot before running it locally, otherwise there is no guarantee that the bot will receive updates. After a successful call, you can immediately log in on a local server, but will not be able to log in back to the cloud Bot API server for 10 minutes. Returns True on success. Requires no parameters.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct LogOut {}
 
-/// Use this method to close the bot instance before moving it from one local server to another.
-/// You need to delete the webhook before calling this method to ensure that the bot isn't
-/// launched again after server restart. The method will return error 429 in the first 10 minutes
-/// after the bot is launched. Returns True on success. Requires no parameters.
+/// Use this method to close the bot instance before moving it from one local server to another. You need to delete the webhook before calling this method to ensure that the bot isn't launched again after server restart. The method will return error 429 in the first 10 minutes after the bot is launched. Returns True on success. Requires no parameters.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct Close {}
@@ -91,31 +83,20 @@ pub struct Close {}
 // // deleteWebhook
 // // getWebhookInfo
 
-/// Use this method to receive incoming updates using long polling (wiki). An Array of Update
-/// objects is returned.
+/// Use this method to receive incoming updates using long polling (wiki). An Array of Update objects is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<Update>"]
 pub struct GetUpdates {
-    /// Identifier of the first update to be returned. Must be greater by one than the highest
-    /// among the identifiers of previously received updates. By default, updates starting with the
-    /// earliest unconfirmed update are returned. An update is considered confirmed as soon as
-    /// getUpdates is called with an offset higher than its update_id. The negative offset can be
-    /// specified to retrieve updates starting from -offset update from the end of the updates
-    /// queue. All previous updates will forgotten.
+    /// Identifier of the first update to be returned. Must be greater by one than the highest among the identifiers of previously received updates. By default, updates starting with the earliest unconfirmed update are returned. An update is considered confirmed as soon as getUpdates is called with an offset higher than its update_id. The negative offset can be specified to retrieve updates starting from -offset update from the end of the updates queue. All previous updates will forgotten.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<Integer>,
-    /// Limits the number of updates to be retrieved. Values between 1—100 are accepted. Defaults
-    /// to 100.
+    /// Limits the number of updates to be retrieved. Values between 1—100 are accepted. Defaults to 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<Integer>,
-    /// Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling. Should be
-    /// positive, short polling should be used for testing purposes only.
+    /// Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling. Should be positive, short polling should be used for testing purposes only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub timeout: Option<Integer>,
-    /// List the types of updates you want your bot to receive. For example, specify [“message”,
-    /// “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update
-    /// for a complete list of available update types. Specify an empty list to receive all updates
-    /// regardless of type (default). If not specified, the previous setting will be used.
+    /// List the types of updates you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all updates regardless of type (default). If not specified, the previous setting will be used.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allowed_updates: Option<Vec<String>>,
 }
@@ -124,13 +105,11 @@ pub struct GetUpdates {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendMessage {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Text of the message to be sent
     pub text: String,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or
-    /// inline URLs in your bot's message.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     // List of special entities that appear in message text, which can be specified instead of parse_mode
@@ -148,8 +127,7 @@ pub struct SendMessage {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
@@ -158,11 +136,9 @@ pub struct SendMessage {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct ForwardMessage {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Unique identifier for the chat where the original message was sent (or channel username in
-    /// the format @channelusername)
+    /// Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
     pub from_chat_id: ChatID,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -171,35 +147,36 @@ pub struct ForwardMessage {
     pub message_id: Integer,
 }
 
-/// Use this method to copy messages of any kind. The method is analogous to the method forwardMessages,
-/// but the copied message doesn't have a link to the original message. Returns the MessageId of the
-/// sent message on success.
+/// Use this method to copy messages of any kind. The method is analogous to the method forwardMessages, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct CopyMessage {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Unique identifier for the chat where the original message was sent (or channel username in the
-    /// format @channelusername)
+    /// Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
     pub from_chat_id: ChatID,
     /// Message identifier in the chat specified in from_chat_id
     pub message_id: Integer,
-    /// New caption for media, 0-1024 characters after entities parsing. If not specified, the original
-    /// caption is kept
+    /// New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Mode for parsing entities in the new caption. See formatting options for more details.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     /// List of special entities that appear in the new caption, which can be specified instead of parse_mode
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
     /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
     /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_to_message_id: Option<Integer>,
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    /// instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
@@ -207,18 +184,14 @@ pub struct CopyMessage {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendPhoto {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers
-    /// (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet,
-    /// or upload a new photo using multipart/form-data. More info on Sending Files »
+    /// Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. More info on Sending Files »
     pub photo: InputFileString,
     /// Photo caption (may also be used when resending photos by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or
-    /// inline URLs in the media caption.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
@@ -233,33 +206,23 @@ pub struct SendPhoto {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to send audio files, if you want Telegram clients to display them in the music
-/// player. Your audio must be in the .mp3 format. On success, the sent Message is returned. Bots
-/// can currently send audio files of up to 50 MB in size, this limit may be changed in the future.
-///
-/// For sending voice messages, use the sendVoice method instead.
+/// Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .mp3 format. On success, the sent Message is returned. Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future. For sending voice messages, use the sendVoice method instead.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendAudio {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Audio file to send. Pass a file_id as String to send an audio file that exists on the
-    /// Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio
-    /// file from the Internet, or upload a new one using multipart/form-data. More info on Sending
-    /// Files »
+    /// Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub audio: InputFileString,
     /// Audio caption, 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or
-    /// inline URLs in the media caption.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
@@ -274,11 +237,7 @@ pub struct SendAudio {
     /// Track name
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
-    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size.
-    /// A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using
-    /// multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you
-    /// can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data
-    /// under <file_attach_name>
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
     /// Sends the message silently. Users will receive a notification with no sound.
@@ -290,36 +249,26 @@ pub struct SendAudio {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to send general files. On success, the sent Message is returned. Bots can currently
-/// send files of any type of up to 50 MB in size, this limit may be changed in the future.
+/// Use this method to send general files. On success, the sent Message is returned. Bots can currently send files of any type of up to 50 MB in size, this limit may be changed in the future.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendDocument {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// File to send. Pass a file_id as String to send a file that exists on the Telegram servers
-    /// (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet,
-    /// or upload a new one using multipart/form-data. More info on Sending Files »
+    /// File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub document: InputFileString,
-    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size.
-    /// A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using
-    /// multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you
-    /// can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data
-    /// under <file_attach_name>
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
     /// Document caption (may also be used when resending documents by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or
-    /// inline URLs in the media caption.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     /// List of special entities that appear in the caption, which can be specified instead of parse_mode
@@ -337,24 +286,18 @@ pub struct SendDocument {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to send video files, Telegram clients support mp4 videos (other formats may be
-/// sent as Document). On success, the sent Message is returned. Bots can currently send video files
-/// of up to 50 MB in size, this limit may be changed in the future.
+/// Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document). On success, the sent Message is returned. Bots can currently send video files of up to 50 MB in size, this limit may be changed in the future.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendVideo {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Video to send. Pass a file_id as String to send a video that exists on the Telegram servers
-    /// (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet,
-    /// or upload a new video using multipart/form-data. More info on Sending Files »
+    /// Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More info on Sending Files »
     pub video: InputFileString,
     /// Duration of sent video in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -365,18 +308,13 @@ pub struct SendVideo {
     /// Video height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<Integer>,
-    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size.
-    /// A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using
-    /// multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you
-    /// can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data
-    /// under <file_attach_name>
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
     /// Video caption (may also be used when resending videos by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or
-    /// inline URLs in the media caption.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
@@ -394,25 +332,18 @@ pub struct SendVideo {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On
-/// success, the sent Message is returned. Bots can currently send animation files of up to
-/// 50 MB in size, this limit may be changed in the future.
+/// Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent Message is returned. Bots can currently send animation files of up to 50 MB in size, this limit may be changed in the future.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendAnimation {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Animation to send. Pass a file_id as String to send an animation that exists on the
-    /// Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an
-    /// animation from the Internet, or upload a new animation using multipart/form-data. More
-    /// info on Sending Files »
+    /// Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More info on Sending Files »
     pub animation: InputFileString,
     /// Duration of sent animation in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -423,19 +354,14 @@ pub struct SendAnimation {
     /// Animation height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<Integer>,
-    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB
-    /// in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is
-    /// not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only
-    /// uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail
-    /// was uploaded using multipart/form-data under <file_attach_name>. More info on Sending
-    /// Files »
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail
+    /// was uploaded using multipart/form-data under <file_attach_name>. More info on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
     /// Animation caption (may also be used when resending animation by file_id), 0-1024 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text
-    /// or inline URLs in the media caption.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
@@ -450,32 +376,23 @@ pub struct SendAnimation {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom
-    /// reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to send audio files, if you want Telegram clients to display the file as a
-/// playable voice message. For this to work, your audio must be in an .ogg file encoded with
-/// OPUS (other formats may be sent as Audio or Document). On success, the sent Message is
-/// returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be
-/// changed in the future.
+/// Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document). On success, the sent Message is returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendVoice {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Audio file to send. Pass a file_id as String to send a file that exists on the Telegram
-    /// servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the
-    /// Internet, or upload a new one using multipart/form-data. More info on Sending Files »
+    /// Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub voice: InputFileString,
     /// Voice message caption, 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text
-    /// or inline URLs in the media caption.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
@@ -493,23 +410,18 @@ pub struct SendVoice {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1 minute long. Use
-/// this method to send video messages. On success, the sent Message is returned.
+/// As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1 minute long. Use this method to send video messages. On success, the sent Message is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendVideoNote {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Video note to send. Pass a file_id as String to send a video note that exists on the
-    /// Telegram servers (recommended) or upload a new video using multipart/form-data. More info
-    /// on Sending Files ». Sending video notes by a URL is currently unsupported
+    /// Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More info on Sending Files ». Sending video notes by a URL is currently unsupported
     pub video_note: InputFileString,
     /// Duration of sent video in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -517,12 +429,7 @@ pub struct SendVideoNote {
     /// Video width and height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub length: Option<Integer>,
-    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB
-    /// in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is
-    /// not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only
-    /// uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail
-    /// was uploaded using multipart/form-data under <file_attach_name>. More info on Sending
-    /// Files »
+    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More info on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
     /// Sends the message silently. Users will receive a notification with no sound.
@@ -534,19 +441,16 @@ pub struct SendVideoNote {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to send a group of photos or videos as an album. On success, an array of the
-/// sent Messages is returned.
+/// Use this method to send a group of photos or videos as an album. On success, an array of the sent Messages is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<Message>"]
 pub struct SendMediaGroup {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// A JSON-serialized array describing photos and videos to be sent, must include 2–10 items
     pub media: Vec<InputMedia>,
@@ -565,8 +469,7 @@ pub struct SendMediaGroup {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendLocation {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Latitude of the location
     pub latitude: Float,
@@ -575,16 +478,13 @@ pub struct SendLocation {
     /// The radius of uncertainty for the location, measured in meters; 0-1500
     #[serde(skip_serializing_if = "Option::is_none")]
     pub horizontal_accuracy: Option<Float>,
-    /// Period in seconds for which the location will be updated (see Live Locations, should be
-    /// between 60 and 86400.
+    /// Period in seconds for which the location will be updated (see Live Locations, should be between 60 and 86400.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub live_period: Option<Integer>,
-    /// For live locations, a direction in which the user is moving, in degrees. Must be
-    /// between 1 and 360 if specified.
+    /// For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub heading: Option<Integer>,
-    /// For live locations, a maximum distance for proximity alerts about approaching another chat
-    /// member, in meters. Must be between 1 and 100000 if specified.
+    /// For live locations, a maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub proximity_alert_radius: Option<Integer>,
     /// Sends the message silently. Users will receive a notification with no sound.
@@ -596,21 +496,16 @@ pub struct SendLocation {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to edit live location messages sent by the bot or via the bot (for inline bots).
-/// A location can be edited until its live_period expires or editing is explicitly disabled by a
-/// call to stopMessageLiveLocation. On success, if the edited message was sent by the bot, the
-/// edited Message is returned, otherwise True is returned.
+/// Use this method to edit live location messages sent by the bot or via the bot (for inline bots). A location can be edited until its live_period expires or editing is explicitly disabled by a call to stopMessageLiveLocation. On success, if the edited message was sent by the bot, the edited Message is returned, otherwise True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageLiveLocation {
-    /// Required if inline_message_id is not specified. Unique identifier for the target chat or
-    /// username of the target channel (in the format @channelusername)
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Required if inline_message_id is not specified. Identifier of the sent message
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -628,8 +523,7 @@ pub struct EditMessageLiveLocation {
     /// Direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub heading: Option<Integer>,
-    /// Maximum distance for proximity alerts about approaching another chat member, in meters.
-    /// Must be between 1 and 100000 if specified.
+    /// Maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub proximity_alert_radius: Option<Integer>,
     /// A JSON-serialized object for a new inline keyboard.
@@ -637,14 +531,11 @@ pub struct EditMessageLiveLocation {
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// Use this method to stop updating a live location message sent by the bot or via the bot (for
-/// inline bots) before live_period expires. On success, if the message was sent by the bot, the
-/// sent Message is returned, otherwise True is returned.
+/// Use this method to stop updating a live location message sent by the bot or via the bot (for inline bots) before live_period expires. On success, if the message was sent by the bot, the sent Message is returned, otherwise True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct StopMessageLiveLocation {
-    /// Required if inline_message_id is not specified. Unique identifier for the target chat or
-    /// username of the target channel (in the format @channelusername)
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Required if inline_message_id is not specified. Identifier of the sent message
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -661,8 +552,7 @@ pub struct StopMessageLiveLocation {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendVenue {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Latitude of the venue
     pub latitude: Float,
@@ -675,8 +565,7 @@ pub struct SendVenue {
     /// Foursquare identifier of the venue
     #[serde(skip_serializing_if = "Option::is_none")]
     pub foursquare_id: Option<String>,
-    /// Foursquare type of the venue, if known. (For example, “arts_entertainment/default”,
-    /// “arts_entertainment/aquarium” or “food/icecream”.)
+    /// Foursquare type of the venue, if known. (For example, “arts_entertainment/default”, “arts_entertainment/aquarium” or “food/icecream”.)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub foursquare_type: Option<String>,
     /// Google Places identifier of the venue
@@ -694,8 +583,7 @@ pub struct SendVenue {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
@@ -704,8 +592,7 @@ pub struct SendVenue {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendContact {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Contact's phone number
     pub phone_number: String,
@@ -726,8 +613,7 @@ pub struct SendContact {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
@@ -742,12 +628,11 @@ pub struct SendPoll {
     pub question: String,
     /// A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
     pub options: Vec<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     /// True, if the poll needs to be anonymous, defaults to True
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub is_anonymous: Option<Boolean>,
     /// Poll type, “quiz” or “regular”, defaults to “regular”
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "type")]
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub kind: Option<String>,
     /// True, if the poll allows multiple answers, ignored for polls in quiz mode, defaults to False
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -755,8 +640,7 @@ pub struct SendPoll {
     /// 0-based identifier of the correct answer option, required for polls in quiz mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub correct_option_id: Option<Integer>,
-    /// Text that is shown when a user chooses an incorrect answer or taps on the lamp icon in a quiz-style poll,
-    /// 0-200 characters with at most 2 line feeds after entities parsing
+    /// Text that is shown when a user chooses an incorrect answer or taps on the lamp icon in a quiz-style poll, 0-200 characters with at most 2 line feeds after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub explanation: Option<String>,
     /// Mode for parsing entities in the explanation. See formatting options for more details.
@@ -768,8 +652,7 @@ pub struct SendPoll {
     /// Amount of time in seconds the poll will be active after creation, 5-600. Can't be used together with close_date.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub open_period: Option<Integer>,
-    /// Point in time (Unix timestamp) when the poll will be automatically closed. Must be at least 5
-    /// and no more than 600 seconds in the future. Can't be used together with open_period.
+    /// Point in time (Unix timestamp) when the poll will be automatically closed. Must be at least 5 and no more than 600 seconds in the future. Can't be used together with open_period.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub close_date: Option<Integer>,
     /// Pass True, if the poll needs to be immediately closed. This can be useful for poll preview.
@@ -784,8 +667,7 @@ pub struct SendPoll {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard,
-    /// instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
@@ -797,22 +679,24 @@ pub struct SendDice {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, “🏀”, “⚽”, “🎳”, or “🎰”. Dice can have values 1-6 for “🎲”, “🎯” and “🎳”, values 1-5 for “🏀” and “⚽”, and values 1-64 for “🎰”. Defaults to “🎲”
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub emoji: Option<String>,
     /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
     /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_to_message_id: Option<Integer>,
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
     /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
 
 /// Use this method when you need to tell the user that something is happening on the bot's side. The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status). Returns True on success.
-///
-///    Example: The ImageBot needs some time to process a request and upload the image. Instead of sending a text message along the lines of “Retrieving image, please wait…”, the bot may use sendChatAction with action = upload_photo. The user will see a “sending photo” status for the bot.
-///
-/// We only recommend using this method when a response from the bot will take a noticeable amount of time to arrive.
+///    Example: The ImageBot needs some time to process a request and upload the image. Instead of sending a text message along the lines of “Retrieving image, please wait…”, the bot may use sendChatAction with action = upload_photo. The user will see a “sending photo” status for the bot. We only recommend using this method when a response from the bot will take a noticeable amount of time to arrive.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SendChatAction {
@@ -831,17 +715,12 @@ pub struct GetUserProfilePhotos {
     /// Sequential number of the first photo to be returned. By default, all photos are returned.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<Integer>,
-    /// Limits the number of photos to be retrieved. Values between 1—100 are accepted. Defaults
-    /// to 100.
+    /// Limits the number of photos to be retrieved. Values between 1—100 are accepted. Defaults to 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<Integer>,
 }
 
-/// Use this method to get basic info about a file and prepare it for downloading. For the moment,
-/// bots can download files of up to 20MB in size. On success, a File object is returned. The file
-/// can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>, where
-/// <file_path> is taken from the response. It is guaranteed that the link will be valid for at
-/// least 1 hour. When the link expires, a new one can be requested by calling getFile again.
+/// Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile again.
 #[derive(Serialize, Debug, Response)]
 #[response = "File"]
 pub struct GetFile {
@@ -858,45 +737,37 @@ pub struct KickChatMember {
     /// Unique identifier of the target user
     pub user_id: Integer,
     /// Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub until_date: Option<Integer>,
     /// Pass True to delete all messages from the chat for the user that is being removed. If False, the user will be able to see messages in the group that were sent before the user was removed. Always True for supergroups and channels.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub revoke_messages: Option<Boolean>,
 }
 
-/// Use this method to unban a previously kicked user in a supergroup or channel. The user will not
-/// return to the group or channel automatically, but will be able to join via link, etc. The bot
-/// must be an administrator for this to work. By default, this method guarantees that after the
-/// call the user is not a member of the chat, but will be able to join it. So if the user is a
-/// member of the chat they will also be removed from the chat. If you don't want this, use the
-/// parameter only_if_banned. Returns True on success.
+/// Use this method to unban a previously kicked user in a supergroup or channel. The user will not return to the group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it. So if the user is a member of the chat they will also be removed from the chat. If you don't want this, use the parameter only_if_banned. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct UnbanChatMember {
-    /// Unique identifier for the target group or username of the target supergroup or channel (in
-    /// the format @username)
+    /// Unique identifier for the target group or username of the target supergroup or channel (in the format @username)
     pub chat_id: ChatID,
     /// Unique identifier of the target user
     pub user_id: Integer,
     /// Do nothing if the user is not banned
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub only_if_banned: Option<Boolean>,
 }
 
-/// Use this method to restrict a user in a supergroup. The bot must be an administrator in the
-/// supergroup for this to work and must have the appropriate admin rights. Pass True for all
-/// boolean parameters to lift restrictions from a user. Returns True on success.
+/// Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights. Pass True for all boolean parameters to lift restrictions from a user. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct RestrictChatMember {
-    /// Unique identifier for the target chat or username of the target supergroup (in the format
-    /// @supergroupusername)
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
     pub chat_id: ChatID,
     /// Unique identifier of the target user
     pub user_id: Integer,
     /// A JSON-serialized object for new user permissions
     pub permissions: ChatPermissions,
-    /// Date when restrictions will be lifted for the user, unix time. If user is restricted for
-    /// more than 366 days or less than 30 seconds from the current time, they are considered to be
-    /// restricted forever
+    /// Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
     #[serde(skip_serializing_if = "Option::is_none")]
     pub until_date: Option<Integer>,
 }
@@ -910,31 +781,41 @@ pub struct PromoteChatMember {
     /// Unique identifier of the target user
     pub user_id: Integer,
     /// Pass True, if the administrator's presence in the chat is hidden
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub is_anonymous: Option<Boolean>,
     /// Pass True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_manage_chat: Option<Boolean>,
     /// Pass True, if the administrator can create channel posts, channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_post_messages: Option<Boolean>,
     /// Pass True, if the administrator can edit messages of other users and can pin messages, channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_edit_messages: Option<Boolean>,
     /// Pass True, if the administrator can delete messages of other users
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_delete_messages: Option<Boolean>,
     /// Pass True, if the administrator can manage voice chats
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_manage_voice_chats: Option<Boolean>,
     /// Pass True, if the administrator can restrict, ban or unban chat members
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_restrict_members: Option<Boolean>,
     /// Pass True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_promote_members: Option<Boolean>,
     /// Pass True, if the administrator can change chat title, photo and other settings
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_change_info: Option<Boolean>,
     /// Pass True, if the administrator can invite new users to the chat
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_invite_users: Option<Boolean>,
     /// Pass True, if the administrator can pin messages, supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub can_pin_messages: Option<Boolean>,
 }
 
-/// Use this method to set a custom title for an administrator in a supergroup promoted by the bot.
-/// Returns True on success.
+/// Use this method to set a custom title for an administrator in a supergroup promoted by the bot. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetChatAdministratorCustomTitle {
@@ -946,9 +827,7 @@ pub struct SetChatAdministratorCustomTitle {
     pub custom_title: String,
 }
 
-/// Use this method to set default chat permissions for all members. The bot must be an administrator
-/// in the group or a supergroup for this to work and must have the can_restrict_members admin rights.
-/// Returns True on success.
+/// Use this method to set default chat permissions for all members. The bot must be an administrator in the group or a supergroup for this to work and must have the can_restrict_members admin rights. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetChatPermissions {
@@ -958,147 +837,122 @@ pub struct SetChatPermissions {
     pub permissions: ChatPermissions,
 }
 
-/// Use this method to generate a new invite link for a chat; any previously generated link is
-/// revoked. The bot must be an administrator in the chat for this to work and must have the
-/// appropriate admin rights. Returns the new invite link as String on success.
+/// Use this method to generate a new invite link for a chat; any previously generated link is revoked. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the new invite link as String on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "String"]
 pub struct ExportChatInviteLink {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
 }
 
 /// Use this method to create an additional invite link for a chat. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. The link can be revoked using the method revokeChatInviteLink. Returns the new invite link as ChatInviteLink object.
-/// Parameter 	Type 	Required 	Description
-/// chat_id 	Integer or String 	Yes 	Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-/// expire_date 	Integer 	Optional 	Point in time (Unix timestamp) when the link will expire
-/// member_limit 	Integer 	Optional 	Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
 #[derive(Serialize, Debug, Response)]
 #[response = "ChatInviteLink"]
 pub struct CreateChatInviteLink {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Point in time (Unix timestamp) when the link will expire
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expire_date: Option<Integer>,
+    /// Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub member_limit: Option<Integer>,
 }
 
 /// Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the edited invite link as a ChatInviteLink object.
-/// Parameter 	Type 	Required 	Description
-/// chat_id 	Integer or String 	Yes 	Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-/// invite_link 	String 	Yes 	The invite link to edit
-/// expire_date 	Integer 	Optional 	Point in time (Unix timestamp) when the link will expire
-/// member_limit 	Integer 	Optional 	Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
 #[derive(Serialize, Debug, Response)]
 #[response = "ChatInviteLink"]
 pub struct EditChatInviteLink {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// The invite link to edit
     pub invite_link: String,
+    /// Point in time (Unix timestamp) when the link will expire
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expire_date: Option<Integer>,
+    /// Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub member_limit: Option<Integer>,
 }
 
 /// Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is automatically generated. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the revoked invite link as ChatInviteLink object.
-/// Parameter 	Type 	Required 	Description
-/// chat_id 	Integer or String 	Yes 	Unique identifier of the target chat or username of the target channel (in the format @channelusername)
-/// invite_link 	String 	Yes 	The invite link to revoke
 #[derive(Serialize, Debug, Response)]
 #[response = "ChatInviteLink"]
 pub struct RevokeChatInviteLink {
+    /// Unique identifier of the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// The invite link to revoke
     pub invite_link: String,
 }
 
-/// Use this method to set a new profile photo for the chat. Photos can't be changed for private
-/// chats. The bot must be an administrator in the chat for this to work and must have the appropriate
-/// admin rights. Returns True on success.
+/// Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetChatPhoto {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// New chat photo, uploaded using multipart/form-data
     pub photo: InputFile,
 }
 
-/// Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must
-/// be an administrator in the chat for this to work and must have the appropriate admin rights.
-/// Returns True on success.
+/// Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct DeleteChatPhoto {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
 }
 
-/// Use this method to change the title of a chat. Titles can't be changed for private chats.
-/// The bot must be an administrator in the chat for this to work and must have the appropriate
-/// admin rights. Returns True on success.
+/// Use this method to change the title of a chat. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetChatTitle {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// New chat title, 1-255 characters
     pub title: String,
 }
 
-/// Use this method to change the description of a supergroup or a channel. The bot must be an
-/// administrator in the chat for this to work and must have the appropriate admin rights.
-/// Returns True on success.
+/// Use this method to change the description of a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetChatDescription {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// New chat description, 0-255 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
 }
 
-/// Use this method to pin a message in a supergroup or a channel. The bot must be an
-/// administrator in the chat for this to work and must have the ‘can_pin_messages’ admin right
-/// in the supergroup or ‘can_edit_messages’ admin right in the channel. Returns True on success.
+/// Use this method to pin a message in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the ‘can_pin_messages’ admin right in the supergroup or ‘can_edit_messages’ admin right in the channel. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct PinChatMessage {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Identifier of a message to pin
     pub message_id: Integer,
-    /// Pass True, if it is not necessary to send a notification to all chat members about the new
-    /// pinned message. Notifications are always disabled in channels.
+    /// Pass True, if it is not necessary to send a notification to all chat members about the new pinned message. Notifications are always disabled in channels.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
 }
 
-/// Use this method to unpin a message in a supergroup or a channel. The bot must be an
-/// administrator in the chat for this to work and must have the ‘can_pin_messages’ admin right
-/// in the supergroup or ‘can_edit_messages’ admin right in the channel. Returns True on success.
+/// Use this method to unpin a message in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the ‘can_pin_messages’ admin right in the supergroup or ‘can_edit_messages’ admin right in the channel. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct UnpinChatMessage {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Identifier of a message to unpin. If not specified, the most recent pinned message (by
-    /// sending date) will be unpinned.
+    /// Identifier of a message to unpin. If not specified, the most recent pinned message (by sending date) will be unpinned.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub message_id: Option<Integer>,
 }
 
-/// Use this method to clear the list of pinned messages in a chat. If the chat is not a private
-/// chat, the bot must be an administrator in the chat for this to work and must have the
-/// 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel.
-/// Returns True on success.
+/// Use this method to clear the list of pinned messages in a chat. If the chat is not a private chat, the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct UnpinAllChatMessages {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
 }
 
@@ -1106,31 +960,23 @@ pub struct UnpinAllChatMessages {
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct LeaveChat {
-    /// Unique identifier for the target chat or username of the target supergroup or channel (in
-    /// the format @channelusername)
+    /// Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: ChatID,
 }
 
-/// Use this method to get up to date information about the chat (current name of the user for
-/// one-on-one conversations, current username of a user, group or channel, etc.). Returns a Chat
-/// object on success.
+/// Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a Chat object on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Chat"]
 pub struct GetChat {
-    /// Unique identifier for the target chat or username of the target supergroup or channel (in
-    /// the format @channelusername)
+    /// Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: ChatID,
 }
 
-/// Use this method to get a list of administrators in a chat. On success, returns an Array of
-/// ChatMember objects that contains information about all chat administrators except other bots.
-/// If the chat is a group or a supergroup and no administrators were appointed, only the creator
-/// will be returned.
+/// Use this method to get a list of administrators in a chat. On success, returns an Array of ChatMember objects that contains information about all chat administrators except other bots. If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<ChatMember>"]
 pub struct GetChatAdministrators {
-    /// Unique identifier for the target chat or username of the target supergroup or channel (in
-    /// the format @channelusername)
+    /// Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: ChatID,
 }
 
@@ -1138,8 +984,7 @@ pub struct GetChatAdministrators {
 #[derive(Serialize, Debug, Response)]
 #[response = "u64"]
 pub struct GetChatMembersCount {
-    /// Unique identifier for the target chat or username of the target supergroup or channel (in
-    /// the format @channelusername)
+    /// Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: ChatID,
 }
 
@@ -1147,62 +992,46 @@ pub struct GetChatMembersCount {
 #[derive(Serialize, Debug, Response)]
 #[response = "ChatMember"]
 pub struct GetChatMember {
-    /// Unique identifier for the target chat or username of the target supergroup or channel (in
-    /// the format @channelusername)
+    /// Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Unique identifier of the target user
     pub user_id: Integer,
 }
 
-/// Use this method to set a new group sticker set for a supergroup. The bot must be an administrator
-/// in the chat for this to work and must have the appropriate admin rights. Use the field
-/// can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method.
-/// Returns True on success.
+/// Use this method to set a new group sticker set for a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Use the field can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetChatStickerSet {
-    /// Unique identifier for the target chat or username of the target supergroup (in the format
-    /// @supergroupusername)
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
     pub chat_id: ChatID,
     /// Name of the sticker set to be set as the group sticker set
     pub sticker_set_name: String,
 }
 
-/// Use this method to delete a group sticker set from a supergroup. The bot must be an administrator
-/// in the chat for this to work and must have the appropriate admin rights. Use the field
-/// can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method.
-/// Returns True on success.
+/// Use this method to delete a group sticker set from a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Use the field can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct DeleteChatStickerSet {
-    /// Unique identifier for the target chat or username of the target supergroup (in the format
-    /// @supergroupusername)
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
     pub chat_id: ChatID,
 }
 
-/// Use this method to send answers to callback queries sent from inline keyboards. The answer will be
-/// displayed to the user as a notification at the top of the chat screen or as an alert. On success,
-/// True is returned.
+/// Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct AnswerCallbackQuery {
     /// Unique identifier for the query to be answered
     pub callback_query_id: String,
-    /// Text of the notification. If not specified, nothing will be shown to the user, 0-200
-    /// characters
+    /// Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
-    /// If true, an alert will be shown by the client instead of a notification at the top of the
-    /// chat screen. Defaults to false.
+    /// If true, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults to false.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub show_alert: Option<Boolean>,
-    /// URL that will be opened by the user's client. If you have created a Game and accepted the
-    /// conditions via @Botfather, specify the URL that opens your game – note that this will only
-    /// work if the query comes from a callback_game button.
+    /// URL that will be opened by the user's client. If you have created a Game and accepted the conditions via @Botfather, specify the URL that opens your game – note that this will only work if the query comes from a callback_game button.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
-    /// The maximum amount of time in seconds that the result of the callback query may be cached
-    /// client-side. Telegram apps will support caching starting in version 3.14. Defaults to 0.
+    /// The maximum amount of time in seconds that the result of the callback query may be cached client-side. Telegram apps will support caching starting in version 3.14. Defaults to 0.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cache_time: Option<Integer>,
 }
@@ -1211,25 +1040,20 @@ pub struct AnswerCallbackQuery {
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetMyCommands {
-    /// A JSON-serialized list of bot commands to be set as the list of the bot's commands.
-    /// At most 100 commands can be specified.
+    /// A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
     pub commands: Vec<BotCommand>,
 }
 
-/// Use this method to get the current list of the bot's commands. Requires no parameters.
-/// Returns Array of BotCommand on success.
+/// Use this method to get the current list of the bot's commands. Requires no parameters. Returns Array of BotCommand on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<BotCommand>"]
 pub struct GetMyCommands {}
 
-/// Use this method to edit text and game messages sent by the bot or via the bot (for inline bots).
-/// On success, if edited message is sent by the bot, the edited Message is returned, otherwise
-/// True is returned.
+/// Use this method to edit text and game messages sent by the bot or via the bot (for inline bots). On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageText {
-    /// Required if inline_message_id is not specified. Unique identifier for the target chat or
-    /// username of the target channel (in the format @channelusername)
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Required if inline_message_id is not specified. Identifier of the sent message
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1239,8 +1063,7 @@ pub struct EditMessageText {
     pub inline_message_id: Option<String>,
     /// New text of the message
     pub text: String,
-    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or
-    /// inline URLs in your bot's message.
+    /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
@@ -1254,14 +1077,11 @@ pub struct EditMessageText {
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
-/// On success, if edited message is sent by the bot, the edited Message is returned, otherwise
-/// True is returned.
+/// Use this method to edit captions of messages sent by the bot or via the bot (for inline bots). On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageCaption {
-    /// Required if inline_message_id is not specified. Unique identifier for the target chat or
-    /// username of the target channel (in the format @channelusername)
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_id: Option<ChatID>,
     /// Required if inline_message_id is not specified. Identifier of the sent message
@@ -1284,16 +1104,11 @@ pub struct EditMessageCaption {
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// Use this method to edit audio, document, photo, or video messages. If a message is a part
-/// of a message album, then it can be edited only to a photo or a video. Otherwise, message
-/// type can be changed arbitrarily. When inline message is edited, new file can't be uploaded.
-/// Use previously uploaded file via its file_id or specify a URL. On success, if the edited
-/// message was sent by the bot, the edited Message is returned, otherwise True is returned.
+/// Use this method to edit audio, document, photo, or video messages. If a message is a part of a message album, then it can be edited only to a photo or a video. Otherwise, message type can be changed arbitrarily. When inline message is edited, new file can't be uploaded. Use previously uploaded file via its file_id or specify a URL. On success, if the edited message was sent by the bot, the edited Message is returned, otherwise True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageMedia {
-    /// Required if inline_message_id is not specified. Unique identifier for the target chat
-    /// or username of the target channel (in the format @channelusername)
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_id: Option<ChatID>,
     /// Required if inline_message_id is not specified. Identifier of the sent message
@@ -1309,14 +1124,11 @@ pub struct EditMessageMedia {
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// Use this method to edit only the reply markup of messages sent by the bot or via the bot
-/// (for inline bots). On success, if edited message is sent by the bot, the edited Message
-/// is returned, otherwise True is returned.
+/// Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots). On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageReplyMarkup {
-    /// Required if inline_message_id is not specified. Unique identifier for the target chat or
-    /// username of the target channel (in the format @channelusername)
+    /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Required if inline_message_id is not specified. Identifier of the sent message
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1329,8 +1141,7 @@ pub struct EditMessageReplyMarkup {
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// Use this method to stop a poll which was sent by the bot. On success,
-/// the stopped Poll with the final results is returned.
+/// Use this method to stop a poll which was sent by the bot. On success, the stopped Poll with the final results is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Poll"]
 pub struct StopPoll {
@@ -1343,18 +1154,11 @@ pub struct StopPoll {
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// Use this method to delete a message, including service messages, with the following limitations:
-/// - A message can only be deleted if it was sent less than 48 hours ago.
-/// - Bots can delete outgoing messages in groups and supergroups.
-/// - Bots granted can_post_messages permissions can delete outgoing messages in channels.
-/// - If the bot is an administrator of a group, it can delete any message there.
-/// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
-/// Returns True on success.
+/// Use this method to delete a message, including service messages, with the following limitations: - A message can only be deleted if it was sent less than 48 hours ago. - Bots can delete outgoing messages in groups and supergroups. - Bots granted can_post_messages permissions can delete outgoing messages in channels. - If the bot is an administrator of a group, it can delete any message there. - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct DeleteMessage {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Identifier of the message to delete
     pub message_id: Integer,
@@ -1364,12 +1168,9 @@ pub struct DeleteMessage {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendSticker {
-    /// Unique identifier for the target chat or username of the target channel (in the format
-    /// @channelusername)
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Sticker to send. Pass a file_id as String to send a file that exists on the Telegram
-    /// servers (recommended), pass an HTTP URL as a String for Telegram to get a .webp file
-    /// from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
+    /// Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .webp file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub sticker: InputFileString,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1380,8 +1181,7 @@ pub struct SendSticker {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply
-    /// keyboard, instructions to remove reply keyboard or to force a reply from the user.
+    /// Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
 }
@@ -1394,40 +1194,30 @@ pub struct GetStickerSet {
     pub name: String,
 }
 
-/// Use this method to upload a .png file with a sticker for later use in createNewStickerSet and
-/// addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
+/// Use this method to upload a .png file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "File"]
 pub struct UploadStickerFile {
     /// User identifier of sticker file owner
     pub user_id: Integer,
-    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed
-    /// 512px, and either width or height must be exactly 512px. More info on Sending Files »
+    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More info on Sending Files »
     pub png_sticker: InputFile,
 }
 
-/// Use this method to create new sticker set owned by a user. The bot will be able to edit the
-/// created sticker set. Returns True on success.
+/// Use this method to create new sticker set owned by a user. The bot will be able to edit the created sticker set. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct CreateNewStickerSet {
     /// User identifier of created sticker set owner
     pub user_id: Integer,
-    /// Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain
-    /// only english letters, digits and underscores. Must begin with a letter, can't contain
-    /// consecutive underscores and must end in “_by_<bot username>”. <bot_username> is case
-    /// insensitive. 1-64 characters.
+    /// Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only english letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in “_by_<bot username>”. <bot_username> is case insensitive. 1-64 characters.
     pub name: String,
     /// Sticker set title, 1-64 characters
     pub title: String,
-    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed
-    /// 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send
-    /// a file that already exists on the Telegram servers, pass an HTTP URL as a String for
-    /// Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
+    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
     /// More info on Sending Files »
     pub png_sticker: InputFileString,
-    /// TGS animation with the sticker, uploaded using multipart/form-data.
-    /// See https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
+    /// TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgs_sticker: Option<InputFile>,
     /// One or more emoji corresponding to the sticker
@@ -1448,10 +1238,7 @@ pub struct AddStickerToSet {
     pub user_id: Integer,
     /// Sticker set name
     pub name: String,
-    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed
-    /// 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send
-    /// a file that already exists on the Telegram servers, pass an HTTP URL as a String for
-    /// Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
+    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
     /// More info on Sending Files »
     pub png_sticker: InputFileString,
     // TGS animation with the sticker, uploaded using multipart/form-data.
@@ -1465,8 +1252,7 @@ pub struct AddStickerToSet {
     pub mask_position: Option<MaskPosition>,
 }
 
-/// Use this method to move a sticker in a set created by the bot to a specific position . Returns
-/// True on success.
+/// Use this method to move a sticker in a set created by the bot to a specific position . Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetStickerPositionInSet {
@@ -1484,8 +1270,7 @@ pub struct DeleteStickerFromSet {
     pub sticker: String,
 }
 
-/// Use this method to set the thumbnail of a sticker set. Animated thumbnails can be set
-/// for animated sticker sets only. Returns True on success.
+/// Use this method to set the thumbnail of a sticker set. Animated thumbnails can be set for animated sticker sets only. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetStickerSetThumb {
@@ -1493,19 +1278,13 @@ pub struct SetStickerSetThumb {
     pub name: String,
     /// User identifier of the sticker set owner
     pub user_id: Integer,
-    /// A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height
-    /// exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size;
-    /// see https://core.telegram.org/animated_stickers#technical-requirements for animated sticker
-    /// technical requirements. Pass a file_id as a String to send a file that already exists on the
-    /// Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet,
-    /// or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker
-    /// set thumbnail can't be uploaded via HTTP URL.
+    /// A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/animated_stickers#technical-requirements for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the
+    /// Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker set thumbnail can't be uploaded via HTTP URL.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
 }
 
-/// Use this method to send answers to an inline query. On success, True is returned.
-/// No more than 50 results per query are allowed.
+/// Use this method to send answers to an inline query. On success, True is returned. No more than 50 results per query are allowed.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct AnswerInlineQuery {
@@ -1513,26 +1292,19 @@ pub struct AnswerInlineQuery {
     pub inline_query_id: String,
     /// A JSON-serialized array of results for the inline query
     pub results: Vec<InlineQueryResult>,
-    /// The maximum amount of time in seconds that the result of the inline query may be cached on
-    /// the server. Defaults to 300.
+    /// The maximum amount of time in seconds that the result of the inline query may be cached on the server. Defaults to 300.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cache_time: Option<Integer>,
-    /// Pass True, if results may be cached on the server side only for the user that sent the
-    /// query. By default, results may be returned to any user who sends the same query
+    /// Pass True, if results may be cached on the server side only for the user that sent the query. By default, results may be returned to any user who sends the same query
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_personal: Option<Boolean>,
-    /// Pass the offset that a client should send in the next query with the same text to receive
-    /// more results. Pass an empty string if there are no more results or if you don‘t support
-    /// pagination. Offset length can’t exceed 64 bytes.
+    /// Pass the offset that a client should send in the next query with the same text to receive more results. Pass an empty string if there are no more results or if you don‘t support pagination. Offset length can’t exceed 64 bytes.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub next_offset: Option<String>,
-    /// If passed, clients will display a button with specified text that switches the user to a
-    /// private chat with the bot and sends the bot a start message with the parameter
-    /// switch_pm_parameter
+    /// If passed, clients will display a button with specified text that switches the user to a private chat with the bot and sends the bot a start message with the parameter switch_pm_parameter
     #[serde(skip_serializing_if = "Option::is_none")]
     pub switch_pm_text: Option<String>,
-    /// Deep-linking parameter for the /start message sent to the bot when user presses the switch
-    /// button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.
+    /// Deep-linking parameter for the /start message sent to the bot when user presses the switch button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub switch_pm_parameter: Option<String>,
 }
@@ -1556,94 +1328,94 @@ pub struct SendInvoice {
     /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
     pub prices: Vec<LabeledPrice>,
     /// The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub max_tip_amount: Option<Integer>,
     /// A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive, passed in a strictly increased order and must not exceed max_tip_amount.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub suggested_tip_amounts: Option<Vec<Integer>>,
     /// Unique deep-linking parameter. If left empty, forwarded copies of the sent message will have a Pay button, allowing multiple users to pay directly from the forwarded message, using the same invoice. If non-empty, forwarded copies of the sent message will have a URL button with a deep link to the bot (instead of a Pay button), with the value used as the start parameter
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub start_parameter: Option<String>,
     /// A JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description of required fields should be provided by the payment provider.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub provider_data: Option<String>,
     /// URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_url: Option<String>,
     /// Photo size
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_size: Option<Integer>,
     /// Photo width
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_width: Option<Integer>,
     /// Photo height
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_height: Option<Integer>,
     /// Pass True, if you require the user's full name to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub need_name: Option<Boolean>,
     /// Pass True, if you require the user's phone number to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub need_phone_number: Option<Boolean>,
     /// Pass True, if you require the user's email address to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub need_email: Option<Boolean>,
     /// Pass True, if you require the user's shipping address to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub need_shipping_address: Option<Boolean>,
     /// Pass True, if user's phone number should be sent to provider
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub send_phone_number_to_provider: Option<Boolean>,
     /// Pass True, if user's email address should be sent to provider
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub send_email_to_provider: Option<Boolean>,
     /// Pass True, if the final price depends on the shipping method
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub is_flexible: Option<Boolean>,
     /// Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
     /// If the message is a reply, ID of the original message
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_to_message_id: Option<Integer>,
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
     /// A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// If you sent an invoice requesting a shipping address and the parameter is_flexible was specified,
-/// the Bot API will send an Update with a shipping_query field to the bot. Use this method to reply
-/// to shipping queries. On success, True is returned.
+/// If you sent an invoice requesting a shipping address and the parameter is_flexible was specified, the Bot API will send an Update with a shipping_query field to the bot. Use this method to reply to shipping queries. On success, True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct AnswerShippingQuery {
     /// Unique identifier for the query to be answered
     pub shipping_query_id: String,
-    /// Specify True if delivery to the specified address is possible and False if there are any problems
-    /// (for example, if delivery to the specified address is not possible)
+    /// Specify True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
     pub ok: Boolean,
     /// Required if ok is True. A JSON-serialized array of available shipping options.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shipping_options: Option<Vec<ShippingOption>>,
-    /// Required if ok is False. Error message in human readable form that explains why it is impossible
-    /// to complete the order (e.g. "Sorry, delivery to your desired address is unavailable').
-    /// Telegram will display this message to the user.
+    /// Required if ok is False. Error message in human readable form that explains why it is impossible to complete the order (e.g. "Sorry, delivery to your desired address is unavailable'). Telegram will display this message to the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error_message: Option<String>,
 }
 
-/// Once the user has confirmed their payment and shipping details, the Bot API sends the final
-/// confirmation in the form of an Update with the field pre_checkout_query. Use this method to
-/// respond to such pre-checkout queries. On success, True is returned. Note: The Bot API must
-/// receive an answer within 10 seconds after the pre-checkout query was sent.
+/// Once the user has confirmed their payment and shipping details, the Bot API sends the final confirmation in the form of an Update with the field pre_checkout_query. Use this method to respond to such pre-checkout queries. On success, True is returned. Note: The Bot API must receive an answer within 10 seconds after the pre-checkout query was sent.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct AnswerPreCheckoutQuery {
     /// Unique identifier for the query to be answered
     pub pre_checkout_query_id: String,
-    /// Specify True if everything is alright (goods are available, etc.) and the bot is ready to
-    /// proceed with the order. Use False if there are any problems.
+    /// Specify True if everything is alright (goods are available, etc.) and the bot is ready to proceed with the order. Use False if there are any problems.
     pub ok: Boolean,
-    /// Required if ok is False. Error message in human readable form that explains the reason for
-    /// failure to proceed with the checkout (e.g. "Sorry, somebody just bought the last of our
-    /// amazing black T-shirts while you were busy filling out your payment details. Please choose
-    /// a different color or garment!"). Telegram will display this message to the user.
+    /// Required if ok is False. Error message in human readable form that explains the reason for failure to proceed with the checkout (e.g. "Sorry, somebody just bought the last of our amazing black T-shirts while you were busy filling out your payment details. Please choose a different color or garment!"). Telegram will display this message to the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error_message: Option<String>,
 }
 
-/// Informs a user that some of the Telegram Passport elements they provided contains errors.
-/// The user will not be able to re-submit their Passport to you until the errors are fixed (the
-/// contents of the field for which you returned the error must change). Returns True on success.
-///
-/// Use this if the data submitted by the user doesn't satisfy the standards your service requires
-/// for any reason. For example, if a birthday date seems invalid, a submitted document is blurry,
-/// a scan shows evidence of tampering, etc. Supply some details in the error message to make sure
-/// the user knows how to correct the issues.
+/// Informs a user that some of the Telegram Passport elements they provided contains errors. The user will not be able to re-submit their Passport to you until the errors are fixed (the contents of the field for which you returned the error must change). Returns True on success. Use this if the data submitted by the user doesn't satisfy the standards your service requires for any reason. For example, if a birthday date seems invalid, a submitted document is blurry, a scan shows evidence of tampering, etc. Supply some details in the error message to make sure the user knows how to correct the issues.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetPassportDataErrors {
@@ -1659,8 +1431,7 @@ pub struct SetPassportDataErrors {
 pub struct SendGame {
     /// Unique identifier for the target chat
     pub chat_id: Integer,
-    /// Short name of the game, serves as the unique identifier for the game. Set up your games
-    /// via Botfather.
+    /// Short name of the game, serves as the unique identifier for the game. Set up your games via Botfather.
     pub game_short_name: String,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1671,15 +1442,12 @@ pub struct SendGame {
     /// Pass True, if the message should be sent even if the specified replied-to message is not found
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_sending_without_reply: Option<Boolean>,
-    /// A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title'
-    /// button will be shown. If not empty, the first button must launch the game.
+    /// A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not empty, the first button must launch the game.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// Use this method to set the score of the specified user in a game. On success, if the message
-/// was sent by the bot, returns the edited Message, otherwise returns True. Returns an error,
-/// if the new score is not greater than the user's current score in the chat and force is False.
+/// Use this method to set the score of the specified user in a game. On success, if the message was sent by the bot, returns the edited Message, otherwise returns True. Returns an error, if the new score is not greater than the user's current score in the chat and force is False.
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct SetGameScore {
@@ -1687,12 +1455,10 @@ pub struct SetGameScore {
     user_id: Integer,
     /// New score, must be non-negative
     score: Integer,
-    /// Pass True, if the high score is allowed to decrease. This can be useful when fixing mistakes
-    /// or banning cheaters
+    /// Pass True, if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub force: Option<Boolean>,
-    /// Pass True, if the game message should not be automatically edited to include the current
-    /// scoreboard
+    /// Pass True, if the game message should not be automatically edited to include the current scoreboard
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_edit_message: Option<Boolean>,
     /// Required if inline_message_id is not specified. Unique identifier for the target chat
@@ -1706,12 +1472,7 @@ pub struct SetGameScore {
     pub inline_message_id: Option<String>,
 }
 
-/// Use this method to get data for high score tables. Will return the score of the specified user
-/// and several of their neighbors in a game. On success, returns an Array of GameHighScore objects.
-///
-/// This method will currently return scores for the target user, plus two of their closest
-/// neighbors on each side. Will also return the top three users if the user and his neighbors
-/// are not among them. Please note that this behavior is subject to change.
+/// Use this method to get data for high score tables. Will return the score of the specified user and several of their neighbors in a game. On success, returns an Array of GameHighScore objects. This method will currently return scores for the target user, plus two of their closest neighbors on each side. Will also return the top three users if the user and his neighbors are not among them. Please note that this behavior is subject to change.
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<GameHighScore>"]
 pub struct GetGameHighScores {
