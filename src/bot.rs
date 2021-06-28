@@ -744,6 +744,22 @@ pub struct KickChatMember {
     pub revoke_messages: Option<Boolean>,
 }
 
+/// Use this method to ban a user in a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct BanChatMember {
+    /// Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Unique identifier of the target user
+    pub user_id: Integer,
+    /// Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever. Applied for supergroups and channels only.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub until_date: Option<Integer>,
+    /// Pass True to delete all messages from the chat for the user that is being removed. If False, the user will be able to see messages in the group that were sent before the user was removed. Always True for supergroups and channels.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub revoke_messages: Option<Boolean>,
+}
+
 /// Use this method to unban a previously kicked user in a supergroup or channel. The user will not return to the group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it. So if the user is a member of the chat they will also be removed from the chat. If you don't want this, use the parameter only_if_banned. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
@@ -982,7 +998,7 @@ pub struct GetChatAdministrators {
 
 /// Use this method to get the number of members in a chat. Returns Int on success.
 #[derive(Serialize, Debug, Response)]
-#[response = "u64"]
+#[response = "Integer"]
 pub struct GetChatMembersCount {
     /// Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: ChatID,
@@ -1036,18 +1052,41 @@ pub struct AnswerCallbackQuery {
     pub cache_time: Option<Integer>,
 }
 
-/// Use this method to change the list of the bot's commands. Returns True on success.
+/// Use this method to change the list of the bot's commands. See https://core.telegram.org/bots#commands for more details about bot commands. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetMyCommands {
     /// A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
     pub commands: Vec<BotCommand>,
+    /// A JSON-serialized object, describing scope of users for which the commands are relevant. Defaults to BotCommandScopeDefault.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scope: Option<BotCommandScope>,
+    /// A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language_code: Option<String>,
 }
 
-/// Use this method to get the current list of the bot's commands. Requires no parameters. Returns Array of BotCommand on success.
+/// Use this method to delete the list of the bot's commands for the given scope and user language. After deletion, higher level commands will be shown to affected users. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct DeleteMyCommands {
+    /// A JSON-serialized object, describing scope of users for which the commands are relevant. Defaults to BotCommandScopeDefault.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scope: Option<BotCommandScope>,
+    /// A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language_code: Option<String>,
+}
+
+/// Use this method to get the current list of the bot's commands for the given scope and user language. Returns Array of BotCommand on success. If commands aren't set, an empty list is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<BotCommand>"]
-pub struct GetMyCommands {}
+pub struct GetMyCommands {
+    /// A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
+    pub scope: Option<BotCommandScope>,
+    /// A two-letter ISO 639-1 language code or an empty string
+    pub language_code: Option<String>,
+}
 
 /// Use this method to edit text and game messages sent by the bot or via the bot (for inline bots). On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.
 #[derive(Serialize, Debug, Response)]

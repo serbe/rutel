@@ -671,11 +671,18 @@ pub struct File {
 /// This object represents a custom keyboard with reply options (see Introduction to bots fordetails and examples).
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ReplyKeyboardMarkup {
+    /// Array of button rows, each represented by an Array of KeyboardButton objects
     pub keyboard: Vec<Vec<KeyboardButton>>,
+    /// Requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons). Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub resize_keyboard: Option<Boolean>,
+    /// Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available, but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button in the input field to see the custom keyboard again. Defaults to false.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub one_time_keyboard: Option<Boolean>,
+    /// The placeholder to be shown in the input field when the keyboard is active; 1-64 characters
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub input_field_placeholder: Option<String>,
+    /// Use this parameter if you want to show the keyboard to specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub selective: Option<Boolean>,
 }
@@ -761,10 +768,15 @@ pub struct CallbackQuery {
     pub game_short_name: Option<String>,
 }
 
-/// Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot‘s message and tapped ’Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
+/// Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ForceReply {
+    /// Shows reply interface to the user, as if they manually selected the bot's message and tapped 'Reply'
     pub force_reply: Boolean,
+    /// The placeholder to be shown in the input field when the reply is active; 1-64 characters
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub input_field_placeholder: Option<String>,
+    /// Use this parameter if you want to force reply from specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub selective: Option<Boolean>,
 }
@@ -801,73 +813,121 @@ pub struct ChatInviteLink {
     pub member_limit: Option<Integer>,
 }
 
-/// This object contains information about one member of a chat.
+/// This object contains information about one member of a chat. Currently, the following 6 types of chat members are supported
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct ChatMember {
+pub enum ChatMember {
+    ChatMemberOwner,
+    ChatMemberAdministrator,
+    ChatMemberMember,
+    ChatMemberRestricted,
+    ChatMemberLeft,
+    ChatMemberBanned,
+}
+
+/// Represents a chat member that owns the chat and has all administrator privileges.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatMemberOwner {
+    /// The member's status in the chat, always “creator”
+    pub status: String,
     /// Information about the user
     pub user: User,
-    /// The member's status in the chat. Can be “creator”, “administrator”, “member”, “restricted”, “left” or “kicked”
+    /// Custom title for this user
+    pub custom_title: String,
+    /// True, if the user's presence in the chat is hidden
+    pub is_anonymous: Boolean,
+}
+
+/// Represents a chat member that has some additional privileges.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatMemberAdministrator {
+    /// The member's status in the chat, always “administrator”
     pub status: String,
-    /// Owner and administrators only. Custom title for this user
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_title: Option<String>,
-    /// Owner and administrators only. True, if the user's presence in the chat is hidden
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub is_anonymous: Option<Boolean>,
-    /// Administrators only. True, if the bot is allowed to edit administrator privileges of that user
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_be_edited: Option<Boolean>,
-    /// Administrators only. True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_manage_chat: Option<Boolean>,
-    /// Administrators only. True, if the administrator can post in the channel; channels only
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_post_messages: Option<Boolean>,
-    /// Administrators only. True, if the administrator can edit messages of other users and can pin messages; channels only
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_edit_messages: Option<Boolean>,
-    /// Administrators only. True, if the administrator can delete messages of other users
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_delete_messages: Option<Boolean>,
-    /// Administrators only. True, if the administrator can manage voice chats
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_manage_voice_chats: Option<Boolean>,
-    /// Administrators only. True, if the administrator can restrict, ban or unban chat members
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_restrict_members: Option<Boolean>,
-    /// Administrators only. True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_promote_members: Option<Boolean>,
-    /// Administrators and restricted only. True, if the user is allowed to change the chat title, photo and other settings
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_change_info: Option<Boolean>,
-    /// Administrators and restricted only. True, if the user is allowed to invite new users to the chat
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_invite_users: Option<Boolean>,
-    /// Administrators and restricted only. True, if the user is allowed to pin messages; groups and supergroups only
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_pin_messages: Option<Boolean>,
-    /// Restricted only. True, if the user is a member of the chat at the moment of the request
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub is_member: Option<Boolean>,
-    /// Restricted only. True, if the user is allowed to send text messages, contacts, locations and venues
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_send_messages: Option<Boolean>,
-    /// Restricted only. True, if the user is allowed to send audios, documents, photos, videos, video notes and voice notes
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_send_media_messages: Option<Boolean>,
-    /// Restricted only. True, if the user is allowed to send polls
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_send_polls: Option<Boolean>,
-    /// Restricted only. True, if the user is allowed to send animations, games, stickers and use inline bots
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_send_other_messages: Option<Boolean>,
-    /// Restricted only. True, if the user is allowed to add web page previews to their messages
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_add_web_page_previews: Option<Boolean>,
-    /// Restricted and kicked only. Date when restrictions will be lifted for this user; unix time
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub until_date: Option<Integer>,
+    /// Information about the user
+    pub user: User,
+    /// True, if the bot is allowed to edit administrator privileges of that user
+    pub can_be_edited: Boolean,
+    /// Custom title for this user
+    pub custom_title: String,
+    /// True, if the user's presence in the chat is hidden
+    pub is_anonymous: Boolean,
+    /// True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+    pub can_manage_chat: Boolean,
+    /// True, if the administrator can post in the channel; channels only
+    pub can_post_messages: Boolean,
+    /// True, if the administrator can edit messages of other users and can pin messages; channels only
+    pub can_edit_messages: Boolean,
+    /// True, if the administrator can delete messages of other users
+    pub can_delete_messages: Boolean,
+    /// True, if the administrator can manage voice chats
+    pub can_manage_voice_chats: Boolean,
+    /// True, if the administrator can restrict, ban or unban chat members
+    pub can_restrict_members: Boolean,
+    /// True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user)
+    pub can_promote_members: Boolean,
+    /// True, if the user is allowed to change the chat title, photo and other settings
+    pub can_change_info: Boolean,
+    /// True, if the user is allowed to invite new users to the chat
+    pub can_invite_users: Boolean,
+    /// True, if the user is allowed to pin messages; groups and supergroups only
+    pub can_pin_messages: Boolean,
+}
+
+/// Represents a chat member that has no additional privileges or restrictions.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatMemberMember {
+    /// The member's status in the chat, always “member”
+    pub status: String,
+    /// Information about the user
+    pub user: User,
+}
+
+/// Represents a chat member that is under certain restrictions in the chat. Supergroups only.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatMemberRestricted {
+    /// The member's status in the chat, always “restricted”
+    pub status: String,
+    /// Information about the user
+    pub user: User,
+    /// True, if the user is a member of the chat at the moment of the request
+    pub is_member: Boolean,
+    /// True, if the user is allowed to change the chat title, photo and other settings
+    pub can_change_info: Boolean,
+    /// True, if the user is allowed to invite new users to the chat
+    pub can_invite_users: Boolean,
+    /// True, if the user is allowed to pin messages; groups and supergroups only
+    pub can_pin_messages: Boolean,
+    /// True, if the user is allowed to send text messages, contacts, locations and venues
+    pub can_send_messages: Boolean,
+    /// True, if the user is allowed to send audios, documents, photos, videos, video notes and voice notes
+    pub can_send_media_messages: Boolean,
+    /// True, if the user is allowed to send polls
+    pub can_send_polls: Boolean,
+    /// True, if the user is allowed to send animations, games, stickers and use inline bots
+    pub can_send_other_messages: Boolean,
+    /// True, if the user is allowed to add web page previews to their messages
+    pub can_add_web_page_previews: Boolean,
+    /// Date when restrictions will be lifted for this user; unix time
+    pub until_date: Integer,
+}
+
+/// Represents a chat member that isn't currently a member of the chat, but may join it themselves.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatMemberLeft {
+    /// The member's status in the chat, always “left”
+    pub status: String,
+    /// Information about the user
+    pub user: User,
+}
+
+/// Represents a chat member that was banned in the chat and can't return to the chat or view chat messages.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatMemberBanned {
+    /// The member's status in the chat, always “kicked”
+    pub status: String,
+    /// Information about the user
+    pub user: User,
+    /// Date when restrictions will be lifted for this user; unix time
+    pub until_date: Integer,
 }
 
 /// This object represents changes in the status of a chat member.
@@ -916,11 +976,86 @@ pub struct BotCommand {
     pub description: String,
 }
 
+/// This object represents the scope to which bot commands are applied. Currently, the following 7 scopes are supported:
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum BotCommandScope {
+    BotCommandScopeDefault,
+    BotCommandScopeAllPrivateChats,
+    BotCommandScopeAllGroupChats,
+    BotCommandScopeAllChatAdministrators,
+    BotCommandScopeChat,
+    BotCommandScopeChatAdministrators,
+    BotCommandScopeChatMember,
+}
+
+/// Represents the default scope of bot commands. Default commands are used if no commands with a narrower scope are specified for the user.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotCommandScopeDefault {
+    /// Scope type, must be default
+    #[serde(rename = "type")]
+    pub kind: String,
+}
+
+/// Represents the scope of bot commands, covering all private chats.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotCommandScopeAllPrivateChats {
+    /// Scope type, must be all_private_chats
+    #[serde(rename = "type")]
+    pub kind: String,
+}
+
+/// Represents the scope of bot commands, covering all group and supergroup chats.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotCommandScopeAllGroupChats {
+    /// Scope type, must be all_group_chats
+    #[serde(rename = "type")]
+    pub kind: String,
+}
+
+/// Represents the scope of bot commands, covering all group and supergroup chat administrators.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotCommandScopeAllChatAdministrators {
+    /// Scope type, must be all_chat_administrators
+    #[serde(rename = "type")]
+    pub kind: String,
+}
+
+/// Represents the scope of bot commands, covering a specific chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotCommandScopeChat {
+    /// Scope type, must be chat
+    #[serde(rename = "type")]
+    pub kind: String,
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+}
+
+/// Represents the scope of bot commands, covering all administrators of a specific group or supergroup chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotCommandScopeChatAdministrators {
+    /// Scope type, must be chat_administrators
+    #[serde(rename = "type")]
+    pub kind: String,
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+}
+
+/// Represents the scope of bot commands, covering a specific member of a group or supergroup chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotCommandScopeChatMember {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// Unique identifier of the target user
+    pub user_id: Integer,
+}
+
 /// Contains information about why a request was unsuccessful.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ResponseParameters {
+    /// The group has been migrated to a supergroup with the specified identifier. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this identifier.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub migrate_to_chat_id: Option<Integer>,
+    /// In case of exceeding flood control, the number of seconds left to wait before the request can be repeated
     #[serde(skip_serializing_if = "Option::is_none")]
     pub retry_after: Option<Integer>,
 }
