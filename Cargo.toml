@@ -2,7 +2,7 @@
 authors = ["Valeriy Kostikov <mkoctuk@gmail.com>"]
 edition = "2018"
 name = "rutel"
-version = "0.6.3"
+version = "0.6.4"
 
 [dependencies]
 netc = {version = "0.6", git = "https://github.com/serbe/netc"}
@@ -13,4 +13,4 @@ thiserror = "1.0"
 
 [dev-dependencies]
 dotenv = "0.15"
-tokio = {version = "1.7", features = ["full"]}
+tokio = {version = "1.8", features = ["full"]}

@@ -668,7 +668,7 @@ pub struct File {
     pub file_path: Option<String>,
 }
 
-/// This object represents a custom keyboard with reply options (see Introduction to bots fordetails and examples).
+/// This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ReplyKeyboardMarkup {
     /// Array of button rows, each represented by an Array of KeyboardButton objects
