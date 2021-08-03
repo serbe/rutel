@@ -13,4 +13,4 @@ thiserror = "1.0"
 
 [dev-dependencies]
 dotenv = "0.15"
-tokio = {version = "1.8", features = ["full"]}
+tokio = {version = "1", features = ["full"]}
