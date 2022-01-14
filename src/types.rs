@@ -140,6 +140,9 @@ pub struct Update {
     /// A chat member's status was updated in a chat. The bot must be an administrator in the chat and must explicitly specify “chat_member” in the list of allowed_updates to receive these updates.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_member: Option<ChatMemberUpdated>,
+    /// A request to join the chat has been sent. The bot must have the can_invite_users administrator right in the chat to receive these updates.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_join_request: Option<ChatJoinRequest>,
 }
 
 /// Contains information about the current status of a webhook.
@@ -801,16 +804,24 @@ pub struct ChatInviteLink {
     pub invite_link: String,
     /// Creator of the link
     pub creator: User,
+    /// True, if users joining the chat via the link need to be approved by chat administrators
+    pub creates_join_request: Boolean,
     /// True, if the link is primary
     pub is_primary: Boolean,
     /// True, if the link is revoked
     pub is_revoked: Boolean,
+    /// Invite link name
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
     /// Point in time (Unix timestamp) when the link will expire or has been expired
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expire_date: Option<Integer>,
     /// Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
     #[serde(skip_serializing_if = "Option::is_none")]
     pub member_limit: Option<Integer>,
+    /// Number of pending join requests created using this link
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pending_join_request_count: Option<Integer>,
 }
 
 /// This object contains information about one member of a chat. Currently, the following 6 types of chat members are supported
@@ -944,6 +955,23 @@ pub struct ChatMemberUpdated {
     /// New information about the chat member
     pub new_chat_member: ChatMember,
     /// Chat invite link, which was used by the user to join the chat; for joining by invite link events only.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub invite_link: Option<ChatInviteLink>,
+}
+
+/// Represents a join request sent to a chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatJoinRequest {
+    /// Chat to which the request was sent
+    pub chat: Chat,
+    /// User that sent the join request
+    pub from: User,
+    /// Date the request was sent in Unix time
+    pub date: Integer,
+    /// Bio of the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bio: Option<String>,
+    /// Chat invite link that was used by the user to send the join request
     #[serde(skip_serializing_if = "Option::is_none")]
     pub invite_link: Option<ChatInviteLink>,
 }

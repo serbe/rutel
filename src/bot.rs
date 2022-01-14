@@ -702,7 +702,7 @@ pub struct SendDice {
 pub struct SendChatAction {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
-    /// Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, find_location for location data, record_video_note or upload_video_note for video notes.
+    /// Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes.
     pub action: String,
 }
 
@@ -851,12 +851,18 @@ pub struct ExportChatInviteLink {
 pub struct CreateChatInviteLink {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Invite link name; 0-32 characters
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
     /// Point in time (Unix timestamp) when the link will expire
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expire_date: Option<Integer>,
     /// Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
     #[serde(skip_serializing_if = "Option::is_none")]
     pub member_limit: Option<Integer>,
+    /// True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit can't be specified
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub creates_join_request: Option<Boolean>,
 }
 
 /// Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the edited invite link as a ChatInviteLink object.
@@ -867,12 +873,18 @@ pub struct EditChatInviteLink {
     pub chat_id: ChatID,
     /// The invite link to edit
     pub invite_link: String,
+    /// Invite link name; 0-32 characters
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
     /// Point in time (Unix timestamp) when the link will expire
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expire_date: Option<Integer>,
     /// Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
     #[serde(skip_serializing_if = "Option::is_none")]
     pub member_limit: Option<Integer>,
+    /// True, if users joining the chat via the link need to be approved by chat administrators. If True, member_limit can't be specified
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub creates_join_request: Option<Boolean>,
 }
 
 /// Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is automatically generated. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the revoked invite link as ChatInviteLink object.
@@ -883,6 +895,26 @@ pub struct RevokeChatInviteLink {
     pub chat_id: ChatID,
     /// The invite link to revoke
     pub invite_link: String,
+}
+
+/// Use this method to approve a chat join request. The bot must be an administrator in the chat for this to work and must have the can_invite_users administrator right. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct ApproveChatJoinRequest {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Unique identifier of the target user
+    pub user_id: Integer,
+}
+
+/// Use this method to decline a chat join request. The bot must be an administrator in the chat for this to work and must have the can_invite_users administrator right. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct DeclineChatJoinRequest {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Unique identifier of the target user
+    pub user_id: Integer,
 }
 
 /// Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
