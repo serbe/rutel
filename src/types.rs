@@ -206,10 +206,10 @@ pub struct Chat {
     pub photo: Option<ChatPhoto>,
     /// Bio of the other party in a private chat. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub bio: Option< 	String 	>,
+    pub bio: Option<String>,
     /// True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id> links only in chats with the user. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub has_private_forwards: 	Option<Boolean>,
+    pub has_private_forwards: Option<Boolean>,
     /// Description, for groups, supergroups and channel chats. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
@@ -227,7 +227,7 @@ pub struct Chat {
     pub slow_mode_delay: Option<Integer>,
     /// The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub message_auto_delete_time: Option< 	Integer>, 	
+    pub message_auto_delete_time: Option<Integer>,
     /// True, if messages from the chat can't be forwarded to other chats. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_protected_content: Option<Boolean>,
@@ -239,10 +239,10 @@ pub struct Chat {
     pub can_set_sticker_set: Option<Boolean>,
     /// Unique identifier for the linked chat, i.e. the discussion group identifier for a channel and vice versa; for supergroups and channel chats. This identifier may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it is smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub linked_chat_id: Option< 	Integer >,
+    pub linked_chat_id: Option<Integer>,
     /// For supergroups, the location to which the supergroup is connected. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub location: Option< 	ChatLocation >,
+    pub location: Option<ChatLocation>,
 }
 
 /// This object represents a message.
@@ -424,14 +424,20 @@ pub struct Message {
 /// This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct MessageEntity {
+    /// Type of the entity. Currently, can be “mention” (@username), “hashtag” (#hashtag), “cashtag” ($USD), “bot_command” (/start@jobs_bot), “url” (https://telegram.org), “email” (do-not-reply@telegram.org), “phone_number” (+1-212-555-0123), “bold” (bold text), “italic” (italic text), “underline” (underlined text), “strikethrough” (strikethrough text), “spoiler” (spoiler message), “code” (monowidth string), “pre” (monowidth block), “text_link” (for clickable text URLs), “text_mention” (for users without usernames)
     #[serde(rename = "type")]
     pub kind: String,
+    /// Offset in UTF-16 code units to the start of the entity
     pub offset: Integer,
+    /// Length of the entity in UTF-16 code units
     pub length: Integer,
+    /// Optional. For “text_link” only, url that will be opened after user taps on the text
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
+    /// Optional. For “text_mention” only, the mentioned user
     #[serde(skip_serializing_if = "Option::is_none")]
     pub user: Option<User>,
+    /// Optional. For “pre” only, the programming language of the entity text
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
 }
@@ -447,7 +453,7 @@ pub struct PhotoSize {
     pub width: Integer,
     /// Photo height
     pub height: Integer,
-    /// File size
+    /// Optional. File size in bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -455,17 +461,26 @@ pub struct PhotoSize {
 /// This object represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Animation {
+    /// Identifier for this file, which can be used to download or reuse the file
     pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub file_unique_id: String,
+    /// Video width as defined by sender
     pub width: Integer,
+    /// Video height as defined by sender
     pub height: Integer,
+    /// Duration of the video in seconds as defined by sender
     pub duration: Integer,
+    /// Optional. Animation thumbnail as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<PhotoSize>,
+    /// Optional. Original animation filename as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_name: Option<String>,
+    /// Optional. MIME type of the file as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mime_type: Option<String>,
+    /// Optional. File size in bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -1039,9 +1054,9 @@ pub struct ChatPermissions {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ChatLocation {
     /// The location to which the supergroup is connected. Can't be a live location.
-    pub location: 	Location 	,
+    pub location: Location,
     /// Location address; 1-64 characters, as defined by the chat owner
-    pub address: 	String 	,
+    pub address: String,
 }
 
 /// This object represents a bot command.

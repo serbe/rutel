@@ -2,7 +2,7 @@
 authors = ["Valeriy Kostikov <mkoctuk@gmail.com>"]
 edition = "2021"
 name = "rutel"
-version = "0.6.6"
+version = "0.6.7"
 
 [dependencies]
 netc = {version = "0.7", git = "https://github.com/serbe/netc"}
