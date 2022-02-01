@@ -1277,19 +1277,31 @@ pub struct InputMediaDocument {
 /// This object represents a sticker.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Sticker {
+    /// Identifier for this file, which can be used to download or reuse the file
     pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub file_unique_id: String,
+    /// Sticker width
     pub width: Integer,
+    /// Sticker height
     pub height: Integer,
+    /// True, if the sticker is animated
     pub is_animated: Boolean,
+    /// True, if the sticker is a video sticker
+    pub is_video: Boolean,
+    /// Optional. Sticker thumbnail in the .WEBP or .JPG format
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<PhotoSize>,
+    /// Optional. Emoji associated with the sticker
     #[serde(skip_serializing_if = "Option::is_none")]
     pub emoji: Option<String>,
+    /// Optional. Name of the sticker set to which the sticker belongs
     #[serde(skip_serializing_if = "Option::is_none")]
     pub set_name: Option<String>,
+    /// Optional. For mask stickers, the position where the mask should be placed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mask_position: Option<MaskPosition>,
+    /// Optional. File size in bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -1297,11 +1309,19 @@ pub struct Sticker {
 /// This object represents a sticker set.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct StickerSet {
+    /// Sticker set name
     pub name: String,
+    /// Sticker set title
     pub title: String,
+    /// True, if the sticker set contains animated stickers
     pub is_animated: Boolean,
+    /// True, if the sticker set contains video stickers
+    pub is_video: Boolean,
+    /// True, if the sticker set contains masks
     pub contains_masks: Boolean,
+    /// List of all set stickers
     pub stickers: Vec<Sticker>,
+    /// Optional. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<PhotoSize>,
 }
@@ -1309,9 +1329,13 @@ pub struct StickerSet {
 /// This object describes the position on faces where a mask should be placed by default.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct MaskPosition {
+    /// The part of the face relative to which the mask should be placed. One of “forehead”, “eyes”, “mouth”, or “chin”.
     pub point: String,
+    /// Shift by X-axis measured in widths of the mask scaled to the face size, from left to right. For example, choosing -1.0 will place mask just to the left of the default mask position.
     pub x_shift: Float,
+    /// Shift by Y-axis measured in heights of the mask scaled to the face size, from top to bottom. For example, 1.0 will place the mask just below the default mask position.
     pub y_shift: Float,
+    /// Mask scaling coefficient. For example, 2.0 means double size.
     pub scale: Float,
 }
 
@@ -1326,10 +1350,10 @@ pub struct InlineQuery {
     pub query: String,
     /// Offset of the results to be returned, can be controlled by the bot
     pub offset: String,
-    /// Type of the chat, from which the inline query was sent. Can be either “sender” for a private chat with the inline query sender, “private”, “group”, “supergroup”, or “channel”. The chat type should be always known for requests sent from official clients and most third-party clients, unless the request was sent from a secret chat
+    /// Optional. Type of the chat, from which the inline query was sent. Can be either “sender” for a private chat with the inline query sender, “private”, “group”, “supergroup”, or “channel”. The chat type should be always known for requests sent from official clients and most third-party clients, unless the request was sent from a secret chat
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_type: Option<String>,
-    /// Sender location, only for bots that request user location
+    /// Optional. Sender location, only for bots that request user location
     #[serde(skip_serializing_if = "Option::is_none")]
     pub location: Option<Location>,
 }

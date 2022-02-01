@@ -33,9 +33,6 @@ impl Bot {
     pub async fn create_request(&mut self, method: &'static str, values: String) -> Result<Value> {
         let uri = self.build_uri(method);
 
-        // dbg!(&uri);
-        // dbg!(&values);
-
         let client_builder = if let Some(proxy) = &self.proxy {
             Client::builder().proxy(proxy)
         } else {
@@ -43,7 +40,7 @@ impl Bot {
         };
 
         let mut client = client_builder
-            .post(uri)
+            .post(&uri)
             .body(values)
             .header("Content-Type", "application/json")
             .build()
@@ -1340,12 +1337,14 @@ pub struct CreateNewStickerSet {
     pub name: String,
     /// Sticker set title, 1-64 characters
     pub title: String,
-    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
-    /// More info on Sending Files »
+    /// PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub png_sticker: InputFileString,
     /// TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgs_sticker: Option<InputFile>,
+    /// WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub webm_sticker: Option<InputFile>,
     /// One or more emoji corresponding to the sticker
     pub emojis: String,
     /// Pass True, if a set of mask stickers should be created
@@ -1364,13 +1363,14 @@ pub struct AddStickerToSet {
     pub user_id: Integer,
     /// Sticker set name
     pub name: String,
-    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
-    /// More info on Sending Files »
+    /// PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub png_sticker: InputFileString,
-    // TGS animation with the sticker, uploaded using multipart/form-data.
-    /// See https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
+    /// TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgs_sticker: Option<InputFile>,
+    /// WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub webm_sticker: Option<InputFile>,
     /// One or more emoji corresponding to the sticker
     pub emojis: String,
     /// A JSON-serialized object for position where the mask should be placed on faces
