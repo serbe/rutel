@@ -18,6 +18,12 @@ impl From<String> for ChatID {
     }
 }
 
+impl From<&String> for ChatID {
+    fn from(id: &String) -> Self {
+        ChatID::String(id.to_string())
+    }
+}
+
 impl From<Integer> for ChatID {
     fn from(id: Integer) -> Self {
         ChatID::Integer(id)
@@ -419,6 +425,13 @@ pub struct Message {
     /// Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+}
+
+/// This object represents a unique message identifier.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct MessageId {
+    /// Unique message identifier
+    pub message_id: Integer,
 }
 
 /// This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
