@@ -120,7 +120,6 @@ async fn test_send_audio() {
 
 // -----------------
 
-
 #[tokio::test]
 async fn test_send_poll() {
     if let Some((mut bot, target)) = get_tt() {
@@ -147,9 +146,7 @@ async fn test_send_dice() {
     }
 }
 
-
 // -----------------
-
 
 #[tokio::test]
 async fn test_get_chat() {
@@ -158,7 +155,7 @@ async fn test_get_chat() {
             .get_chat(&bot::GetChat::new(ChatID::from(&target)))
             .await
             .unwrap();
-            dbg!(&chat);
+        dbg!(&chat);
         assert_eq!(chat.id, target.parse::<i64>().unwrap());
     }
 }
