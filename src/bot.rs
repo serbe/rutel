@@ -152,7 +152,7 @@ pub struct ForwardMessage {
 
 /// Use this method to copy messages of any kind. The method is analogous to the method forwardMessages, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
 #[derive(Serialize, Debug, Response)]
-#[response = "Message"]
+#[response = "MessageId"]
 pub struct CopyMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
