@@ -220,7 +220,8 @@ pub struct SendPhoto {
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .mp3 format. On success, the sent Message is returned. Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future. For sending voice messages, use the sendVoice method instead.
+/// Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .MP3 or .M4A format. On success, the sent Message is returned. Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future.
+/// For sending voice messages, use the sendVoice method instead.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendAudio {
@@ -765,7 +766,7 @@ pub struct GetUserProfilePhotos {
     pub limit: Option<Integer>,
 }
 
-/// Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile again.
+/// Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link [https://api.telegram.org/file/bot<token>/<file_path>](https://api.telegram.org/file/bot<token>/<file_path>), where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile again.
 #[derive(Serialize, Debug, Response)]
 #[response = "File"]
 pub struct GetFile {
@@ -840,9 +841,9 @@ pub struct PromoteChatMember {
     /// Pass True, if the administrator can delete messages of other users
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_delete_messages: Option<Boolean>,
-    /// Pass True, if the administrator can manage voice chats
+    /// Pass True, if the administrator can manage video chats
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_manage_voice_chats: Option<Boolean>,
+    pub can_manage_video_chats: Option<Boolean>,
     /// Pass True, if the administrator can restrict, ban or unban chat members
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_restrict_members: Option<Boolean>,
@@ -1133,7 +1134,7 @@ pub struct AnswerCallbackQuery {
     pub cache_time: Option<Integer>,
 }
 
-/// Use this method to change the list of the bot's commands. See https://core.telegram.org/bots#commands for more details about bot commands. Returns True on success.
+/// Use this method to change the list of the bot's commands. See [https://core.telegram.org/bots#commands](https://core.telegram.org/bots#commands) for more details about bot commands. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetMyCommands {
@@ -1164,9 +1165,53 @@ pub struct DeleteMyCommands {
 #[response = "Vec<BotCommand>"]
 pub struct GetMyCommands {
     /// A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub scope: Option<BotCommandScope>,
     /// A two-letter ISO 639-1 language code or an empty string
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub language_code: Option<String>,
+}
+
+/// Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetChatMenuButton {
+    /// Optional Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_id: Option<Integer>,
+    /// Optional A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub menu_button: Option<MenuButton>,
+}
+
+/// Use this method to get the current value of the bot's menu button in a private chat, or the default menu button. Returns MenuButton on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "MenuButton"]
+pub struct GetChatMenuButton {
+    /// Optional Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_id: Option<Integer>,
+}
+
+// Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels. These rights will be suggested to users, but they are are free to modify the list before adding the bot. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetMyDefaultAdministratorRights {
+    /// Optional A JSON-serialized object describing new default administrator rights. If not specified, the default administrator rights will be cleared.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub rights: Option<ChatAdministratorRights>,
+    /// Optional Pass True to change the default administrator rights of the bot in channels. Otherwise, the default administrator rights of the bot for groups and supergroups will be changed.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub for_channels: Option<Boolean>,
+}
+
+/// Use this method to get the current default administrator rights of the bot. Returns ChatAdministratorRights on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "ChatAdministratorRights"]
+pub struct GetMyDefaultAdministratorRights {
+    /// Optional Pass True to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub for_channels: Option<Boolean>,
 }
 
 /// Use this method to edit text and game messages sent by the bot or via the bot (for inline bots). On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.
@@ -1339,10 +1384,10 @@ pub struct CreateNewStickerSet {
     pub title: String,
     /// PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub png_sticker: InputFileString,
-    /// TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/animated_stickers#technical-requirements for technical requirements
+    /// TGS animation with the sticker, uploaded using multipart/form-data. See [https://core.telegram.org/animated_stickers#technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgs_sticker: Option<InputFile>,
-    /// WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+    /// WEBM video with the sticker, uploaded using multipart/form-data. See [https://core.telegram.org/stickers#video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub webm_sticker: Option<InputFile>,
     /// One or more emoji corresponding to the sticker
@@ -1365,10 +1410,10 @@ pub struct AddStickerToSet {
     pub name: String,
     /// PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub png_sticker: InputFileString,
-    /// TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
+    /// TGS animation with the sticker, uploaded using multipart/form-data. See [https://core.telegram.org/stickers#animated-sticker-requirements](https://core.telegram.org/stickers#animated-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgs_sticker: Option<InputFile>,
-    /// WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+    /// WEBM video with the sticker, uploaded using multipart/form-data. See [https://core.telegram.org/stickers#video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub webm_sticker: Option<InputFile>,
     /// One or more emoji corresponding to the sticker
@@ -1404,7 +1449,7 @@ pub struct SetStickerSetThumb {
     pub name: String,
     /// User identifier of the sticker set owner
     pub user_id: Integer,
-    /// A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/animated_stickers#technical-requirements for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the
+    /// A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see [https://core.telegram.org/animated_stickers#technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the
     /// Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker set thumbnail can't be uploaded via HTTP URL.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
@@ -1433,6 +1478,16 @@ pub struct AnswerInlineQuery {
     /// Deep-linking parameter for the /start message sent to the bot when user presses the switch button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub switch_pm_parameter: Option<String>,
+}
+
+/// Use this method to set the result of an interaction with a [Web App](https://core.telegram.org/bots/webapps) and send a corresponding message on behalf of the user to the chat from which the query originated. On success, a SentWebAppMessage object is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "SentWebAppMessage"]
+pub struct AnswerWebAppQuery {
+    /// Unique identifier for the query to be answered
+    pub web_app_query_id: String,
+    /// A JSON-serialized object describing the message to be sent
+    pub result: InlineQueryResult,
 }
 
 /// Use this method to send invoices. On success, the sent Message is returned.

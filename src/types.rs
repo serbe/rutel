@@ -154,15 +154,28 @@ pub struct Update {
 /// Contains information about the current status of a webhook.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct WebhookInfo {
+    /// Webhook URL, may be empty if webhook is not set up
     pub url: String,
+    /// True, if a custom certificate was provided for webhook certificate checks
     pub has_custom_certificate: Boolean,
+    /// Number of updates awaiting delivery
     pub pending_update_count: Integer,
+    /// Optional. Currently used webhook IP address
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ip_address: Option<String>,
+    /// Optional. Unix time for the most recent error that happened when trying to deliver an update via webhook
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_error_date: Option<Integer>,
+    /// Optional. Error message in human-readable format for the most recent error that happened when trying to deliver an update via webhook
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_error_message: Option<String>,
+    /// Optional. Unix time of the most recent error that happened when trying to synchronize available updates with Telegram datacenters
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_synchronization_error_date: Option<Integer>,
+    /// Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_connections: Option<Integer>,
+    /// Optional. A list of update types the bot is subscribed to. Defaults to all update types except chat_member
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allowed_updates: Option<Vec<String>>,
 }
@@ -410,18 +423,21 @@ pub struct Message {
     /// Service message. A user in the chat triggered another user's proximity alert while sharing Live Location.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub proximity_alert_triggered: Option<ProximityAlertTriggered>,
-    /// Service message: voice chat scheduled
+    /// Optional. Service message: video chat scheduled
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub voice_chat_scheduled: Option<VoiceChatScheduled>,
-    /// Service message: voice chat started
+    pub video_chat_scheduled: Option<VideoChatScheduled>,
+    /// Service message: video chat started
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub voice_chat_started: Option<VoiceChatStarted>,
-    /// Service message: voice chat ended
+    pub video_chat_started: Option<VideoChatStarted>,
+    /// Service message: video chat ended
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub voice_chat_ended: Option<VoiceChatEnded>,
-    /// Service message: new participants invited to a voice chat
+    pub video_chat_ended: Option<VideoChatEnded>,
+    /// Service message: new participants invited to a video chat
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub voice_chat_participants_invited: Option<VoiceChatParticipantsInvited>,
+    pub video_chat_participants_invited: Option<VideoChatParticipantsInvited>,
+    /// Optional. Service message: data sent by a Web App
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub web_app_data: Option<WebAppData>,
     /// Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -437,7 +453,7 @@ pub struct MessageId {
 /// This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct MessageEntity {
-    /// Type of the entity. Currently, can be “mention” (@username), “hashtag” (#hashtag), “cashtag” ($USD), “bot_command” (/start@jobs_bot), “url” (https://telegram.org), “email” (do-not-reply@telegram.org), “phone_number” (+1-212-555-0123), “bold” (bold text), “italic” (italic text), “underline” (underlined text), “strikethrough” (strikethrough text), “spoiler” (spoiler message), “code” (monowidth string), “pre” (monowidth block), “text_link” (for clickable text URLs), “text_mention” (for users without usernames)
+    /// Type of the entity. Currently, can be “mention” (`@username`), “hashtag” (`#hashtag`), “cashtag” (`$USD`), “bot_command” (`/start@jobs_bot`), “url” (`https://telegram.org`), “email” (`do-not-reply@telegram.org`), “phone_number” (`+1-212-555-0123`), “bold” (**bold text**), “italic” (*italic text*), “underline” (<ins>underlined text</ins>), “strikethrough” (~~strikethrough text~~), “spoiler” (`spoiler message`), “code” (`monowidth string`), “pre” (`monowidth block`), “text_link” (`for clickable text URLs`), “text_mention” (`for users without usernames`)
     #[serde(rename = "type")]
     pub kind: String,
     /// Offset in UTF-16 code units to the start of the entity
@@ -675,6 +691,15 @@ pub struct Venue {
     pub google_place_type: Option<String>,
 }
 
+/// Contains data sent from a Web App to the bot.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct WebAppData {
+    /// The data. Be aware that a bad client can send arbitrary data in this field.
+    pub data: String,
+    /// Text of the web_app keyboard button, from which the Web App was opened. Be aware that a bad client can send arbitrary data in this field.
+    pub button_text: String,
+}
+
 /// This object represents the content of a service message, sent whenever a user in the chat triggers a proximity alert set by another user.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ProximityAlertTriggered {
@@ -693,28 +718,28 @@ pub struct MessageAutoDeleteTimerChanged {
     pub message_auto_delete_time: Integer,
 }
 
-/// This object represents a service message about a voice chat scheduled in the chat.
+/// This object represents a service message about a video chat scheduled in the chat.
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct VoiceChatScheduled {
-    /// Point in time (Unix timestamp) when the voice chat is supposed to be started by a chat administrator
+pub struct VideoChatScheduled {
+    /// Point in time (Unix timestamp) when the video chat is supposed to be started by a chat administrator
     pub start_date: Integer,
 }
 
-/// This object represents a service message about a voice chat started in the chat. Currently holds no information.
+/// This object represents a service message about a video chat started in the chat. Currently holds no information.
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct VoiceChatStarted {}
+pub struct VideoChatStarted {}
 
-/// This object represents a service message about a voice chat ended in the chat.
+/// This object represents a service message about a video chat ended in the chat.
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct VoiceChatEnded {
-    /// Voice chat duration; in seconds
+pub struct VideoChatEnded {
+    /// Video chat duration; in seconds
     pub duration: Integer,
 }
 
-/// This object represents a service message about new members invited to a voice chat.
+/// This object represents a service message about new members invited to a video chat.
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct VoiceChatParticipantsInvited {
-    /// New members that were invited to the voice chat
+pub struct VideoChatParticipantsInvited {
+    /// New members that were invited to the video chat
     #[serde(skip_serializing_if = "Option::is_none")]
     pub users: Option<Vec<User>>,
 }
@@ -726,7 +751,7 @@ pub struct UserProfilePhotos {
     pub photos: Vec<Vec<PhotoSize>>,
 }
 
-/// This object represents a file ready to be downloaded. The file can be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile. Maximum file size to download is 20 MB
+/// This object represents a file ready to be downloaded. The file can be downloaded via the link [https://api.telegram.org/file/bot<token>/<file_path>](https://api.telegram.org/file/bot<token>/<file_path>). It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile. Maximum file size to download is 20 MB
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct File {
     pub file_id: String,
@@ -735,6 +760,13 @@ pub struct File {
     pub file_size: Option<Integer>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_path: Option<String>,
+}
+
+/// Contains information about a [Web App](https://core.telegram.org/bots/webapps).
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct WebAppInfo {
+    /// An HTTPS URL of a Web App to be opened with additional data as specified in [Initializing Web Apps](https://core.telegram.org/bots/webapps#initializing-web-apps)
+    pub url: String,
 }
 
 /// This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).
@@ -759,13 +791,20 @@ pub struct ReplyKeyboardMarkup {
 /// This object represents one button of the reply keyboard. For simple text buttons String can be used instead of this object to specify text of the button. Optional fields are mutually exclusive.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct KeyboardButton {
+    /// Text of the button. If none of the optional fields are used, it will be sent as a message when the button is pressed
     pub text: String,
+    /// Optional. If True, the user's phone number will be sent as a contact when the button is pressed. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_contact: Option<Boolean>,
+    /// Optional. If True, the user's current location will be sent when the button is pressed. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_location: Option<Boolean>,
+    /// Optional. If specified, the user will be asked to create a poll and send it to the bot when the button is pressed. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_poll: Option<KeyboardButtonPollType>,
+    /// Optional. If specified, the described [Web App](https://core.telegram.org/bots/webapps) will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub web_app: Option<WebAppInfo>,
 }
 
 /// This object represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
@@ -792,24 +831,39 @@ pub struct InlineKeyboardMarkup {
 /// This object represents one button of an inline keyboard. You must use exactly one of the optional fields.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineKeyboardButton {
+    /// Label text on the button
     pub text: String,
+    /// Optional. HTTP or tg:// url to be opened when the button is pressed. Links tg://user?id=<user_id> can be used to mention a user by their ID without using a username, if this is allowed by their privacy settings.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub login_url: Option<LoginUrl>,
+    /// Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub callback_data: Option<String>,
+    /// Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub web_app: Option<WebAppInfo>,
+    /// Optional. An HTTP URL used to automatically authorize the user. Can be used as a replacement for the [Telegram Login Widget](https://core.telegram.org/widgets/login).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub login_url: Option<LoginUrl>,
+    /// Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted.
+    /// Note: This offers an easy way for users to start using your bot in inline mode when they are currently in a private chat with it. Especially useful when combined with switch_pm… actions – in this case the user will be automatically returned to the chat they switched from, skipping the chat selection screen.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub switch_inline_query: Option<String>,
+    /// Optional. If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty, in which case only the bot's username will be inserted.
+    /// This offers a quick way for the user to open your bot in inline mode in the same chat – good for selecting something from multiple options.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub switch_inline_query_current_chat: Option<String>,
+    /// Optional. Description of the game that will be launched when the user presses the button.
+    /// NOTE: This type of button must always be the first button in the first row.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub callback_game: Option<CallbackGame>,
+    /// Optional. Specify True, to send a Pay button.
+    /// NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pay: Option<Boolean>,
 }
 
-/// This object represents a parameter of the inline keyboard button used to automatically authorize a user. Serves as a great replacement for the Telegram Login Widget when the user is coming from Telegram. All the user needs to do is tap/click a button and confirm that they want to log in: https://core.telegram.org/file/811140015/1734/8VZFkwWXalM.97872/6127fa62d8a0bf2b3c
+/// This object represents a parameter of the inline keyboard button used to automatically authorize a user. Serves as a great replacement for the Telegram Login Widget when the user is coming from Telegram. All the user needs to do is tap/click a button and confirm that they want to log in: [https://core.telegram.org/file/811140015/1734/8VZFkwWXalM.97872/6127fa62d8a0bf2b3c](https://core.telegram.org/file/811140015/1734/8VZFkwWXalM.97872/6127fa62d8a0bf2b3c)
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct LoginUrl {
     pub url: String,
@@ -890,6 +944,36 @@ pub struct ChatInviteLink {
     pub pending_join_request_count: Option<Integer>,
 }
 
+/// Represents the rights of an administrator in a chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatAdministratorRights {
+    /// True, if the user's presence in the chat is hidden
+    pub is_anonymous: Boolean,
+    /// True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+    pub can_manage_chat: Boolean,
+    /// True, if the administrator can delete messages of other users
+    pub can_delete_messages: Boolean,
+    /// True, if the administrator can manage video chats
+    pub can_manage_video_chats: Boolean,
+    /// True, if the administrator can restrict, ban or unban chat members
+    pub can_restrict_members: Boolean,
+    /// True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user)
+    pub can_promote_members: Boolean,
+    /// True, if the user is allowed to change the chat title, photo and other settings
+    pub can_change_info: Boolean,
+    /// True, if the user is allowed to invite new users to the chat
+    pub can_invite_users: Boolean,
+    /// Optional. True, if the administrator can post in the channel; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_post_messages: Option<Boolean>,
+    /// Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_edit_messages: Option<Boolean>,
+    /// Optional. True, if the user is allowed to pin messages; groups and supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_pin_messages: Option<Boolean>,
+}
+
 /// This object contains information about one member of a chat. Currently, the following 6 types of chat members are supported
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum ChatMember {
@@ -935,8 +1019,8 @@ pub struct ChatMemberAdministrator {
     pub can_edit_messages: Boolean,
     /// True, if the administrator can delete messages of other users
     pub can_delete_messages: Boolean,
-    /// True, if the administrator can manage voice chats
-    pub can_manage_voice_chats: Boolean,
+    /// True, if the administrator can manage video chats
+    pub can_manage_video_chats: Boolean,
     /// True, if the administrator can restrict, ban or unban chat members
     pub can_restrict_members: Boolean,
     /// True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user)
@@ -1150,6 +1234,15 @@ pub struct BotCommandScopeChatMember {
     pub chat_id: ChatID,
     /// Unique identifier of the target user
     pub user_id: Integer,
+}
+
+/// This object describes the bot's menu button in a private chat. It should be one of
+/// If a menu button other than MenuButtonDefault is set for a private chat, then it is applied in the chat. Otherwise the default menu button is applied. By default, the menu button opens the list of bot commands.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum MenuButton {
+    MenuButtonCommands,
+    MenuButtonWebApp,
+    MenuButtonDefault,
 }
 
 /// Contains information about why a request was unsuccessful.
@@ -2048,6 +2141,13 @@ pub struct ChosenInlineResult {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inline_message_id: Option<String>,
     pub query: String,
+}
+
+/// Contains information about an inline message sent by a [Web App](https://core.telegram.org/bots/webapps) on behalf of a user.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct SentWebAppMessage {
+    /// Optional. Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message.
+    pub inline_message_id: String,
 }
 
 /// This object represents a portion of the price for goods or services.
