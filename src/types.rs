@@ -229,6 +229,15 @@ pub struct Chat {
     /// True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id> links only in chats with the user. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_private_forwards: Option<Boolean>,
+    /// Optional. True, if the privacy settings of the other party restrict sending voice and video note messages in the private chat. Returned only in getChat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_restricted_voice_and_video_messages: Option<Boolean>,
+    /// Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub join_to_send_messages: Option<Boolean>,
+    /// Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub join_by_request: Option<Boolean>,
     /// Description, for groups, supergroups and channel chats. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
@@ -469,6 +478,9 @@ pub struct MessageEntity {
     /// Optional. For “pre” only, the programming language of the entity text
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
+    /// Optional. For “custom_emoji” only, unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_emoji_id: Option<String>,
 }
 
 /// This object represents one size of a photo or a file / sticker thumbnail.
@@ -765,7 +777,7 @@ pub struct File {
 /// Contains information about a [Web App](https://core.telegram.org/bots/webapps).
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct WebAppInfo {
-    /// An HTTPS URL of a Web App to be opened with additional data as specified in [Initializing Web Apps](https://core.telegram.org/bots/webapps#initializing-web-apps)
+    /// An HTTPS URL of a Web App to be opened with additional data as specified in [initializing-web-apps](https://core.telegram.org/bots/webapps#initializing-web-apps)
     pub url: String,
 }
 
@@ -802,7 +814,7 @@ pub struct KeyboardButton {
     /// Optional. If specified, the user will be asked to create a poll and send it to the bot when the button is pressed. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_poll: Option<KeyboardButtonPollType>,
-    /// Optional. If specified, the described [Web App](https://core.telegram.org/bots/webapps) will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only.
+    /// Optional. If specified, the described [webapps](https://core.telegram.org/bots/webapps) will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub web_app: Option<WebAppInfo>,
 }
@@ -1387,6 +1399,9 @@ pub struct Sticker {
     pub file_id: String,
     /// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub file_unique_id: String,
+    /// Type of the sticker, currently one of “regular”, “mask”, “custom_emoji”. The type of the sticker is independent from its format, which is determined by the fields is_animated and is_video.
+    #[serde(rename = "type")]
+    pub kind: String,
     /// Sticker width
     pub width: Integer,
     /// Sticker height
@@ -1407,6 +1422,9 @@ pub struct Sticker {
     /// Optional. For mask stickers, the position where the mask should be placed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mask_position: Option<MaskPosition>,
+    /// Optional. For custom emoji stickers, unique identifier of the custom emoji
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_emoji_id: Option<String>,
     /// Optional. File size in bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
@@ -1423,8 +1441,6 @@ pub struct StickerSet {
     pub is_animated: Boolean,
     /// True, if the sticker set contains video stickers
     pub is_video: Boolean,
-    /// True, if the sticker set contains masks
-    pub contains_masks: Boolean,
     /// List of all set stickers
     pub stickers: Vec<Sticker>,
     /// Optional. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
@@ -2143,7 +2159,7 @@ pub struct ChosenInlineResult {
     pub query: String,
 }
 
-/// Contains information about an inline message sent by a [Web App](https://core.telegram.org/bots/webapps) on behalf of a user.
+/// Contains information about an inline message sent by a [webapps](https://core.telegram.org/bots/webapps) on behalf of a user.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct SentWebAppMessage {
     /// Optional. Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message.

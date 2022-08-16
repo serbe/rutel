@@ -1134,7 +1134,7 @@ pub struct AnswerCallbackQuery {
     pub cache_time: Option<Integer>,
 }
 
-/// Use this method to change the list of the bot's commands. See [https://core.telegram.org/bots#commands](https://core.telegram.org/bots#commands) for more details about bot commands. Returns True on success.
+/// Use this method to change the list of the bot's commands. See [commands](https://core.telegram.org/bots#commands) for more details about bot commands. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetMyCommands {
@@ -1362,6 +1362,14 @@ pub struct GetStickerSet {
     pub name: String,
 }
 
+/// Use this method to get information about custom emoji stickers by their identifiers. Returns an Array of Sticker objects.
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<Sticker>"]
+pub struct GetCustomEmojiStickers {
+    /// List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
+    pub custom_emoji_ids: Vec<String>,
+}
+
 /// Use this method to upload a .png file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "File"]
@@ -1372,7 +1380,7 @@ pub struct UploadStickerFile {
     pub png_sticker: InputFile,
 }
 
-/// Use this method to create new sticker set owned by a user. The bot will be able to edit the created sticker set. Returns True on success.
+/// Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus created. You must use exactly one of the fields png_sticker, tgs_sticker, or webm_sticker. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct CreateNewStickerSet {
@@ -1382,20 +1390,21 @@ pub struct CreateNewStickerSet {
     pub name: String,
     /// Sticker set title, 1-64 characters
     pub title: String,
-    /// PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
-    pub png_sticker: InputFileString,
-    /// TGS animation with the sticker, uploaded using multipart/form-data. See [https://core.telegram.org/animated_stickers#technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for technical requirements
+    /// Optional PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub png_sticker: Option<InputFileString>,
+    /// Optional TGS animation with the sticker, uploaded using multipart/form-data. See [animated-sticker-requirements](https://core.telegram.org/stickers#animated-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgs_sticker: Option<InputFile>,
-    /// WEBM video with the sticker, uploaded using multipart/form-data. See [https://core.telegram.org/stickers#video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
+    /// Optional WEBM video with the sticker, uploaded using multipart/form-data. See [video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub webm_sticker: Option<InputFile>,
+    /// Optional Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API at the moment. By default, a regular sticker set is created.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sticker_type: Option<String>,
     /// One or more emoji corresponding to the sticker
     pub emojis: String,
-    /// Pass True, if a set of mask stickers should be created
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub contains_masks: Option<Boolean>,
-    /// A JSON-serialized object for position where the mask should be placed on faces
+    /// Optional A JSON-serialized object for position where the mask should be placed on faces
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mask_position: Option<MaskPosition>,
 }
@@ -1410,10 +1419,10 @@ pub struct AddStickerToSet {
     pub name: String,
     /// PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub png_sticker: InputFileString,
-    /// TGS animation with the sticker, uploaded using multipart/form-data. See [https://core.telegram.org/stickers#animated-sticker-requirements](https://core.telegram.org/stickers#animated-sticker-requirements) for technical requirements
+    /// TGS animation with the sticker, uploaded using multipart/form-data. See [animated-sticker-requirements](https://core.telegram.org/stickers#animated-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgs_sticker: Option<InputFile>,
-    /// WEBM video with the sticker, uploaded using multipart/form-data. See [https://core.telegram.org/stickers#video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
+    /// WEBM video with the sticker, uploaded using multipart/form-data. See [video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub webm_sticker: Option<InputFile>,
     /// One or more emoji corresponding to the sticker
@@ -1449,7 +1458,7 @@ pub struct SetStickerSetThumb {
     pub name: String,
     /// User identifier of the sticker set owner
     pub user_id: Integer,
-    /// A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see [https://core.telegram.org/animated_stickers#technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the
+    /// A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see [technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the
     /// Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker set thumbnail can't be uploaded via HTTP URL.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,

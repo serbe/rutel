@@ -2,4 +2,4 @@
 
 [Telegram Bot API](https://core.telegram.org/bots/api) implementation in [Rust](https://www.rust-lang.org/)
 
-Bot API 6.0
+Telegram Bot API 6.2
