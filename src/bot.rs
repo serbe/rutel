@@ -104,6 +104,9 @@ pub struct GetUpdates {
 pub struct SendMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Text of the message to be sent
     pub text: String,
     /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.
@@ -138,6 +141,9 @@ pub struct SendMessage {
 pub struct ForwardMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
     pub from_chat_id: ChatID,
     /// Sends the message silently. Users will receive a notification with no sound.
@@ -156,6 +162,9 @@ pub struct ForwardMessage {
 pub struct CopyMessage {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
     pub from_chat_id: ChatID,
     /// Message identifier in the chat specified in from_chat_id
@@ -192,6 +201,9 @@ pub struct CopyMessage {
 pub struct SendPhoto {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. More info on Sending Files »
     pub photo: InputFileString,
     /// Photo caption (may also be used when resending photos by file_id), 0-200 characters
@@ -203,6 +215,9 @@ pub struct SendPhoto {
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Pass True if the photo needs to be covered with a spoiler animation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_spoiler: Option<Boolean>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -227,6 +242,9 @@ pub struct SendPhoto {
 pub struct SendAudio {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub audio: InputFileString,
     /// Audio caption, 0-200 characters
@@ -273,6 +291,9 @@ pub struct SendAudio {
 pub struct SendDocument {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub document: InputFileString,
     /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>
@@ -313,6 +334,9 @@ pub struct SendDocument {
 pub struct SendVideo {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More info on Sending Files »
     pub video: InputFileString,
     /// Duration of sent video in seconds
@@ -333,9 +357,12 @@ pub struct SendVideo {
     /// Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
-    // List of special entities that appear in the caption, which can be specified instead of parse_mode
+    /// List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Pass True if the video needs to be covered with a spoiler animation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_spoiler: Option<Boolean>,
     /// Pass True, if the uploaded video is suitable for streaming
     #[serde(skip_serializing_if = "Option::is_none")]
     pub supports_streaming: Option<Boolean>,
@@ -362,6 +389,9 @@ pub struct SendVideo {
 pub struct SendAnimation {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More info on Sending Files »
     pub animation: InputFileString,
     /// Duration of sent animation in seconds
@@ -386,6 +416,9 @@ pub struct SendAnimation {
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Pass True if the animation needs to be covered with a spoiler animation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_spoiler: Option<Boolean>,
     /// Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -409,6 +442,9 @@ pub struct SendAnimation {
 pub struct SendVoice {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub voice: InputFileString,
     /// Voice message caption, 0-200 characters
@@ -446,6 +482,9 @@ pub struct SendVoice {
 pub struct SendVideoNote {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More info on Sending Files ». Sending video notes by a URL is currently unsupported
     pub video_note: InputFileString,
     /// Duration of sent video in seconds
@@ -480,6 +519,9 @@ pub struct SendVideoNote {
 pub struct SendMediaGroup {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// A JSON-serialized array describing photos and videos to be sent, must include 2–10 items
     pub media: Vec<InputMedia>,
     /// Sends the messages silently. Users will receive a notification with no sound.
@@ -502,6 +544,9 @@ pub struct SendMediaGroup {
 pub struct SendLocation {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Latitude of the location
     pub latitude: Float,
     /// Longitude of the location
@@ -588,6 +633,9 @@ pub struct StopMessageLiveLocation {
 pub struct SendVenue {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Latitude of the venue
     pub latitude: Float,
     /// Longitude of the venue
@@ -631,6 +679,9 @@ pub struct SendVenue {
 pub struct SendContact {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Contact's phone number
     pub phone_number: String,
     /// Contact's first name
@@ -664,6 +715,9 @@ pub struct SendContact {
 pub struct SendPoll {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Poll question, 1-255 characters
     pub question: String,
     /// A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
@@ -721,6 +775,9 @@ pub struct SendPoll {
 pub struct SendDice {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, “🏀”, “⚽”, “🎳”, or “🎰”. Dice can have values 1-6 for “🎲”, “🎯” and “🎳”, values 1-5 for “🏀” and “⚽”, and values 1-64 for “🎰”. Defaults to “🎲”
     #[serde(skip_serializing_if = "Option::is_none")]
     pub emoji: Option<String>,
@@ -748,6 +805,9 @@ pub struct SendDice {
 pub struct SendChatAction {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread; supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes.
     pub action: String,
 }
@@ -859,6 +919,9 @@ pub struct PromoteChatMember {
     /// Pass True, if the administrator can pin messages, supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_pin_messages: Option<Boolean>,
+    /// Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_manage_topics: Option<Boolean>,
 }
 
 /// Use this method to set a custom title for an administrator in a supergroup promoted by the bot. Returns True on success.
@@ -1114,6 +1177,137 @@ pub struct DeleteChatStickerSet {
     pub chat_id: ChatID,
 }
 
+/// Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user. Requires no parameters.
+///  Returns an Array of Sticker objects.
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<Sticker>"]
+pub struct GetForumTopicIconStickers {}
+
+/// Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+///  Returns information about the created topic as a ForumTopic object.
+#[derive(Serialize, Debug, Response)]
+#[response = "ForumTopic"]
+pub struct CreateForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// Topic name, 1-128 characters
+    pub name: String,
+    /// Color of the topic icon in RGB format. Currently, must be one of 7322096 (0x6FB9F0), 16766590 (0xFFD67E), 13338331 (0xCB86DB), 9367192 (0x8EEE98), 16749490 (0xFF93B2), or 16478047 (0xFB6F5F)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon_color: Option<Integer>,
+    /// Unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed custom emoji identifiers.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon_custom_emoji_id: Option<String>,
+}
+
+/// Use this method to edit name and icon of a topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights, unless it is the creator of the topic.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct EditForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// Unique identifier for the target message thread of the forum topic
+    pub message_thread_id: Integer,
+    /// New topic name, 0-128 characters. If not specified or empty, the current name of the topic will be kept
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// New unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed custom emoji identifiers. Pass an empty string to remove the icon. If not specified, the current icon will be kept
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon_custom_emoji_id: Option<String>,
+}
+
+/// Use this method to close an open topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct CloseForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// Unique identifier for the target message thread of the forum topic
+    pub message_thread_id: Integer,
+}
+
+/// Use this method to reopen a closed topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct ReopenForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// Unique identifier for the target message thread of the forum topic
+    pub message_thread_id: Integer,
+}
+
+/// Use this method to delete a forum topic along with all its messages in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_delete_messages administrator rights.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct DeleteForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// Unique identifier for the target message thread of the forum topic
+    pub message_thread_id: Integer,
+}
+
+/// Use this method to clear the list of pinned messages in a forum topic. The bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct UnpinAllForumTopicMessages {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// Unique identifier for the target message thread of the forum topic
+    pub message_thread_id: Integer,
+}
+
+/// Use this method to edit the name of the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct EditGeneralForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+    /// New topic name, 1-128 characters
+    pub name: String,
+}
+
+/// Use this method to close an open 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct CloseGeneralForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+}
+
+/// Use this method to reopen a closed 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically unhidden if it was hidden.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct ReopenGeneralForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+}
+
+/// Use this method to hide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically closed if it was open.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct HideGeneralForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+}
+
+/// Use this method to unhide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct UnhideGeneralForumTopic {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+}
+
 /// Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
@@ -1176,10 +1370,10 @@ pub struct GetMyCommands {
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetChatMenuButton {
-    /// Optional Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
+    /// Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_id: Option<Integer>,
-    /// Optional A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
+    /// A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
     #[serde(skip_serializing_if = "Option::is_none")]
     pub menu_button: Option<MenuButton>,
 }
@@ -1188,7 +1382,7 @@ pub struct SetChatMenuButton {
 #[derive(Serialize, Debug, Response)]
 #[response = "MenuButton"]
 pub struct GetChatMenuButton {
-    /// Optional Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
+    /// Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_id: Option<Integer>,
 }
@@ -1197,10 +1391,10 @@ pub struct GetChatMenuButton {
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SetMyDefaultAdministratorRights {
-    /// Optional A JSON-serialized object describing new default administrator rights. If not specified, the default administrator rights will be cleared.
+    /// A JSON-serialized object describing new default administrator rights. If not specified, the default administrator rights will be cleared.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub rights: Option<ChatAdministratorRights>,
-    /// Optional Pass True to change the default administrator rights of the bot in channels. Otherwise, the default administrator rights of the bot for groups and supergroups will be changed.
+    /// Pass True to change the default administrator rights of the bot in channels. Otherwise, the default administrator rights of the bot for groups and supergroups will be changed.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub for_channels: Option<Boolean>,
 }
@@ -1209,7 +1403,7 @@ pub struct SetMyDefaultAdministratorRights {
 #[derive(Serialize, Debug, Response)]
 #[response = "ChatAdministratorRights"]
 pub struct GetMyDefaultAdministratorRights {
-    /// Optional Pass True to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned.
+    /// Pass True to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub for_channels: Option<Boolean>,
 }
@@ -1319,7 +1513,16 @@ pub struct StopPoll {
     pub reply_markup: Option<InlineKeyboardMarkup>,
 }
 
-/// Use this method to delete a message, including service messages, with the following limitations: - A message can only be deleted if it was sent less than 48 hours ago. - Bots can delete outgoing messages in groups and supergroups. - Bots granted can_post_messages permissions can delete outgoing messages in channels. - If the bot is an administrator of a group, it can delete any message there. - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there. Returns True on success.
+/// Use this method to delete a message, including service messages, with the following limitations:
+/// - A message can only be deleted if it was sent less than 48 hours ago.
+/// - Service messages about a supergroup, channel, or forum topic creation can't be deleted.
+/// - A dice message in a private chat can only be deleted if it was sent more than 24 hours ago.
+/// - Bots can delete outgoing messages in private chats, groups, and supergroups.
+/// - Bots can delete incoming messages in private chats.
+/// - Bots granted can_post_messages permissions can delete outgoing messages in channels.
+/// - If the bot is an administrator of a group, it can delete any message there.
+/// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
+/// Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct DeleteMessage {
@@ -1335,6 +1538,9 @@ pub struct DeleteMessage {
 pub struct SendSticker {
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .webp file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub sticker: InputFileString,
     /// Sends the message silently. Users will receive a notification with no sound.
@@ -1390,21 +1596,21 @@ pub struct CreateNewStickerSet {
     pub name: String,
     /// Sticker set title, 1-64 characters
     pub title: String,
-    /// Optional PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
+    /// PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
     pub png_sticker: Option<InputFileString>,
-    /// Optional TGS animation with the sticker, uploaded using multipart/form-data. See [animated-sticker-requirements](https://core.telegram.org/stickers#animated-sticker-requirements) for technical requirements
+    /// TGS animation with the sticker, uploaded using multipart/form-data. See [animated-sticker-requirements](https://core.telegram.org/stickers#animated-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgs_sticker: Option<InputFile>,
-    /// Optional WEBM video with the sticker, uploaded using multipart/form-data. See [video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
+    /// WEBM video with the sticker, uploaded using multipart/form-data. See [video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
     #[serde(skip_serializing_if = "Option::is_none")]
     pub webm_sticker: Option<InputFile>,
-    /// Optional Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API at the moment. By default, a regular sticker set is created.
+    /// Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API at the moment. By default, a regular sticker set is created.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sticker_type: Option<String>,
     /// One or more emoji corresponding to the sticker
     pub emojis: String,
-    /// Optional A JSON-serialized object for position where the mask should be placed on faces
+    /// A JSON-serialized object for position where the mask should be placed on faces
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mask_position: Option<MaskPosition>,
 }
@@ -1505,6 +1711,9 @@ pub struct AnswerWebAppQuery {
 pub struct SendInvoice {
     /// Unique identifier for the target private chat
     pub chat_id: Integer,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Product name, 1-32 characters
     pub title: String,
     /// Product description, 1-255 characters
@@ -1624,6 +1833,9 @@ pub struct SetPassportDataErrors {
 pub struct SendGame {
     /// Unique identifier for the target chat
     pub chat_id: Integer,
+    /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Short name of the game, serves as the unique identifier for the game. Set up your games via Botfather.
     pub game_short_name: String,
     /// Sends the message silently. Users will receive a notification with no sound.

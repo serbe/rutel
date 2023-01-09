@@ -160,22 +160,22 @@ pub struct WebhookInfo {
     pub has_custom_certificate: Boolean,
     /// Number of updates awaiting delivery
     pub pending_update_count: Integer,
-    /// Optional. Currently used webhook IP address
+    /// Currently used webhook IP address
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ip_address: Option<String>,
-    /// Optional. Unix time for the most recent error that happened when trying to deliver an update via webhook
+    /// Unix time for the most recent error that happened when trying to deliver an update via webhook
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_error_date: Option<Integer>,
-    /// Optional. Error message in human-readable format for the most recent error that happened when trying to deliver an update via webhook
+    /// Error message in human-readable format for the most recent error that happened when trying to deliver an update via webhook
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_error_message: Option<String>,
-    /// Optional. Unix time of the most recent error that happened when trying to synchronize available updates with Telegram datacenters
+    /// Unix time of the most recent error that happened when trying to synchronize available updates with Telegram datacenters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_synchronization_error_date: Option<Integer>,
-    /// Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
+    /// Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_connections: Option<Integer>,
-    /// Optional. A list of update types the bot is subscribed to. Defaults to all update types except chat_member
+    /// update types the bot is subscribed to. Defaults to all update types except chat_member
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allowed_updates: Option<Vec<String>>,
 }
@@ -220,22 +220,31 @@ pub struct Chat {
     /// Last name of the other party in a private chat
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_name: Option<String>,
+    /// True, if the supergroup chat is a forum (has topics enabled)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_forum: Option<Boolean>,
     /// Chat photo. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub photo: Option<ChatPhoto>,
+    /// If non-empty, the list of all active chat usernames; for private chats, supergroups and channels. Returned only in getChat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub active_usernames: Option<Vec<String>>,
+    /// Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub emoji_status_custom_emoji_id: Option<String>,
     /// Bio of the other party in a private chat. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bio: Option<String>,
     /// True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id> links only in chats with the user. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_private_forwards: Option<Boolean>,
-    /// Optional. True, if the privacy settings of the other party restrict sending voice and video note messages in the private chat. Returned only in getChat.
+    /// True, if the privacy settings of the other party restrict sending voice and video note messages in the private chat. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_restricted_voice_and_video_messages: Option<Boolean>,
-    /// Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat.
+    /// True, if users need to join the supergroup before they can send messages. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub join_to_send_messages: Option<Boolean>,
-    /// Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat.
+    /// True, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub join_by_request: Option<Boolean>,
     /// Description, for groups, supergroups and channel chats. Returned only in getChat.
@@ -256,6 +265,12 @@ pub struct Chat {
     /// The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message_auto_delete_time: Option<Integer>,
+    /// True, if aggressive anti-spam checks are enabled in the supergroup. The field is only available to chat administrators. Returned only in getChat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_aggressive_anti_spam_enabled: Option<Boolean>,
+    /// True, if non-administrators can only get the list of bots and administrators in the chat. Returned only in getChat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_hidden_members: Option<Boolean>,
     /// True, if messages from the chat can't be forwarded to other chats. Returned only in getChat.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_protected_content: Option<Boolean>,
@@ -278,6 +293,9 @@ pub struct Chat {
 pub struct Message {
     /// Unique message identifier inside this chat
     pub message_id: Integer,
+    /// Unique identifier of a message thread to which the message belongs; for supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
     /// Sender, empty for messages sent to channels
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<User>,
@@ -306,6 +324,9 @@ pub struct Message {
     /// For forwarded messages, date the original message was sent in Unix time
     #[serde(skip_serializing_if = "Option::is_none")]
     pub forward_date: Option<Integer>,
+    /// True, if the message is sent to a forum topic
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_topic_message: Option<Boolean>,
     /// True, if the message is a channel post that was automatically forwarded to the connected discussion group
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_automatic_forward: Option<Boolean>,
@@ -363,6 +384,9 @@ pub struct Message {
     /// For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in the caption
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// True, if the message media is covered by a spoiler animation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_media_spoiler: Option<Boolean>,
     /// Message is a shared contact, information about the contact
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contact: Option<Contact>,
@@ -432,7 +456,25 @@ pub struct Message {
     /// Service message. A user in the chat triggered another user's proximity alert while sharing Live Location.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub proximity_alert_triggered: Option<ProximityAlertTriggered>,
-    /// Optional. Service message: video chat scheduled
+    /// Service message: forum topic created
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub forum_topic_created: Option<ForumTopicCreated>,
+    /// Service message: forum topic edited
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub forum_topic_edited: Option<ForumTopicEdited>,
+    /// Service message: forum topic closed
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub forum_topic_closed: Option<ForumTopicClosed>,
+    /// ssage: forum topic reopened
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub forum_topic_reopened: Option<ForumTopicReopened>,
+    /// Service message: the 'General' forum topic hidden
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub general_forum_topic_hidden: Option<GeneralForumTopicHidden>,
+    /// Service message: the 'General' forum topic unhidden
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub general_forum_topic_unhidden: Option<GeneralForumTopicUnhidden>,
+    /// Service message: video chat scheduled
     #[serde(skip_serializing_if = "Option::is_none")]
     pub video_chat_scheduled: Option<VideoChatScheduled>,
     /// Service message: video chat started
@@ -444,7 +486,7 @@ pub struct Message {
     /// Service message: new participants invited to a video chat
     #[serde(skip_serializing_if = "Option::is_none")]
     pub video_chat_participants_invited: Option<VideoChatParticipantsInvited>,
-    /// Optional. Service message: data sent by a Web App
+    /// Service message: data sent by a Web App
     #[serde(skip_serializing_if = "Option::is_none")]
     pub web_app_data: Option<WebAppData>,
     /// Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
@@ -469,16 +511,16 @@ pub struct MessageEntity {
     pub offset: Integer,
     /// Length of the entity in UTF-16 code units
     pub length: Integer,
-    /// Optional. For “text_link” only, url that will be opened after user taps on the text
+    /// For “text_link” only, url that will be opened after user taps on the text
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
-    /// Optional. For “text_mention” only, the mentioned user
+    /// For “text_mention” only, the mentioned user
     #[serde(skip_serializing_if = "Option::is_none")]
     pub user: Option<User>,
-    /// Optional. For “pre” only, the programming language of the entity text
+    /// For “pre” only, the programming language of the entity text
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
-    /// Optional. For “custom_emoji” only, unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker
+    /// For “custom_emoji” only, unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_emoji_id: Option<String>,
 }
@@ -494,7 +536,7 @@ pub struct PhotoSize {
     pub width: Integer,
     /// Photo height
     pub height: Integer,
-    /// Optional. File size in bytes
+    /// File size in bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -512,16 +554,16 @@ pub struct Animation {
     pub height: Integer,
     /// Duration of the video in seconds as defined by sender
     pub duration: Integer,
-    /// Optional. Animation thumbnail as defined by sender
+    /// Animation thumbnail as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<PhotoSize>,
-    /// Optional. Original animation filename as defined by sender
+    /// Original animation filename as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_name: Option<String>,
-    /// Optional. MIME type of the file as defined by sender
+    /// MIME type of the file as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mime_type: Option<String>,
-    /// Optional. File size in bytes
+    /// File size in bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -730,6 +772,49 @@ pub struct MessageAutoDeleteTimerChanged {
     pub message_auto_delete_time: Integer,
 }
 
+/// This object represents a service message about a new forum topic created in the chat.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ForumTopicCreated {
+    /// Name of the topic
+    pub name: String,
+    /// Color of the topic icon in RGB format
+    pub icon_color: Integer,
+    /// Unique identifier of the custom emoji shown as the topic icon
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon_custom_emoji_id: Option<String>,
+}
+
+/// This object represents a service message about a forum topic closed in the chat. Currently holds no information.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ForumTopicClosed {}
+
+/// This object represents a service message about an edited forum topic.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ForumTopicEdited {
+    /// New name of the topic, if it was edited
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// New identifier of the custom emoji shown as the topic icon, if it was edited; an empty string if the icon was removed
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon_custom_emoji_id: Option<String>,
+}
+
+/// This object represents a service message about a forum topic reopened in the chat. Currently holds no information
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ForumTopicReopened {}
+
+/// This object represents a service message about General forum topic hidden in the chat. Currently holds no information.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct GeneralForumTopicHidden {}
+
+/// This object represents a service message about General forum topic unhidden in the chat. Currently holds no information.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct GeneralForumTopicUnhidden {}
+
+/// This object represents a service message about a user allowing a bot added to the attachment menu to write messages. Currently holds no information.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct WriteAccessAllowed {}
+
 /// This object represents a service message about a video chat scheduled in the chat.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct VideoChatScheduled {
@@ -786,6 +871,9 @@ pub struct WebAppInfo {
 pub struct ReplyKeyboardMarkup {
     /// Array of button rows, each represented by an Array of KeyboardButton objects
     pub keyboard: Vec<Vec<KeyboardButton>>,
+    /// Requests clients to always show the keyboard when the regular keyboard is hidden. Defaults to false, in which case the custom keyboard can be hidden and opened with a keyboard icon.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_persistent: Option<Boolean>,
     /// Requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons). Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub resize_keyboard: Option<Boolean>,
@@ -805,16 +893,16 @@ pub struct ReplyKeyboardMarkup {
 pub struct KeyboardButton {
     /// Text of the button. If none of the optional fields are used, it will be sent as a message when the button is pressed
     pub text: String,
-    /// Optional. If True, the user's phone number will be sent as a contact when the button is pressed. Available in private chats only.
+    /// If True, the user's phone number will be sent as a contact when the button is pressed. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_contact: Option<Boolean>,
-    /// Optional. If True, the user's current location will be sent when the button is pressed. Available in private chats only.
+    /// If True, the user's current location will be sent when the button is pressed. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_location: Option<Boolean>,
-    /// Optional. If specified, the user will be asked to create a poll and send it to the bot when the button is pressed. Available in private chats only.
+    /// If specified, the user will be asked to create a poll and send it to the bot when the button is pressed. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_poll: Option<KeyboardButtonPollType>,
-    /// Optional. If specified, the described [webapps](https://core.telegram.org/bots/webapps) will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only.
+    /// If specified, the described [webapps](https://core.telegram.org/bots/webapps) will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub web_app: Option<WebAppInfo>,
 }
@@ -845,31 +933,31 @@ pub struct InlineKeyboardMarkup {
 pub struct InlineKeyboardButton {
     /// Label text on the button
     pub text: String,
-    /// Optional. HTTP or tg:// url to be opened when the button is pressed. Links tg://user?id=<user_id> can be used to mention a user by their ID without using a username, if this is allowed by their privacy settings.
+    /// HTTP or tg:// url to be opened when the button is pressed. Links tg://user?id=<user_id> can be used to mention a user by their ID without using a username, if this is allowed by their privacy settings.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
-    /// Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes
+    /// Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub callback_data: Option<String>,
-    /// Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot.
+    /// Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub web_app: Option<WebAppInfo>,
-    /// Optional. An HTTP URL used to automatically authorize the user. Can be used as a replacement for the [Telegram Login Widget](https://core.telegram.org/widgets/login).
+    /// An HTTP URL used to automatically authorize the user. Can be used as a replacement for the [Telegram Login Widget](https://core.telegram.org/widgets/login).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub login_url: Option<LoginUrl>,
-    /// Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted.
+    /// If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted.
     /// Note: This offers an easy way for users to start using your bot in inline mode when they are currently in a private chat with it. Especially useful when combined with switch_pm… actions – in this case the user will be automatically returned to the chat they switched from, skipping the chat selection screen.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub switch_inline_query: Option<String>,
-    /// Optional. If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty, in which case only the bot's username will be inserted.
+    /// If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty, in which case only the bot's username will be inserted.
     /// This offers a quick way for the user to open your bot in inline mode in the same chat – good for selecting something from multiple options.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub switch_inline_query_current_chat: Option<String>,
-    /// Optional. Description of the game that will be launched when the user presses the button.
+    /// Description of the game that will be launched when the user presses the button.
     /// NOTE: This type of button must always be the first button in the first row.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub callback_game: Option<CallbackGame>,
-    /// Optional. Specify True, to send a Pay button.
+    /// Specify True, to send a Pay button.
     /// NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pay: Option<Boolean>,
@@ -975,15 +1063,18 @@ pub struct ChatAdministratorRights {
     pub can_change_info: Boolean,
     /// True, if the user is allowed to invite new users to the chat
     pub can_invite_users: Boolean,
-    /// Optional. True, if the administrator can post in the channel; channels only
+    /// True, if the administrator can post in the channel; channels only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_post_messages: Option<Boolean>,
-    /// Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
+    /// True, if the administrator can edit messages of other users and can pin messages; channels only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_edit_messages: Option<Boolean>,
-    /// Optional. True, if the user is allowed to pin messages; groups and supergroups only
+    /// True, if the user is allowed to pin messages; groups and supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_pin_messages: Option<Boolean>,
+    /// True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_manage_topics: Option<Boolean>,
 }
 
 /// This object contains information about one member of a chat. Currently, the following 6 types of chat members are supported
@@ -1019,16 +1110,10 @@ pub struct ChatMemberAdministrator {
     pub user: User,
     /// True, if the bot is allowed to edit administrator privileges of that user
     pub can_be_edited: Boolean,
-    /// Custom title for this user
-    pub custom_title: String,
     /// True, if the user's presence in the chat is hidden
     pub is_anonymous: Boolean,
     /// True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
     pub can_manage_chat: Boolean,
-    /// True, if the administrator can post in the channel; channels only
-    pub can_post_messages: Boolean,
-    /// True, if the administrator can edit messages of other users and can pin messages; channels only
-    pub can_edit_messages: Boolean,
     /// True, if the administrator can delete messages of other users
     pub can_delete_messages: Boolean,
     /// True, if the administrator can manage video chats
@@ -1041,8 +1126,21 @@ pub struct ChatMemberAdministrator {
     pub can_change_info: Boolean,
     /// True, if the user is allowed to invite new users to the chat
     pub can_invite_users: Boolean,
+    /// True, if the administrator can post in the channel; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_post_messages: Option<Boolean>,
+    /// he administrator can edit messages of other users and can pin messages; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_edit_messages: Option<Boolean>,
     /// True, if the user is allowed to pin messages; groups and supergroups only
-    pub can_pin_messages: Boolean,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_pin_messages: Option<Boolean>,
+    /// True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_manage_topics: Option<Boolean>,
+    /// Custom title for this user
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_title: Option<String>,
 }
 
 /// Represents a chat member that has no additional privileges or restrictions.
@@ -1069,6 +1167,8 @@ pub struct ChatMemberRestricted {
     pub can_invite_users: Boolean,
     /// True, if the user is allowed to pin messages; groups and supergroups only
     pub can_pin_messages: Boolean,
+    /// True, if the user is allowed to create forum topics
+    pub can_manage_topics: Boolean,
     /// True, if the user is allowed to send text messages, contacts, locations and venues
     pub can_send_messages: Boolean,
     /// True, if the user is allowed to send audios, documents, photos, videos, video notes and voice notes
@@ -1141,22 +1241,33 @@ pub struct ChatJoinRequest {
 /// Describes actions that a non-administrator user is allowed to take in a chat.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ChatPermissions {
+    /// True, if the user is allowed to send text messages, contacts, locations and venues
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_send_messages: Option<Boolean>,
+    /// he user is allowed to send audios, documents, photos, videos, video notes and voice notes, implies can_send_messages
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_send_media_messages: Option<Boolean>,
+    /// True, if the user is allowed to send polls, implies can_send_messages
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_send_polls: Option<Boolean>,
+    /// True, if the user is allowed to send animations, games, stickers and use inline bots, implies can_send_media_messages
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_send_other_messages: Option<Boolean>,
+    /// True, if the user is allowed to add web page previews to their messages, implies can_send_media_messages
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_add_web_page_previews: Option<Boolean>,
+    /// True, if the user is allowed to change the chat title, photo and other settings. Ignored in public supergroups
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_change_info: Option<Boolean>,
+    /// True, if the user is allowed to invite new users to the chat
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_invite_users: Option<Boolean>,
+    /// True, if the user is allowed to pin messages. Ignored in public supergroups
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_pin_messages: Option<Boolean>,
+    /// True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_manage_topics: Option<Boolean>,
 }
 
 /// Represents a location to which a chat is connected.
@@ -1166,6 +1277,20 @@ pub struct ChatLocation {
     pub location: Location,
     /// Location address; 1-64 characters, as defined by the chat owner
     pub address: String,
+}
+
+/// This object represents a forum topic.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ForumTopic {
+    /// Unique identifier of the forum topic
+    pub message_thread_id: Integer,
+    /// Name of the topic
+    pub name: String,
+    /// Color of the topic icon in RGB format
+    pub icon_color: Integer,
+    /// Unique identifier of the custom emoji shown as the topic icon
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon_custom_emoji_id: Option<String>,
 }
 
 /// This object represents a bot command.
@@ -1281,9 +1406,12 @@ pub enum InputMedia {
 /// Represents a photo to be sent.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputMediaPhoto {
+    /// Type of the result, must be photo
     #[serde(rename = "type")]
     pub kind: String,
+    /// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. More information on Sending Files »
     pub media: String,
+    /// Caption of the photo to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -1292,56 +1420,80 @@ pub struct InputMediaPhoto {
     /// List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Pass True if the photo needs to be covered with a spoiler animation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_spoiler: Option<Boolean>,
 }
 
 /// Represents a video to be sent.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputMediaVideo {
+    /// Type of the result, must be video
     #[serde(rename = "type")]
     pub kind: String,
+    /// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. More information on Sending Files »
     pub media: String,
+    /// Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
+    /// Caption of the video to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    /// Mode for parsing entities in the photo caption. See formatting options for more details.
+    /// Mode for parsing entities in the video caption. See formatting options for more details.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     /// List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Video width
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width: Option<Integer>,
+    /// Video height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<Integer>,
+    /// Video duration in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
+    /// Pass True if the uploaded video is suitable for streaming
     #[serde(skip_serializing_if = "Option::is_none")]
     pub supports_streaming: Option<Boolean>,
+    /// Pass True if the video needs to be covered with a spoiler animation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_spoiler: Option<Boolean>,
 }
 
 /// Represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputMediaAnimation {
+    /// Type of the result, must be animation
     #[serde(rename = "type")]
     pub kind: String,
+    /// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. More information on Sending Files »
     pub media: String,
+    /// Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<InputFileString>,
+    /// Caption of the animation to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
-    /// Mode for parsing entities in the photo caption. See formatting options for more details.
+    /// Mode for parsing entities in the animation caption. See formatting options for more details.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parse_mode: Option<String>,
     /// List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Animation width
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width: Option<Integer>,
+    /// Animation height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<Integer>,
+    /// Animation duration in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
+    /// Pass True if the animation needs to be covered with a spoiler animation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_spoiler: Option<Boolean>,
 }
 
 /// Represents an audio file to be treated as music to be sent.
@@ -1410,22 +1562,22 @@ pub struct Sticker {
     pub is_animated: Boolean,
     /// True, if the sticker is a video sticker
     pub is_video: Boolean,
-    /// Optional. Sticker thumbnail in the .WEBP or .JPG format
+    /// Sticker thumbnail in the .WEBP or .JPG format
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<PhotoSize>,
-    /// Optional. Emoji associated with the sticker
+    /// Emoji associated with the sticker
     #[serde(skip_serializing_if = "Option::is_none")]
     pub emoji: Option<String>,
-    /// Optional. Name of the sticker set to which the sticker belongs
+    /// Name of the sticker set to which the sticker belongs
     #[serde(skip_serializing_if = "Option::is_none")]
     pub set_name: Option<String>,
-    /// Optional. For mask stickers, the position where the mask should be placed
+    /// For mask stickers, the position where the mask should be placed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mask_position: Option<MaskPosition>,
-    /// Optional. For custom emoji stickers, unique identifier of the custom emoji
+    /// For custom emoji stickers, unique identifier of the custom emoji
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_emoji_id: Option<String>,
-    /// Optional. File size in bytes
+    /// File size in bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -1443,7 +1595,7 @@ pub struct StickerSet {
     pub is_video: Boolean,
     /// List of all set stickers
     pub stickers: Vec<Sticker>,
-    /// Optional. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
+    /// Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb: Option<PhotoSize>,
 }
@@ -1472,10 +1624,10 @@ pub struct InlineQuery {
     pub query: String,
     /// Offset of the results to be returned, can be controlled by the bot
     pub offset: String,
-    /// Optional. Type of the chat, from which the inline query was sent. Can be either “sender” for a private chat with the inline query sender, “private”, “group”, “supergroup”, or “channel”. The chat type should be always known for requests sent from official clients and most third-party clients, unless the request was sent from a secret chat
+    /// Type of the chat, from which the inline query was sent. Can be either “sender” for a private chat with the inline query sender, “private”, “group”, “supergroup”, or “channel”. The chat type should be always known for requests sent from official clients and most third-party clients, unless the request was sent from a secret chat
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_type: Option<String>,
-    /// Optional. Sender location, only for bots that request user location
+    /// Sender location, only for bots that request user location
     #[serde(skip_serializing_if = "Option::is_none")]
     pub location: Option<Location>,
 }
@@ -2162,8 +2314,9 @@ pub struct ChosenInlineResult {
 /// Contains information about an inline message sent by a [webapps](https://core.telegram.org/bots/webapps) on behalf of a user.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct SentWebAppMessage {
-    /// Optional. Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message.
-    pub inline_message_id: String,
+    /// Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub inline_message_id: Option<String>,
 }
 
 /// This object represents a portion of the price for goods or services.
