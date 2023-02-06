@@ -873,7 +873,10 @@ pub struct RestrictChatMember {
     pub user_id: Integer,
     /// A JSON-serialized object for new user permissions
     pub permissions: ChatPermissions,
-    /// Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
+    /// Optional. Pass True if chat permissions are set independently. Otherwise, the can_send_other_messages and can_add_web_page_previews permissions will imply the can_send_messages, can_send_audios, can_send_documents, can_send_photos, can_send_videos, can_send_video_notes, and can_send_voice_notes permissions; the can_send_polls permission will imply the can_send_messages permission.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub use_independent_chat_permissions: Option<Boolean>,
+    /// Optional. Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
     #[serde(skip_serializing_if = "Option::is_none")]
     pub until_date: Option<Integer>,
 }
@@ -964,6 +967,9 @@ pub struct SetChatPermissions {
     pub chat_id: ChatID,
     /// New default chat permissions
     pub permissions: ChatPermissions,
+    /// Optional. Pass True if chat permissions are set independently. Otherwise, the can_send_other_messages and can_add_web_page_previews permissions will imply the can_send_messages, can_send_audios, can_send_documents, can_send_photos, can_send_videos, can_send_video_notes, and can_send_voice_notes permissions; the can_send_polls permission will imply the can_send_messages permission.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub use_independent_chat_permissions: Option<Boolean>,
 }
 
 /// Use this method to generate a new invite link for a chat; any previously generated link is revoked. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the new invite link as String on success.

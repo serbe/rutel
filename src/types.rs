@@ -447,6 +447,12 @@ pub struct Message {
     /// Message is a service message about a successful payment, information about the payment.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub successful_payment: Option<SuccessfulPayment>,
+    /// Service message: a user was shared with the bot
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub user_shared: Option<UserShared>,
+    /// Service message: a chat was shared with the bot
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_shared: Option<ChatShared>,
     /// The domain name of the website on which the user has logged in.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub connected_website: Option<String>,
@@ -814,6 +820,24 @@ pub struct GeneralForumTopicHidden {}
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct GeneralForumTopicUnhidden {}
 
+/// This object contains information about the user whose identifier was shared with the bot using a KeyboardButtonRequestUser button.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct UserShared {
+    /// Identifier of the request
+    pub request_id: Integer,
+    /// Identifier of the shared user. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a 64-bit integer or double-precision float type are safe for storing this identifier. The bot may not have access to the user and could be unable to use this identifier, unless the user is already known to the bot by some other means.
+    pub user_id: Integer,
+}
+
+/// This object contains information about the chat whose identifier was shared with the bot using a KeyboardButtonRequestChat button.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct ChatShared {
+    /// Identifier of the request
+    pub request_id: Integer,
+    /// Identifier of the shared chat. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a 64-bit integer or double-precision float type are safe for storing this identifier. The bot may not have access to the chat and could be unable to use this identifier, unless the chat is already known to the bot by some other means.
+    pub chat_id: Integer,
+}
+
 /// This object represents a service message about a user allowing a bot added to the attachment menu to write messages. Currently holds no information.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct WriteAccessAllowed {}
@@ -896,6 +920,12 @@ pub struct ReplyKeyboardMarkup {
 pub struct KeyboardButton {
     /// Text of the button. If none of the optional fields are used, it will be sent as a message when the button is pressed
     pub text: String,
+    /// If specified, pressing the button will open a list of suitable users. Tapping on any user will send their identifier to the bot in a “user_shared” service message. Available in private chats only.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub request_user: Option<KeyboardButtonRequestUser>,
+    /// If specified, pressing the button will open a list of suitable chats. Tapping on a chat will send its identifier to the bot in a “chat_shared” service message. Available in private chats only.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub request_chat: Option<KeyboardButtonRequestChat>,
     /// If True, the user's phone number will be sent as a contact when the button is pressed. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_contact: Option<Boolean>,
@@ -908,6 +938,46 @@ pub struct KeyboardButton {
     /// If specified, the described [webapps](https://core.telegram.org/bots/webapps) will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub web_app: Option<WebAppInfo>,
+}
+
+/// This object defines the criteria used to request a suitable user. The identifier of the selected user will be shared with the bot when the corresponding button is pressed.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct KeyboardButtonRequestUser {
+    /// Signed 32-bit identifier of the request, which will be received back in the UserShared object. Must be unique within the message
+    pub request_id: Integer,
+    /// Pass True to request a bot, pass False to request a regular user. If not specified, no additional restrictions are applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub user_is_bot: Option<Boolean>,
+    /// Pass True to request a premium user, pass False to request a non-premium user. If not specified, no additional restrictions are applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub user_is_premium: Option<Boolean>,
+}
+
+/// This object defines the criteria used to request a suitable chat. The identifier of the selected chat will be shared with the bot when the corresponding button is pressed.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct KeyboardButtonRequestChat {
+    /// Signed 32-bit identifier of the request, which will be received back in the ChatShared object. Must be unique within the message
+    pub request_id: Integer,
+    /// Pass True to request a channel chat, pass False to request a group or a supergroup chat.
+    pub chat_is_channel: Boolean,
+    /// Pass True to request a forum supergroup, pass False to request a non-forum chat. If not specified, no additional restrictions are applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_is_forum: Option<Boolean>,
+    /// Pass True to request a supergroup or a channel with a username, pass False to request a chat without a username. If not specified, no additional restrictions are applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_has_username: Option<Boolean>,
+    /// Pass True to request a chat owned by the user. Otherwise, no additional restrictions are applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chat_is_created: Option<Boolean>,
+    /// A JSON-serialized object listing the required administrator rights of the user in the chat. The rights must be a superset of bot_administrator_rights. If not specified, no additional restrictions are applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub user_administrator_rights: Option<ChatAdministratorRights>,
+    /// A JSON-serialized object listing the required administrator rights of the bot in the chat. The rights must be a subset of user_administrator_rights. If not specified, no additional restrictions are applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bot_administrator_rights: Option<ChatAdministratorRights>,
+    /// Pass True to request a chat with the bot as a member. Otherwise, no additional restrictions are applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bot_is_member: Option<Boolean>,
 }
 
 /// This object represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
@@ -1164,25 +1234,35 @@ pub struct ChatMemberRestricted {
     pub user: User,
     /// True, if the user is a member of the chat at the moment of the request
     pub is_member: Boolean,
-    /// True, if the user is allowed to change the chat title, photo and other settings
-    pub can_change_info: Boolean,
-    /// True, if the user is allowed to invite new users to the chat
-    pub can_invite_users: Boolean,
-    /// True, if the user is allowed to pin messages; groups and supergroups only
-    pub can_pin_messages: Boolean,
-    /// True, if the user is allowed to create forum topics
-    pub can_manage_topics: Boolean,
     /// True, if the user is allowed to send text messages, contacts, locations and venues
     pub can_send_messages: Boolean,
-    /// True, if the user is allowed to send audios, documents, photos, videos, video notes and voice notes
-    pub can_send_media_messages: Boolean,
+    /// True, if the user is allowed to send audios
+    pub can_send_audios: Boolean,
+    /// True, if the user is allowed to send documents
+    pub can_send_documents: Boolean,
+    /// True, if the user is allowed to send photos
+    pub can_send_photos: Boolean,
+    /// True, if the user is allowed to send videos
+    pub can_send_videos: Boolean,
+    /// True, if the user is allowed to send video notes
+    pub can_send_video_notes: Boolean,
+    /// True, if the user is allowed to send voice notes
+    pub can_send_voice_notes: Boolean,
     /// True, if the user is allowed to send polls
     pub can_send_polls: Boolean,
     /// True, if the user is allowed to send animations, games, stickers and use inline bots
     pub can_send_other_messages: Boolean,
     /// True, if the user is allowed to add web page previews to their messages
     pub can_add_web_page_previews: Boolean,
-    /// Date when restrictions will be lifted for this user; unix time
+    /// True, if the user is allowed to change the chat title, photo and other settings
+    pub can_change_info: Boolean,
+    /// True, if the user is allowed to invite new users to the chat
+    pub can_invite_users: Boolean,
+    /// True, if the user is allowed to pin messages
+    pub can_pin_messages: Boolean,
+    /// True, if the user is allowed to create forum topics
+    pub can_manage_topics: Boolean,
+    /// Date when restrictions will be lifted for this user; unix time. If 0, then the user is restricted forever
     pub until_date: Integer,
 }
 
@@ -1231,12 +1311,14 @@ pub struct ChatJoinRequest {
     pub chat: Chat,
     /// User that sent the join request
     pub from: User,
+    /// Identifier of a private chat with the user who sent the join request. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a 64-bit integer or double-precision float type are safe for storing this identifier. The bot can use this identifier for 24 hours to send messages until the join request is processed, assuming no other administrator contacted the user.
+    pub user_chat_id: Integer,
     /// Date the request was sent in Unix time
     pub date: Integer,
-    /// Bio of the user.
+    /// Optional. Bio of the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bio: Option<String>,
-    /// Chat invite link that was used by the user to send the join request
+    /// Optional. Chat invite link that was used by the user to send the join request
     #[serde(skip_serializing_if = "Option::is_none")]
     pub invite_link: Option<ChatInviteLink>,
 }
@@ -1247,9 +1329,24 @@ pub struct ChatPermissions {
     /// True, if the user is allowed to send text messages, contacts, locations and venues
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_send_messages: Option<Boolean>,
-    /// he user is allowed to send audios, documents, photos, videos, video notes and voice notes, implies can_send_messages
+    /// True, if the user is allowed to send audios
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_send_media_messages: Option<Boolean>,
+    pub can_send_audios: Option<Boolean>,
+    /// True, if the user is allowed to send documents
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_documents: Option<Boolean>,
+    /// True, if the user is allowed to send photos
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_photos: Option<Boolean>,
+    /// True, if the user is allowed to send videos
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_videos: Option<Boolean>,
+    /// True, if the user is allowed to send video notes
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_video_notes: Option<Boolean>,
+    /// True, if the user is allowed to send voice notes
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_voice_notes: Option<Boolean>,
     /// True, if the user is allowed to send polls, implies can_send_messages
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_send_polls: Option<Boolean>,
