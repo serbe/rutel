@@ -450,6 +450,9 @@ pub struct Message {
     /// The domain name of the website on which the user has logged in.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub connected_website: Option<String>,
+    /// Service message: the user allowed the bot added to the attachment menu to write messages
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub write_access_allowed: Option<WriteAccessAllowed>,
     /// Telegram Passport data
     #[serde(skip_serializing_if = "Option::is_none")]
     pub passport_data: Option<PassportData>,
