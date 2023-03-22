@@ -267,7 +267,7 @@ pub struct SendAudio {
     pub title: Option<String>,
     /// Optional. Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
     /// Optional. Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -298,7 +298,7 @@ pub struct SendDocument {
     pub document: InputFileString,
     /// Optional. Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
     /// Optional. Document caption (may also be used when resending documents by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -350,7 +350,7 @@ pub struct SendVideo {
     pub height: Option<Integer>,
     /// Optional. Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
     /// Optional. Video caption (may also be used when resending videos by file_id), 0-200 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -403,10 +403,9 @@ pub struct SendAnimation {
     /// Optional. Animation height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<Integer>,
-    /// Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail
-    /// Optional. was uploaded using multipart/form-data under <file_attach_name>. More info on Sending Files »
+    /// Optional. Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More info on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
     /// Optional. Animation caption (may also be used when resending animation by file_id), 0-1024 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -495,7 +494,7 @@ pub struct SendVideoNote {
     pub length: Option<Integer>,
     /// Optional. Thumbnail of the file sent. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail‘s width and height should not exceed 90. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can’t be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More info on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
     /// Optional. Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -1372,6 +1371,48 @@ pub struct GetMyCommands {
     pub language_code: Option<String>,
 }
 
+/// Use this method to change the bot's description, which is shown in the chat with the bot if the chat is empty. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<BotCommand>"]
+pub struct SetMyDescription {
+    /// Optional. New bot description; 0-512 characters. Pass an empty string to remove the dedicated description for the given language.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// Optional. A two-letter ISO 639-1 language code. If empty, the description will be applied to all users for whose language there is no dedicated description.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language_code: Option<String>,
+}
+
+/// Use this method to get the current bot description for the given user language. Returns BotDescription on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "BotDescription"]
+pub struct GetMyDescription {
+    /// Optional. A two-letter ISO 639-1 language code or an empty string
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language_code: Option<String>,
+}
+
+/// Use this method to change the bot's short description, which is shown on the bot's profile page and is sent together with the link when users share the bot. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetMyShortDescription {
+    /// Optional. New short description for the bot; 0-120 characters. Pass an empty string to remove the dedicated short description for the given language.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub short_description: Option<String>,
+    /// Optional. A two-letter ISO 639-1 language code. If empty, the short description will be applied to all users for whose language there is no dedicated short description.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language_code: Option<String>,
+}
+
+/// Use this method to get the current bot short description for the given user language. Returns BotShortDescription on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "BotShortDescription"]
+pub struct GetMyShortDescription {
+    /// Optional. A two-letter ISO 639-1 language code or an empty string
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language_code: Option<String>,
+}
+
 /// Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
@@ -1549,6 +1590,9 @@ pub struct SendSticker {
     pub message_thread_id: Option<Integer>,
     /// Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .webp file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
     pub sticker: InputFileString,
+    /// Optional. Emoji associated with the sticker; only for just uploaded stickers
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub emoji: Option<String>,
     /// Optional. Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -1582,43 +1626,38 @@ pub struct GetCustomEmojiStickers {
     pub custom_emoji_ids: Vec<String>,
 }
 
-/// Use this method to upload a .png file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
+/// Use this method to upload a file with a sticker for later use in the createNewStickerSet and addStickerToSet methods (the file can be used multiple times). Returns the uploaded File on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "File"]
 pub struct UploadStickerFile {
     /// User identifier of sticker file owner
     pub user_id: Integer,
-    /// Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More info on Sending Files »
-    pub png_sticker: InputFile,
+    /// A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See https://core.telegram.org/stickers for technical requirements. More information on Sending Files »
+    pub sticker: InputFile,
+    /// Format of the sticker, must be one of “static”, “animated”, “video”
+    pub sticker_format: String,
 }
 
-/// Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus created. You must use exactly one of the fields png_sticker, tgs_sticker, or webm_sticker. Returns True on success.
+/// Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus created. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct CreateNewStickerSet {
     /// User identifier of created sticker set owner
     pub user_id: Integer,
-    /// Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only english letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in “_by_<bot username>”. <bot_username> is case insensitive. 1-64 characters.
+    /// Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
     pub name: String,
     /// Sticker set title, 1-64 characters
     pub title: String,
-    /// Optional. PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub png_sticker: Option<InputFileString>,
-    /// Optional. TGS animation with the sticker, uploaded using multipart/form-data. See [animated-sticker-requirements](https://core.telegram.org/stickers#animated-sticker-requirements) for technical requirements
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tgs_sticker: Option<InputFile>,
-    /// Optional. WEBM video with the sticker, uploaded using multipart/form-data. See [video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub webm_sticker: Option<InputFile>,
-    /// Optional. Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API at the moment. By default, a regular sticker set is created.
+    /// A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
+    pub stickers: Vec<InputSticker>,
+    /// Format of stickers in the set, must be one of “static”, “animated”, “video”
+    pub sticker_format: String,
+    /// Optional. Type of stickers in the set, pass “regular”, “mask”, or “custom_emoji”. By default, a regular sticker set is created.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sticker_type: Option<String>,
-    /// One or more emoji corresponding to the sticker
-    pub emojis: String,
-    /// Optional. A JSON-serialized object for position where the mask should be placed on faces
+    /// Optional. Pass True if stickers in the sticker set must be repainted to the color of text when used in messages, the accent color if used as emoji status, white on chat photos, or another appropriate color based on context; for custom emoji sticker sets only
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub mask_position: Option<MaskPosition>,
+    pub needs_repainting: Option<Boolean>,
 }
 
 /// Use this method to add a new sticker to a set created by the bot. Returns True on success.
@@ -1629,19 +1668,8 @@ pub struct AddStickerToSet {
     pub user_id: Integer,
     /// Sticker set name
     pub name: String,
-    /// PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
-    pub png_sticker: InputFileString,
-    /// Optional. TGS animation with the sticker, uploaded using multipart/form-data. See [animated-sticker-requirements](https://core.telegram.org/stickers#animated-sticker-requirements) for technical requirements
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tgs_sticker: Option<InputFile>,
-    /// Optional. WEBM video with the sticker, uploaded using multipart/form-data. See [video-sticker-requirements](https://core.telegram.org/stickers#video-sticker-requirements) for technical requirements
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub webm_sticker: Option<InputFile>,
-    /// One or more emoji corresponding to the sticker
-    pub emojis: String,
-    /// Optional. A JSON-serialized object for position where the mask should be placed on faces
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub mask_position: Option<MaskPosition>,
+    /// A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set isn't changed.
+    pub sticker: InputSticker,
 }
 
 /// Use this method to move a sticker in a set created by the bot to a specific position . Returns True on success.
@@ -1662,18 +1690,78 @@ pub struct DeleteStickerFromSet {
     pub sticker: String,
 }
 
+/// Use this method to change the list of emoji assigned to a regular or custom emoji sticker. The sticker must belong to a sticker set created by the bot. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetStickerEmojiList {
+    /// File identifier of the sticker
+    pub sticker: String,
+    /// A JSON-serialized list of 1-20 emoji associated with the sticker
+    pub emoji_list: Vec<String>,
+}
+
+/// Use this method to change search keywords assigned to a regular or custom emoji sticker. The sticker must belong to a sticker set created by the bot. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetStickerKeywords {
+    /// File identifier of the sticker
+    pub sticker: String,
+    /// Optional. A JSON-serialized list of 0-20 search keywords for the sticker with total length of up to 64 characters
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub keywords: Option<Vec<String>>,
+}
+
+/// Use this method to change the mask position of a mask sticker. The sticker must belong to a sticker set that was created by the bot. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetStickerMaskPosition {
+    /// File identifier of the sticker
+    pub sticker: String,
+    /// Optional. A JSON-serialized object with the position where the mask should be placed on faces. Omit the parameter to remove the mask position.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mask_position: Option<MaskPosition>,
+}
+
+/// Use this method to set the title of a created sticker set. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetStickerSetTitle {
+    /// Sticker set name
+    pub name: String,
+    /// Sticker set title, 1-64 characters
+    pub title: String,
+}
+
 /// Use this method to set the thumbnail of a sticker set. Animated thumbnails can be set for animated sticker sets only. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
-pub struct SetStickerSetThumb {
+pub struct SetStickerSetThumbnail {
     /// Sticker set name
     pub name: String,
     /// User identifier of the sticker set owner
     pub user_id: Integer,
-    /// A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see [technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the
-    /// Optional. Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker set thumbnail can't be uploaded via HTTP URL.
+    /// Optional. A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see [technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker set thumbnail can't be uploaded via HTTP URL.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
+}
+
+/// Use this method to set the thumbnail of a custom emoji sticker set. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetCustomEmojiStickerSetThumbnail {
+    /// Sticker set name
+    pub name: String,
+    /// Optional. Custom emoji identifier of a sticker from the sticker set; pass an empty string to drop the thumbnail and use the first sticker as the thumbnail.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_emoji_id: Option<String>,
+}
+
+/// Use this method to delete a sticker set that was created by the bot. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct DeleteStickerSet {
+    /// Sticker set name
+    pub name: String,
 }
 
 /// Use this method to send answers to an inline query. On success, True is returned. No more than 50 results per query are allowed.

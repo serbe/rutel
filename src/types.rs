@@ -565,7 +565,7 @@ pub struct Animation {
     pub duration: Integer,
     /// Optional. Animation thumbnail as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<PhotoSize>,
+    pub thumbnail: Option<PhotoSize>,
     /// Optional. Original animation filename as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_name: Option<String>,
@@ -580,34 +580,49 @@ pub struct Animation {
 /// This object represents an audio file to be treated as music by the Telegram clients.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Audio {
+    /// Identifier for this file, which can be used to download or reuse the file
     pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub file_unique_id: String,
+    /// Duration of the audio in seconds as defined by sender
     pub duration: Integer,
+    /// Optional. Performer of the audio as defined by sender or by audio tags
     #[serde(skip_serializing_if = "Option::is_none")]
     pub performer: Option<String>,
+    /// Optional. Title of the audio as defined by sender or by audio tags
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    /// Optional. Original filename as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_name: Option<String>,
+    /// Optional. MIME type of the file as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mime_type: Option<String>,
+    /// Optional. File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
+    /// Optional. Thumbnail of the album cover to which the music file belongs
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<PhotoSize>,
+    pub thumbnail: Option<PhotoSize>,
 }
 
 /// This object represents a general file (as opposed to photos, voice messages and audio files).
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Document {
+    /// Identifier for this file, which can be used to download or reuse the file
     pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub file_unique_id: String,
+    /// Optional. Document thumbnail as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<PhotoSize>,
+    pub thumbnail: Option<PhotoSize>,
+    /// Optional. Original filename as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_name: Option<String>,
+    /// Optional. MIME type of the file as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mime_type: Option<String>,
+    /// Optional. File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -615,17 +630,26 @@ pub struct Document {
 /// This object represents a video file.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Video {
+    /// Identifier for this file, which can be used to download or reuse the file
     pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub file_unique_id: String,
+    /// Video width as defined by sender
     pub width: Integer,
+    /// Video height as defined by sender
     pub height: Integer,
+    /// Duration of the video in seconds as defined by sender
     pub duration: Integer,
+    /// Optional. Video thumbnail
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<PhotoSize>,
+    pub thumbnail: Option<PhotoSize>,
+    /// Optional. Original filename as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_name: Option<String>,
+    /// Optional. MIME type of the file as defined by sender
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mime_type: Option<String>,
+    /// Optional. File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -633,12 +657,18 @@ pub struct Video {
 /// This object represents a video message (available in Telegram apps as of v.4.0).
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct VideoNote {
+    /// Identifier for this file, which can be used to download or reuse the file
     pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     pub file_unique_id: String,
+    /// Video width and height (diameter of the video message) as defined by sender
     pub length: Integer,
+    /// Duration of the video in seconds as defined by sender
     pub duration: Integer,
+    /// Optional. Video thumbnail
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<PhotoSize>,
+    pub thumbnail: Option<PhotoSize>,
+    /// Optional. File size in bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_size: Option<Integer>,
 }
@@ -1473,6 +1503,20 @@ pub struct BotCommandScopeChatMember {
     pub user_id: Integer,
 }
 
+/// This object represents the bot's description.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotDescription {
+    /// The bot's description
+    pub description: String,
+}
+
+/// This object represents the bot's short description.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct BotShortDescription {
+    /// The bot's short description
+    pub short_description: String,
+}
+
 /// This object describes the bot's menu button in a private chat. It should be one of
 /// If a menu button other than MenuButtonDefault is set for a private chat, then it is applied in the chat. Otherwise the default menu button is applied. By default, the menu button opens the list of bot commands.
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -1535,7 +1579,7 @@ pub struct InputMediaVideo {
     pub media: String,
     /// Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
     /// Optional. Caption of the video to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -1572,7 +1616,7 @@ pub struct InputMediaAnimation {
     pub media: String,
     /// Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
     /// Optional. Caption of the animation to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -1599,11 +1643,15 @@ pub struct InputMediaAnimation {
 /// Represents an audio file to be treated as music to be sent.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputMediaAudio {
+    /// Type of the result, must be audio
     #[serde(rename = "type")]
     pub kind: String,
+    /// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. More information on Sending Files »
     pub media: String,
+    /// Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
+    /// Optional. Caption of the audio to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -1612,10 +1660,13 @@ pub struct InputMediaAudio {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. Duration of the audio in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
+    /// Optional. Performer of the audio
     #[serde(skip_serializing_if = "Option::is_none")]
     pub performer: Option<String>,
+    /// Optional. Title of the audio
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
 }
@@ -1623,11 +1674,15 @@ pub struct InputMediaAudio {
 /// Represents a general file to be sent.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputMediaDocument {
+    /// Type of the result, must be document
     #[serde(rename = "type")]
     pub kind: String,
+    /// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. More information on Sending Files »
     pub media: String,
+    /// Optional. Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<InputFileString>,
+    pub thumbnail: Option<InputFileString>,
+    /// Optional. Caption of the document to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -1636,6 +1691,7 @@ pub struct InputMediaDocument {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. Disables automatic server-side content type detection for files uploaded using multipart/form-data. Always True, if the document is sent as part of an album.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_content_type_detection: Option<Boolean>,
 }
@@ -1664,13 +1720,16 @@ pub struct Sticker {
     pub is_video: Boolean,
     /// Optional. Sticker thumbnail in the .WEBP or .JPG format
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<PhotoSize>,
+    pub thumbnail: Option<PhotoSize>,
     /// Optional. Emoji associated with the sticker
     #[serde(skip_serializing_if = "Option::is_none")]
     pub emoji: Option<String>,
     /// Optional. Name of the sticker set to which the sticker belongs
     #[serde(skip_serializing_if = "Option::is_none")]
     pub set_name: Option<String>,
+    /// Optional. For premium regular stickers, premium animation for the sticker
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub premium_animation: Option<File>,
     /// Optional. For mask stickers, the position where the mask should be placed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mask_position: Option<MaskPosition>,
@@ -1697,7 +1756,7 @@ pub struct StickerSet {
     pub stickers: Vec<Sticker>,
     /// Optional. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb: Option<PhotoSize>,
+    pub thumbnail: Option<PhotoSize>,
 }
 
 /// This object describes the position on faces where a mask should be placed by default.
@@ -1711,6 +1770,21 @@ pub struct MaskPosition {
     pub y_shift: Float,
     /// Mask scaling coefficient. For example, 2.0 means double size.
     pub scale: Float,
+}
+
+/// This object describes a sticker to be added to a sticker set.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct InputSticker {
+    /// The added sticker. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, upload a new one using multipart/form-data, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. Animated and video stickers can't be uploaded via HTTP URL. More information on Sending Files »
+    pub sticker: InputFileString,
+    /// List of 1-20 emoji associated with the sticker
+    pub emoji_list: Vec<String>,
+    /// Optional. Position where the mask should be placed on faces. For “mask” stickers only.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mask_position: Option<MaskPosition>,
+    /// Optional. List of 0-20 search keywords for the sticker with total length of up to 64 characters. For “regular” and “custom_emoji” stickers only.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub keywords: Option<Vec<String>>,
 }
 
 /// This object represents an incoming inline query. When the user sends an empty query, your bot could return some default or trending results.
@@ -1760,43 +1834,63 @@ pub enum InlineQueryResult {
 /// Represents a link to an article or web page.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultArticle {
+    /// Type of the result, must be article
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 Bytes
     pub id: String,
+    /// Title of the result
     pub title: String,
+    /// Content of the message to be sent
     pub input_message_content: InputMessageContent,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. URL of the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
+    /// Optional. Pass True if you don't want the URL to be shown in the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hide_url: Option<Boolean>,
+    /// Optional. Short description of the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Optional. Url of the thumbnail for the result
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_url: Option<String>,
+    pub thumbnail_url: Option<String>,
+    /// Optional. Thumbnail width
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_width: Option<Integer>,
+    pub thumbnail_width: Option<Integer>,
+    /// Optional. Thumbnail height
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_height: Option<Integer>,
+    pub thumbnail_height: Option<Integer>,
 }
 
 /// Represents a link to a photo. By default, this photo will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultPhoto {
+    /// Type of the result, must be photo
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 bytes
     pub id: String,
+    /// A valid URL of the photo. Photo must be in JPEG format. Photo size must not exceed 5MB
     pub photo_url: String,
-    pub thumb_url: String,
+    /// URL of the thumbnail for the photo
+    pub thumbnail_url: String,
+    /// Optional. Width of the photo
     #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_width: Option<Integer>,
+    /// Optional. Height of the photo
     #[serde(skip_serializing_if = "Option::is_none")]
     pub photo_height: Option<Integer>,
+    /// Optional. Title for the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    /// Optional. Short description of the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Optional. Caption of the photo to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -1805,8 +1899,10 @@ pub struct InlineQueryResultPhoto {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the photo
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1814,19 +1910,31 @@ pub struct InlineQueryResultPhoto {
 /// Represents a link to an animated GIF file. By default, this animated GIF file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultGif {
+    /// Type of the result, must be gif
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 bytes
     pub id: String,
+    /// A valid URL for the GIF file. File size must not exceed 1MB
     pub gif_url: String,
+    /// Optional. Width of the GIF
     #[serde(skip_serializing_if = "Option::is_none")]
     pub gif_width: Option<Integer>,
+    /// Optional. Height of the GIF
     #[serde(skip_serializing_if = "Option::is_none")]
     pub gif_height: Option<Integer>,
+    /// Optional. Duration of the GIF in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub gif_duration: Option<Integer>,
-    pub thumb_url: String,
+    /// URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
+    pub thumbnail_url: String,
+    /// Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to “image/jpeg”
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thumbnail_mime_type: Option<String>,
+    /// Optional. Title for the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    /// Optional. Caption of the GIF file to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -1835,8 +1943,10 @@ pub struct InlineQueryResultGif {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the GIF animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1844,19 +1954,31 @@ pub struct InlineQueryResultGif {
 /// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultMpeg4Gif {
+    /// Type of the result, must be mpeg4_gif
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 bytes
     pub id: String,
+    /// A valid URL for the MPEG4 file. File size must not exceed 1MB
     pub mpeg4_url: String,
+    /// Optional. Video width
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mpeg4_width: Option<Integer>,
+    /// Optional. Video height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mpeg4_height: Option<Integer>,
+    /// Optional. Video duration in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mpeg4_duration: Option<Integer>,
-    pub thumb_url: String,
+    /// URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
+    pub thumbnail_url: String,
+    /// Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to “image/jpeg”
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thumbnail_mime_type: Option<String>,
+    /// Optional. Title for the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    /// Optional. Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -1865,8 +1987,10 @@ pub struct InlineQueryResultMpeg4Gif {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the video animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1874,13 +1998,20 @@ pub struct InlineQueryResultMpeg4Gif {
 /// Represents a link to a page containing an embedded video player or a video file. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video. If an InlineQueryResultVideo message contains an embedded video (e.g., YouTube), you must replace its content using input_message_content.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultVideo {
+    /// Type of the result, must be video
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 bytes
     pub id: String,
+    /// A valid URL for the embedded video player or video file
     pub video_url: String,
+    /// MIME type of the content of the video URL, “text/html” or “video/mp4”
     pub mime_type: String,
-    pub thumb_url: String,
+    /// URL of the thumbnail (JPEG only) for the video
+    pub thumbnail_url: String,
+    /// Title for the result
     pub title: String,
+    /// Optional. Caption of the video to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -1889,16 +2020,22 @@ pub struct InlineQueryResultVideo {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. Video width
     #[serde(skip_serializing_if = "Option::is_none")]
     pub video_width: Option<Integer>,
+    /// Optional. Video height
     #[serde(skip_serializing_if = "Option::is_none")]
     pub video_height: Option<Integer>,
+    /// Optional. Video duration in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub video_duration: Option<Integer>,
+    /// Optional. Short description of the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the video. This field is required if InlineQueryResultVideo is used to send an HTML-page as a result (e.g., a YouTube video).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -1956,10 +2093,14 @@ pub struct InlineQueryResultVoice {
 /// Represents a link to a file. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file. Currently, only .PDF and .ZIP files can be sent using this method.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultDocument {
+    /// Type of the result, must be document
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 bytes
     pub id: String,
+    /// Title for the result
     pub title: String,
+    /// Optional. Caption of the document to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -1968,49 +2109,71 @@ pub struct InlineQueryResultDocument {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// A valid URL for the file
     pub document_url: String,
+    /// MIME type of the content of the file, either “application/pdf” or “application/zip”
     pub mime_type: String,
+    /// Optional. Short description of the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the file
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
+    /// Optional. URL of the thumbnail (JPEG only) for the file
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_url: Option<String>,
+    pub thumbnail_url: Option<String>,
+    /// Optional. Thumbnail width
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_width: Option<Integer>,
+    pub thumbnail_width: Option<Integer>,
+    /// Optional. Thumbnail height
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_height: Option<Integer>,
+    pub thumbnail_height: Option<Integer>,
 }
 
 /// Represents a location on a map. By default, the location will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the location.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultLocation {
+    /// Type of the result, must be location
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 Bytes
     pub id: String,
+    /// Location latitude in degrees
     pub latitude: Float,
+    /// Location longitude in degrees
     pub longitude: Float,
+    /// Location title
     pub title: String,
+    /// Optional. The radius of uncertainty for the location, measured in meters; 0-1500
     #[serde(skip_serializing_if = "Option::is_none")]
     pub horizontal_accuracy: Option<Float>,
+    /// Optional. Period in seconds for which the location can be updated, should be between 60 and 86400.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub live_period: Option<Integer>,
+    /// Optional. For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub heading: Option<Integer>,
+    /// Optional. For live locations, a maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub proximity_alert_radius: Option<Integer>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the location
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
+    /// Optional. Url of the thumbnail for the result
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_url: Option<String>,
+    pub thumbnail_url: Option<String>,
+    /// Optional. Thumbnail width
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_width: Option<Integer>,
+    pub thumbnail_width: Option<Integer>,
+    /// Optional. Thumbnail height
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_height: Option<Integer>,
+    pub thumbnail_height: Option<Integer>,
 }
 
 /// Represents a venue. By default, the venue will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the venue.
@@ -2049,37 +2212,48 @@ pub struct InlineQueryResultVenue {
     pub input_message_content: Option<InputMessageContent>,
     /// Optional. Url of the thumbnail for the result
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_url: Option<String>,
+    pub thumbnail_url: Option<String>,
     /// Optional. Thumbnail width
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_width: Option<Integer>,
+    pub thumbnail_width: Option<Integer>,
     /// Optional. Thumbnail height
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_height: Option<Integer>,
+    pub thumbnail_height: Option<Integer>,
 }
 
 /// Represents a contact with a phone number. By default, this contact will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the contact.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultContact {
+    /// Type of the result, must be contact
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 Bytes
     pub id: String,
+    /// Contact's phone number
     pub phone_number: String,
+    /// Contact's first name
     pub first_name: String,
+    // Optional. Contact's last name
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_name: Option<String>,
+    /// Optional. Additional data about the contact in the form of a vCard, 0-2048 bytes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vcard: Option<String>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the contact
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
+    /// Optional. Url of the thumbnail for the result
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_url: Option<String>,
+    pub thumbnail_url: Option<String>,
+    /// Optional. Thumbnail width
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_width: Option<Integer>,
+    pub thumbnail_width: Option<Integer>,
+    /// Optional. Thumbnail height
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumb_height: Option<Integer>,
+    pub thumbnail_height: Option<Integer>,
 }
 
 /// Represents a Game.
