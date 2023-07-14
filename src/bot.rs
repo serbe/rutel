@@ -1371,6 +1371,27 @@ pub struct GetMyCommands {
     pub language_code: Option<String>,
 }
 
+/// Use this method to change the bot's name. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetMyName {
+    /// Optional. New bot name; 0-64 characters. Pass an empty string to remove the dedicated name for the given language.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// Optional. A two-letter ISO 639-1 language code. If empty, the name will be shown to all users for whose language there is no dedicated name.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language_code: Option<String>,
+}
+
+/// Use this method to get the current bot name for the given user language. Returns BotName on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "BotName"]
+pub struct GetMyName {
+    /// Optional	A two-letter ISO 639-1 language code or an empty string
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language_code: Option<String>,
+}
+
 /// Use this method to change the bot's description, which is shown in the chat with the bot if the chat is empty. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<BotCommand>"]
@@ -1781,12 +1802,9 @@ pub struct AnswerInlineQuery {
     /// Optional. Pass the offset that a client should send in the next query with the same text to receive more results. Pass an empty string if there are no more results or if you don‘t support pagination. Offset length can’t exceed 64 bytes.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub next_offset: Option<String>,
-    /// Optional. If passed, clients will display a button with specified text that switches the user to a private chat with the bot and sends the bot a start message with the parameter switch_pm_parameter
+    /// Optional. A JSON-serialized object describing a button to be shown above inline query results
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub switch_pm_text: Option<String>,
-    /// Optional. Deep-linking parameter for the /start message sent to the bot when user presses the switch button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub switch_pm_parameter: Option<String>,
+    pub button: Option<InlineQueryResultsButton>,
 }
 
 /// Use this method to set the result of an interaction with a [Web App](https://core.telegram.org/bots/webapps) and send a corresponding message on behalf of the user to the chat from which the query originated. On success, a SentWebAppMessage object is returned.
