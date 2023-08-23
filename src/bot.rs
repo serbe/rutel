@@ -1313,6 +1313,15 @@ pub struct UnhideGeneralForumTopic {
     pub chat_id: ChatID,
 }
 
+/// Use this method to clear the list of pinned messages in a General forum topic. The bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup.
+/// Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct UnpinAllGeneralForumTopicMessages {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: ChatID,
+}
+
 /// Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
@@ -1387,7 +1396,7 @@ pub struct SetMyName {
 #[derive(Serialize, Debug, Response)]
 #[response = "BotName"]
 pub struct GetMyName {
-    /// Optional	A two-letter ISO 639-1 language code or an empty string
+    /// Optional. A two-letter ISO 639-1 language code or an empty string
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language_code: Option<String>,
 }
