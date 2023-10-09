@@ -901,9 +901,15 @@ pub struct ChatShared {
 /// This object represents a service message about a user allowing a bot added to the attachment menu to write messages. Currently holds no information.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct WriteAccessAllowed {
+    /// Optional. True, if the access was granted after the user accepted an explicit request from a Web App sent by the method requestWriteAccess
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub from_request: Option<Boolean>,
     /// Optional. Name of the Web App which was launched from a link
     #[serde(skip_serializing_if = "Option::is_none")]
     pub web_app_name: Option<String>,
+    /// Optional. True, if the access was granted when the bot was added to the attachment or side menu
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub from_attachment_menu: Option<Boolean>,
 }
 
 /// This object represents a service message about a video chat scheduled in the chat.
@@ -1232,6 +1238,15 @@ pub struct ChatAdministratorRights {
     /// Optional. True, if the user is allowed to pin messages; groups and supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_pin_messages: Option<Boolean>,
+    /// Optional. True, if the administrator can post stories in the channel; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_post_stories: Option<Boolean>,
+    /// Optional. True, if the administrator can edit stories posted by other users; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_edit_stories: Option<Boolean>,
+    /// Optional. True, if the administrator can delete stories posted by other users; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_delete_stories: Option<Boolean>,
     /// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_manage_topics: Option<Boolean>,
@@ -1295,6 +1310,15 @@ pub struct ChatMemberAdministrator {
     /// Optional. True, if the user is allowed to pin messages; groups and supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_pin_messages: Option<Boolean>,
+    /// Optional. True, if the administrator can post stories in the channel; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_post_stories: Option<Boolean>,
+    /// Optional. True, if the administrator can edit stories posted by other users; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_edit_stories: Option<Boolean>,
+    /// Optional. True, if the administrator can delete stories posted by other users; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_delete_stories: Option<Boolean>,
     /// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_manage_topics: Option<Boolean>,

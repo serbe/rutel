@@ -921,6 +921,15 @@ pub struct PromoteChatMember {
     /// Optional. Pass True, if the administrator can pin messages, supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_pin_messages: Option<Boolean>,
+    /// Optional. True, if the administrator can post stories in the channel; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_post_stories: Option<Boolean>,
+    /// Optional. True, if the administrator can edit stories posted by other users; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_edit_stories: Option<Boolean>,
+    /// Optional. True, if the administrator can delete stories posted by other users; channels only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_delete_stories: Option<Boolean>,
     /// Optional. Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_manage_topics: Option<Boolean>,
