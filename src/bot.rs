@@ -3,8 +3,26 @@ use rutel_derive::Response;
 use serde::Serialize;
 use serde_json::{from_slice, from_value, Value};
 
-use crate::error::{Error, Result};
-use crate::types::*;
+use crate::{
+    bot_command::{BotCommand, BotCommandScope},
+    chat_boost::UserChatBoosts,
+    error::{Error, Result},
+    games::GameHighScore,
+    inline_mode::{InlineQueryResult, InlineQueryResultsButton, SentWebAppMessage},
+    input_media::InputMedia,
+    message::{Message, MessageEntity, MessageId, ReplyParameters},
+    passport::PassportElementError,
+    payments::{LabeledPrice, ShippingOption},
+    poll::Poll,
+    reaction::ReactionType,
+    stickers::{InputSticker, MaskPosition, Sticker, StickerSet},
+    types::{
+        Boolean, BotDescription, BotName, BotShortDescription, Chat, ChatAdministratorRights,
+        ChatID, ChatInviteLink, ChatMember, ChatPermissions, File, Float, ForumTopic,
+        InlineKeyboardMarkup, InputFile, InputFileString, Integer, LinkPreviewOptions, MenuButton,
+        ReplyMarkup, Response, TrueMessage, Update, User, UserProfilePhotos,
+    },
+};
 
 #[derive(Debug)]
 pub struct Bot {
@@ -115,21 +133,18 @@ pub struct SendMessage {
     /// Optional. List of special entities that appear in message text, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub entities: Option<Vec<MessageEntity>>,
-    /// Optional. Disables link previews for links in this message
+    /// Optional. Link preview generation options for the message
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub disable_web_page_preview: Option<Boolean>,
+    pub link_preview_options: Option<LinkPreviewOptions>,
     /// Optional. Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -154,6 +169,27 @@ pub struct ForwardMessage {
     pub protect_content: Option<Boolean>,
     /// Message identifier in the chat specified in from_chat_id
     pub message_id: Integer,
+}
+
+/// Use this method to forward multiple messages of any kind. If some of the specified messages can't be found or forwarded, they are skipped. Service messages and messages with protected content can't be forwarded. Album grouping is kept for forwarded messages. On success, an array of MessageId of the sent messages is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<MessageId>"]
+pub struct ForwardMessages {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
+    /// Unique identifier for the chat where the original messages were sent (or channel username in the format @channelusername)
+    pub from_chat_id: ChatID,
+    /// Identifiers of 1-100 messages in the chat from_chat_id to forward. The identifiers must be specified in a strictly increasing order.
+    pub message_ids: Vec<Integer>,
+    /// Optional. Sends the messages silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification: Option<Boolean>,
+    /// Optional. Protects the contents of the forwarded messages from forwarding and saving
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub protect_content: Option<Boolean>,
 }
 
 /// Use this method to copy messages of any kind. The method is analogous to the method forwardMessages, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
@@ -184,15 +220,36 @@ pub struct CopyMessage {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
+}
+
+/// Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an array of MessageId of the sent messages is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Vec<MessageId>"]
+pub struct CopyMessages {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<Integer>,
+    /// Unique identifier for the chat where the original messages were sent (or channel username in the format @channelusername)
+    pub from_chat_id: ChatID,
+    /// Identifiers of 1-100 messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly increasing order.
+    pub message_ids: Vec<Integer>,
+    /// Optional. Sends the messages silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification: Option<Boolean>,
+    /// Optional. Protects the contents of the sent messages from forwarding and saving
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub protect_content: Option<Boolean>,
+    /// Optional. Pass True to copy the messages without their captions
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub remove_caption: Option<Boolean>,
 }
 
 /// Use this method to send photos. On success, the sent Message is returned.
@@ -224,12 +281,9 @@ pub struct SendPhoto {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -274,12 +328,9 @@ pub struct SendAudio {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -317,12 +368,9 @@ pub struct SendDocument {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -372,12 +420,9 @@ pub struct SendVideo {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -424,12 +469,9 @@ pub struct SendAnimation {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -464,12 +506,9 @@ pub struct SendVoice {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -501,12 +540,9 @@ pub struct SendVideoNote {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -529,12 +565,9 @@ pub struct SendMediaGroup {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the messages are a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
 }
 
 /// Use this method to send point on the map. On success, the sent Message is returned.
@@ -568,12 +601,9 @@ pub struct SendLocation {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -661,12 +691,9 @@ pub struct SendVenue {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -697,12 +724,9 @@ pub struct SendContact {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -757,12 +781,9 @@ pub struct SendPoll {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -786,12 +807,9 @@ pub struct SendDice {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -809,6 +827,22 @@ pub struct SendChatAction {
     pub message_thread_id: Option<Integer>,
     /// Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes.
     pub action: String,
+}
+
+/// Use this method to change the chosen reactions on a message. Service messages can't be reacted to. Automatically forwarded messages from a channel to its discussion group have the same available reactions as messages in the channel. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct SetMessageReaction {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Identifier of the target message. If the message belongs to a media group, the reaction is set to the first non-deleted message in the group instead.
+    pub message_id: Integer,
+    /// Optional. New list of reaction types to set on the message. Currently, as non-premium users, bots can set up to one reaction per message. A custom emoji reaction can be used if it is either already present on the message or explicitly allowed by chat administrators.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reaction: Option<Vec<ReactionType>>,
+    /// Optional. Pass True to set the reaction with a big animation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_big: Option<Boolean>,
 }
 
 /// Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos object.
@@ -1351,6 +1385,16 @@ pub struct AnswerCallbackQuery {
     pub cache_time: Option<Integer>,
 }
 
+/// Use this method to get the list of boosts added to a chat by a user. Requires administrator rights in the chat. Returns a UserChatBoosts object.
+#[derive(Serialize, Debug, Response)]
+#[response = "UserChatBoosts"]
+pub struct GetUserChatBoosts {
+    /// Unique identifier for the chat or username of the channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Unique identifier of the target user
+    pub user_id: Integer,
+}
+
 /// Use this method to change the list of the bot's commands. See [commands](https://core.telegram.org/bots#commands) for more details about bot commands. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
@@ -1514,9 +1558,9 @@ pub struct EditMessageText {
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub entities: Option<Vec<MessageEntity>>,
-    /// Optional. Disables link previews for links in this message
+    /// Optional. Link preview generation options for the message
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub disable_web_page_preview: Option<Boolean>,
+    pub link_preview_options: Option<LinkPreviewOptions>,
     /// Optional. A JSON-serialized object for an inline keyboard.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -1618,6 +1662,16 @@ pub struct DeleteMessage {
     pub message_id: Integer,
 }
 
+/// Use this method to delete multiple messages simultaneously. If some of the specified messages can't be found, they are skipped. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct DeleteMessages {
+    /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Identifiers of 1-100 messages to delete. See deleteMessage for limitations on which messages can be deleted
+    pub message_ids: Vec<Integer>,
+}
+
 /// Use this method to send .webp stickers. On success, the sent Message is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
@@ -1638,12 +1692,9 @@ pub struct SendSticker {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
@@ -1907,15 +1958,72 @@ pub struct SendInvoice {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+}
+
+/// Use this method to create a link for an invoice. Returns the created invoice link as String on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "String"]
+pub struct CreateInvoiceLink {
+    /// Product name, 1-32 characters
+    pub title: String,
+    /// Product description, 1-255 characters
+    pub description: String,
+    /// Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
+    pub payload: String,
+    /// Payment provider token, obtained via BotFather
+    pub provider_token: String,
+    /// Three-letter ISO 4217 currency code, see more on currencies
+    pub currency: String,
+    /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
+    pub prices: Vec<LabeledPrice>,
+    /// Optional. The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_tip_amount: Option<Integer>,
+    /// Optional. A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive, passed in a strictly increased order and must not exceed max_tip_amount.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub suggested_tip_amounts: Option<Integer>,
+    /// Optional. JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description of required fields should be provided by the payment provider.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub provider_data: Option<String>,
+    /// Optional. URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo_url: Option<String>,
+    /// Optional. Photo size in bytes
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo_size: Option<Integer>,
+    /// Optional. Photo width
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo_width: Option<Integer>,
+    /// Optional. Photo height
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo_height: Option<Integer>,
+    /// Optional. Pass True if you require the user's full name to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub need_name: Option<Boolean>,
+    /// Optional. Pass True if you require the user's phone number to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub need_phone_number: Option<Boolean>,
+    /// Optional. Pass True if you require the user's email address to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub need_email: Option<Boolean>,
+    /// Optional. Pass True if you require the user's shipping address to complete the order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub need_shipping_address: Option<Boolean>,
+    /// Optional. Pass True if the user's phone number should be sent to the provider
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub send_phone_number_to_provider: Option<Boolean>,
+    /// Optional. Pass True if the user's email address should be sent to the provider
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub send_email_to_provider: Option<Boolean>,
+    /// Optional. Pass True if the final price depends on the shipping method
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_flexible: Option<Boolean>,
 }
 
 /// If you sent an invoice requesting a shipping address and the parameter is_flexible was specified, the Bot API will send an Update with a shipping_query field to the bot. Use this method to reply to shipping queries. On success, True is returned.
@@ -1947,6 +2055,8 @@ pub struct AnswerPreCheckoutQuery {
     pub error_message: Option<String>,
 }
 
+// ------------------ PASSPORT -----------------
+
 /// Informs a user that some of the Telegram Passport elements they provided contains errors. The user will not be able to re-submit their Passport to you until the errors are fixed (the contents of the field for which you returned the error must change). Returns True on success. Use this if the data submitted by the user doesn't satisfy the standards your service requires for any reason. For example, if a birthday date seems invalid, a submitted document is blurry, a scan shows evidence of tampering, etc. Supply some details in the error message to make sure the user knows how to correct the issues.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
@@ -1956,6 +2066,8 @@ pub struct SetPassportDataErrors {
     /// A JSON-serialized array describing the errors
     pub errors: Vec<PassportElementError>,
 }
+
+// ------------------ GAMES -------------------
 
 /// Use this method to send a game. On success, the sent Message is returned.
 #[derive(Serialize, Debug, Response)]
@@ -1974,12 +2086,9 @@ pub struct SendGame {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
-    /// Optional. If the message is a reply, ID of the original message
+    /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_to_message_id: Option<Integer>,
-    /// Optional. Pass True, if the message should be sent even if the specified replied-to message is not found
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_sending_without_reply: Option<Boolean>,
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not empty, the first button must launch the game.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
