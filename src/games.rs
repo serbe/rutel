@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    files::{Animation, PhotoSize},
     message::MessageEntity,
-    types::{Animation, Integer, PhotoSize, User},
+    types::{Integer, User},
 };
 
 /// This object represents a game. Use BotFather to create and edit games, their short names will act as unique identifiers.

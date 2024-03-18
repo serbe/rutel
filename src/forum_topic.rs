@@ -32,3 +32,11 @@ pub struct ForumTopicEdited {
 /// This object represents a service message about a forum topic reopened in the chat. Currently holds no information
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct ForumTopicReopened {}
+
+/// This object represents a service message about General forum topic hidden in the chat. Currently holds no information.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct GeneralForumTopicHidden {}
+
+/// This object represents a service message about General forum topic unhidden in the chat. Currently holds no information.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct GeneralForumTopicUnhidden {}

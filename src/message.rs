@@ -1,7 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    forum_topic::{ForumTopicClosed, ForumTopicCreated, ForumTopicEdited, ForumTopicReopened},
+    files::{Animation, Audio, Document, PhotoSize, Video, VideoNote, Voice},
+    forum_topic::{
+        ForumTopicClosed, ForumTopicCreated, ForumTopicEdited, ForumTopicReopened,
+        GeneralForumTopicHidden, GeneralForumTopicUnhidden,
+    },
     games::Game,
     giveaway::{Giveaway, GiveawayCompleted, GiveawayCreated, GiveawayWinners},
     passport::PassportData,
@@ -9,12 +13,11 @@ use crate::{
     poll::Poll,
     stickers::Sticker,
     types::{
-        Animation, Audio, Boolean, Chat, ChatID, ChatShared, Contact, Dice, Document,
-        GeneralForumTopicHidden, GeneralForumTopicUnhidden, InlineKeyboardMarkup, Integer,
-        LinkPreviewOptions, Location, MessageAutoDeleteTimerChanged, PhotoSize,
-        ProximityAlertTriggered, Story, User, UsersShared, Venue, Video, VideoChatEnded,
-        VideoChatParticipantsInvited, VideoChatScheduled, VideoChatStarted, VideoNote, Voice,
-        WebAppData, WriteAccessAllowed,
+        Boolean, Chat, ChatBoostAdded, ChatID, ChatShared, Contact, Dice, InlineKeyboardMarkup,
+        Integer, LinkPreviewOptions, Location, MessageAutoDeleteTimerChanged,
+        ProximityAlertTriggered, Story, User, UsersShared, Venue, VideoChatEnded,
+        VideoChatParticipantsInvited, VideoChatScheduled, VideoChatStarted, WebAppData,
+        WriteAccessAllowed,
     },
 };
 
@@ -32,6 +35,9 @@ pub struct Message {
     /// Optional. Sender of the message, sent on behalf of a chat. The channel itself for channel messages. The supergroup itself for messages from anonymous group administrators. The linked channel for messages automatically forwarded to the discussion group
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sender_chat: Option<Chat>,
+    /// Optional. If the sender of the message boosted the chat, the number of boosts added by the user
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sender_boost_count: Option<Integer>,
     /// Date the message was sent in Unix time
     pub date: Integer,
     /// Conversation the message belongs to
@@ -54,6 +60,9 @@ pub struct Message {
     /// Optional. For replies that quote part of the original message, the quoted part of the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote: Option<TextQuote>,
+    /// Optional. For replies to a story, the original story
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_to_story: Option<Story>,
     /// Optional. Bot through which the message was sent
     #[serde(skip_serializing_if = "Option::is_none")]
     pub via_bot: Option<User>,
@@ -192,6 +201,9 @@ pub struct Message {
     /// Optional. Service message. A user in the chat triggered another user's proximity alert while sharing Live Location.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub proximity_alert_triggered: Option<ProximityAlertTriggered>,
+    /// Optional. Service message: user boosted the chat
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub boost_added: Option<ChatBoostAdded>,
     /// Optional. Service message: forum topic created
     #[serde(skip_serializing_if = "Option::is_none")]
     pub forum_topic_created: Option<ForumTopicCreated>,

@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::types::{Boolean, File, Float, InputFileString, Integer, PhotoSize};
+use crate::{
+    files::{File, PhotoSize},
+    types::{Boolean, Float, InputFileString, Integer},
+};
 
 /// This object represents a sticker.
 #[derive(Clone, Serialize, Deserialize, Debug)]
