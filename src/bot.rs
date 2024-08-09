@@ -695,6 +695,9 @@ pub struct SendLocation {
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageLiveLocation {
+    /// Optional. Unique identifier of the business connection on behalf of which the message to be edited was sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Required if inline_message_id is not specified. Identifier of the sent message
@@ -728,6 +731,9 @@ pub struct EditMessageLiveLocation {
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct StopMessageLiveLocation {
+    /// Optional. Unique identifier of the business connection on behalf of which the message to be edited was sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Required if inline_message_id is not specified. Identifier of the sent message
@@ -1657,6 +1663,9 @@ pub struct GetMyDefaultAdministratorRights {
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageText {
+    /// Optional. Unique identifier of the business connection on behalf of which the message to be edited was sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Required if inline_message_id is not specified. Identifier of the sent message
@@ -1685,6 +1694,9 @@ pub struct EditMessageText {
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageCaption {
+    /// Optional. Unique identifier of the business connection on behalf of which the message to be edited was sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Optional. Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_id: Option<ChatID>,
@@ -1715,6 +1727,9 @@ pub struct EditMessageCaption {
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageMedia {
+    /// Optional. Unique identifier of the business connection on behalf of which the message to be edited was sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Optional. Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chat_id: Option<ChatID>,
@@ -1735,6 +1750,9 @@ pub struct EditMessageMedia {
 #[derive(Serialize, Debug, Response)]
 #[response = "TrueMessage"]
 pub struct EditMessageReplyMarkup {
+    /// Optional. Unique identifier of the business connection on behalf of which the message to be edited was sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Required if inline_message_id is not specified. Identifier of the sent message
@@ -1752,6 +1770,9 @@ pub struct EditMessageReplyMarkup {
 #[derive(Serialize, Debug, Response)]
 #[response = "Poll"]
 pub struct StopPoll {
+    /// Optional. Unique identifier of the business connection on behalf of which the message to be edited was sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Identifier of the original message with the poll
