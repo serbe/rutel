@@ -121,6 +121,9 @@ pub struct GetUpdates {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendMessage {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -257,6 +260,9 @@ pub struct CopyMessages {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendPhoto {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -295,6 +301,9 @@ pub struct SendPhoto {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendAudio {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -341,6 +350,9 @@ pub struct SendAudio {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendDocument {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -381,6 +393,9 @@ pub struct SendDocument {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendVideo {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -433,6 +448,9 @@ pub struct SendVideo {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendAnimation {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -482,6 +500,9 @@ pub struct SendAnimation {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendVoice {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -519,6 +540,9 @@ pub struct SendVoice {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendVideoNote {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -553,6 +577,9 @@ pub struct SendVideoNote {
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<Message>"]
 pub struct SendMediaGroup {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -575,6 +602,9 @@ pub struct SendMediaGroup {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendLocation {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -661,6 +691,9 @@ pub struct StopMessageLiveLocation {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendVenue {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -704,6 +737,9 @@ pub struct SendVenue {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendContact {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -737,6 +773,9 @@ pub struct SendContact {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendPoll {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -794,6 +833,9 @@ pub struct SendPoll {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendDice {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -821,6 +863,9 @@ pub struct SendDice {
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct SendChatAction {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread; supergroups only
@@ -1653,7 +1698,7 @@ pub struct StopPoll {
 /// - Bots granted can_post_messages permissions can delete outgoing messages in channels.
 /// - If the bot is an administrator of a group, it can delete any message there.
 /// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
-/// Returns True on success.
+///  Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct DeleteMessage {
@@ -1677,6 +1722,9 @@ pub struct DeleteMessages {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendSticker {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -1741,8 +1789,6 @@ pub struct CreateNewStickerSet {
     pub title: String,
     /// A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
     pub stickers: Vec<InputSticker>,
-    /// Format of stickers in the set, must be one of “static”, “animated”, “video”
-    pub sticker_format: String,
     /// Optional. Type of stickers in the set, pass “regular”, “mask”, or “custom_emoji”. By default, a regular sticker set is created.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sticker_type: Option<String>,
@@ -1779,6 +1825,20 @@ pub struct SetStickerPositionInSet {
 pub struct DeleteStickerFromSet {
     /// File identifier of the sticker
     pub sticker: String,
+}
+
+/// Use this method to replace an existing sticker in a sticker set with a new one. The method is equivalent to calling deleteStickerFromSet, then addStickerToSet, then setStickerPositionInSet. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct ReplaceStickerInSet {
+    /// User identifier of the sticker set owner
+    pub user_id: Integer,
+    /// Sticker set name
+    pub name: String,
+    /// File identifier of the replaced sticker
+    pub old_sticker: String,
+    /// A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set remains unchanged.
+    pub sticker: InputSticker,
 }
 
 /// Use this method to change the list of emoji assigned to a regular or custom emoji sticker. The sticker must belong to a sticker set created by the bot. Returns True on success.
@@ -1834,6 +1894,8 @@ pub struct SetStickerSetThumbnail {
     /// Optional. A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see [technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker set thumbnail can't be uploaded via HTTP URL.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumbnail: Option<InputFileString>,
+    /// Yes	Format of the thumbnail, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, or “video” for a WEBM video
+    pub format: String,
 }
 
 /// Use this method to set the thumbnail of a custom emoji sticker set. Returns True on success.
@@ -2074,6 +2136,9 @@ pub struct SetPassportDataErrors {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendGame {
+    /// Optional Unique identifier of the business connection on behalf of which the message will be sent
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat
     pub chat_id: Integer,
     /// Optional. Unique identifier for the target message thread (topic) of the forum; for forum supergroups only

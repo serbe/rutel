@@ -1,4 +1,5 @@
 use crate::{
+    business::{BusinessConnection, BusinessMessagesDeleted},
     chat_boost::{ChatBoostRemoved, ChatBoostUpdated},
     files::{File, PhotoSize},
     inline_mode::{ChosenInlineResult, InlineQuery},
@@ -6,7 +7,7 @@ use crate::{
     message::{MaybeInaccessibleMessage, Message},
     payments::{PreCheckoutQuery, ShippingQuery},
     poll::{Poll, PollAnswer},
-    reactions::{MessageReactionCountUpdated, MessageReactionUpdated, ReactionType},
+    reactions::{MessageReactionCountUpdated, MessageReactionUpdated},
 };
 
 use serde::{Deserialize, Serialize};
@@ -130,6 +131,18 @@ pub struct Update {
     /// Optional. New version of a channel post that is known to the bot and was edited
     #[serde(skip_serializing_if = "Option::is_none")]
     pub edited_channel_post: Option<Message>,
+    /// Optional. The bot was connected to or disconnected from a business account, or a user edited an existing connection with the bot
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection: Option<BusinessConnection>,
+    /// Optional. New message from a connected business account
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_message: Option<Message>,
+    /// Optional. New version of a message from a connected business account
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub edited_business_message: Option<Message>,
+    /// Optional. Messages were deleted from a connected business account
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub deleted_business_messages: Option<BusinessMessagesDeleted>,
     /// Optional. A reaction to a message was changed by a user. The bot must be an administrator in the chat and must explicitly specify "message_reaction" in the list of allowed_updates to receive these updates. The update isn't received for reactions set by bots.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message_reaction: Option<MessageReactionUpdated>,
@@ -233,6 +246,9 @@ pub struct User {
     /// Optional. True, if privacy mode is disabled for the bot. Returned only in getMe.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_read_all_group_messages: Option<Boolean>,
+    /// Optional. True, if the bot can be connected to a Telegram Business account to receive its messages. Returned only in getMe.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_connect_to_business: Option<Boolean>,
     /// Optional. True, if the bot supports inline queries. Returned only in getMe.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub supports_inline_queries: Option<Boolean>,
@@ -243,7 +259,7 @@ pub struct User {
 pub struct Chat {
     /// Unique identifier for this chat. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this identifier.
     pub id: Integer,
-    /// Type of chat, can be either “private”, “group”, “supergroup” or “channel”
+    /// Type of the chat, can be either “private”, “group”, “supergroup” or “channel”
     #[serde(rename = "type")]
     pub kind: String,
     /// Optional. Title, for supergroups, channels and group chats
@@ -261,96 +277,6 @@ pub struct Chat {
     /// Optional. True, if the supergroup chat is a forum (has topics enabled)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_forum: Option<Boolean>,
-    /// Optional. Chat photo. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub photo: Option<ChatPhoto>,
-    /// Optional. If non-empty, the list of all active chat usernames; for private chats, supergroups and channels. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub active_usernames: Option<Vec<String>>,
-    /// Optional. List of available reactions allowed in the chat. If omitted, then all emoji reactions are allowed. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub available_reactions: Option<Vec<ReactionType>>,
-    /// Optional. Identifier of the accent color for the chat name and backgrounds of the chat photo, reply header, and link preview. See accent colors for more details. Returned only in getChat. Always returned in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub accent_color_id: Option<Integer>,
-    /// Optional. Custom emoji identifier of emoji chosen by the chat for the reply header and link preview background. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub background_custom_emoji_id: Option<String>,
-    /// Optional. Identifier of the accent color for the chat's profile background. See profile accent colors for more details. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub profile_accent_color_id: Option<Integer>,
-    /// Optional. Custom emoji identifier of the emoji chosen by the chat for its profile background. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub profile_background_custom_emoji_id: Option<String>,
-    /// Optional. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub emoji_status_custom_emoji_id: Option<String>,
-    /// Optional. Expiration date of the emoji status of the other party in a private chat, if any. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub emoji_status_expiration_date: Option<Integer>,
-    /// Optional. Bio of the other party in a private chat. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub bio: Option<String>,
-    /// Optional. True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id> links only in chats with the user. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub has_private_forwards: Option<Boolean>,
-    /// Optional. True, if the privacy settings of the other party restrict sending voice and video note messages in the private chat. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub has_restricted_voice_and_video_messages: Option<Boolean>,
-    /// Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub join_to_send_messages: Option<Boolean>,
-    /// Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub join_by_request: Option<Boolean>,
-    /// Optional. Description, for groups, supergroups and channel chats. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
-    /// Optional. Primary invite link, for groups, supergroups and channel chats. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub invite_link: Option<String>,
-    /// Optional. The most recent pinned message (by sending date). Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub pinned_message: Option<Box<Message>>,
-    /// Optional. Default chat member permissions, for groups and supergroups. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub permissions: Option<ChatPermissions>,
-    /// Optional. For supergroups, the minimum allowed delay between consecutive messages sent by each unpriviledged user; in seconds. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub slow_mode_delay: Option<Integer>,
-    /// Optional. For supergroups, the minimum number of boosts that a non-administrator user needs to add in order to ignore slow mode and chat permissions. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub unrestrict_boost_count: Option<Integer>,
-    /// Optional. The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub message_auto_delete_time: Option<Integer>,
-    /// Optional. True, if aggressive anti-spam checks are enabled in the supergroup. The field is only available to chat administrators. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub has_aggressive_anti_spam_enabled: Option<Boolean>,
-    /// Optional. True, if non-administrators can only get the list of bots and administrators in the chat. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub has_hidden_members: Option<Boolean>,
-    /// Optional. True, if messages from the chat can't be forwarded to other chats. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub has_protected_content: Option<Boolean>,
-    /// Optional. True, if new chat members will have access to old messages; available only to chat administrators. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub has_visible_history: Option<Boolean>,
-    /// Optional. For supergroups, name of group sticker set. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub sticker_set_name: Option<String>,
-    /// Optional. True, if the bot can change the group sticker set. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_set_sticker_set: Option<Boolean>,
-    /// Optional. For supergroups, the name of the group's custom emoji sticker set. Custom emoji from this set can be used by all users and bots in the group. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_emoji_sticker_set_name: Option<String>,
-    /// Optional. Unique identifier for the linked chat, i.e. the discussion group identifier for a channel and vice versa; for supergroups and channel chats. This identifier may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it is smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub linked_chat_id: Option<Integer>,
-    /// Optional. For supergroups, the location to which the supergroup is connected. Returned only in getChat.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub location: Option<ChatLocation>,
 }
 
 /// This object represents a story.
@@ -456,13 +382,32 @@ pub struct ChatBoostAdded {
     pub boost_count: Integer,
 }
 
+/// This object contains information about a user that was shared with the bot using a KeyboardButtonRequestUsers button.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct SharedUser {
+    /// Identifier of the shared user. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so 64-bit integers or double-precision float types are safe for storing these identifiers. The bot may not have access to the user and could be unable to use this identifier, unless the user is already known to the bot by some other means.
+    pub user_id: Integer,
+    /// Optional. First name of the user, if the name was requested by the bot
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub first_name: Option<String>,
+    /// Optional. Last name of the user, if the name was requested by the bot
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_nam: Option<String>,
+    /// Optional. Username of the user, if the username was requested by the bot
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub username: Option<String>,
+    /// Optional. Available sizes of the chat photo, if the photo was requested by the bot
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo: Option<Vec<PhotoSize>>,
+}
+
 /// This object contains information about the users whose identifiers were shared with the bot using a KeyboardButtonRequestUsers button.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct UsersShared {
     /// Identifier of the request
     pub request_id: Integer,
-    /// Identifiers of the shared users. These numbers may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting them. But they have at most 52 significant bits, so 64-bit integers or double-precision float types are safe for storing these identifiers. The bot may not have access to the users and could be unable to use these identifiers, unless the users are already known to the bot by some other means.
-    pub user_ids: Vec<Integer>,
+    /// Information about users shared with the bot.
+    pub users: Vec<SharedUser>,
 }
 
 /// This object contains information about the chat whose identifier was shared with the bot using a KeyboardButtonRequestChat button.
@@ -472,6 +417,15 @@ pub struct ChatShared {
     pub request_id: Integer,
     /// Identifier of the shared chat. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a 64-bit integer or double-precision float type are safe for storing this identifier. The bot may not have access to the chat and could be unable to use this identifier, unless the chat is already known to the bot by some other means.
     pub chat_id: Integer,
+    /// Optional. Title of the chat, if the title was requested by the bot.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    /// Optional. Username of the chat, if the username was requested by the bot and available.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub username: Option<String>,
+    /// Optional. Available sizes of the chat photo, if the photo was requested by the bot
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub photo: Option<Vec<PhotoSize>>,
 }
 
 /// This object represents a service message about a user allowing a bot added to the attachment menu to write messages. Currently holds no information.
@@ -964,6 +918,18 @@ pub struct ChatPermissions {
     /// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_manage_topics: Option<Boolean>,
+}
+
+/// Describes the birthdate of a user.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Birthdate {
+    /// Day of the user's birth; 1-31
+    pub day: Integer,
+    /// Month of the user's birth; 1-12
+    pub month: Integer,
+    /// Optional. Year of the user's birth
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub year: Option<Integer>,
 }
 
 /// Represents a location to which a chat is connected.

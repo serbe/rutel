@@ -47,6 +47,15 @@ pub struct KeyboardButtonRequestUsers {
     /// Optional. The maximum number of users to be selected; 1-10. Defaults to 1.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_quantity: Option<Integer>,
+    /// Optional. Pass True to request the users' first and last names
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub request_name: Option<Boolean>,
+    /// Optional. Pass True to request the users' usernames
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub request_username: Option<Boolean>,
+    /// Optional. Pass True to request the users' photos
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub request_photo: Option<Boolean>,
 }
 
 /// This object defines the criteria used to request a suitable chat. The identifier of the selected chat will be shared with the bot when the corresponding button is pressed.
@@ -74,6 +83,15 @@ pub struct KeyboardButtonRequestChat {
     /// Optional. Pass True to request a chat with the bot as a member. Otherwise, no additional restrictions are applied.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bot_is_member: Option<Boolean>,
+    /// Optional. Pass True to request the chat's title
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub request_title: Option<Boolean>,
+    /// Optional. Pass True to request the chat's username
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub request_username: Option<Boolean>,
+    /// Optional. Pass True to request the chat's photo
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub request_photo: Option<Boolean>,
 }
 
 /// This object represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.

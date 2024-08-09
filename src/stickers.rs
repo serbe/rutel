@@ -53,10 +53,8 @@ pub struct StickerSet {
     pub name: String,
     /// Sticker set title
     pub title: String,
-    /// True, if the sticker set contains animated stickers
-    pub is_animated: Boolean,
-    /// True, if the sticker set contains video stickers
-    pub is_video: Boolean,
+    /// Type of stickers in the set, currently one of “regular”, “mask”, “custom_emoji”
+    pub sticker_type: String,
     /// List of all set stickers
     pub stickers: Vec<Sticker>,
     /// Optional. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
@@ -82,6 +80,8 @@ pub struct MaskPosition {
 pub struct InputSticker {
     /// The added sticker. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, upload a new one using multipart/form-data, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. Animated and video stickers can't be uploaded via HTTP URL. More information on Sending Files »
     pub sticker: InputFileString,
+    /// Format of the added sticker, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, “video” for a WEBM video
+    pub format: String,
     /// List of 1-20 emoji associated with the sticker
     pub emoji_list: Vec<String>,
     /// Optional. Position where the mask should be placed on faces. For “mask” stickers only.

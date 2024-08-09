@@ -7,6 +7,7 @@
 
 pub mod bot;
 pub mod bot_command;
+pub mod business;
 pub mod chat_boost;
 pub mod error;
 pub mod files;
