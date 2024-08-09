@@ -291,12 +291,15 @@ pub struct User {
     /// Optional. True, if privacy mode is disabled for the bot. Returned only in getMe.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub can_read_all_group_messages: Option<Boolean>,
-    /// Optional. True, if the bot can be connected to a Telegram Business account to receive its messages. Returned only in getMe.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub can_connect_to_business: Option<Boolean>,
     /// Optional. True, if the bot supports inline queries. Returned only in getMe.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub supports_inline_queries: Option<Boolean>,
+    /// Optional. True, if the bot can be connected to a Telegram Business account to receive its messages. Returned only in getMe.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_connect_to_business: Option<Boolean>,
+    /// Optional. True, if the bot has a main Web App. Returned only in getMe.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub has_main_web_app: Option<Boolean>,
 }
 
 /// This object represents a chat.

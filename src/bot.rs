@@ -1295,6 +1295,9 @@ pub struct SetChatDescription {
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct PinChatMessage {
+    /// Optional. Unique identifier of the business connection on behalf of which the message will be pinned
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Identifier of a message to pin
@@ -1308,6 +1311,9 @@ pub struct PinChatMessage {
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct UnpinChatMessage {
+    /// Optional. Unique identifier of the business connection on behalf of which the message will be pinned
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub business_connection_id: Option<String>,
     /// Unique identifier for the target chat or username of the target channel (in the format @channelusername)
     pub chat_id: ChatID,
     /// Optional. Identifier of a message to unpin. If not specified, the most recent pinned message (by sending date) will be unpinned.
