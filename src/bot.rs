@@ -13,7 +13,7 @@ use crate::{
     input_media::InputMedia,
     message::{Message, MessageEntity, MessageId, ReplyParameters},
     passport::PassportElementError,
-    payments::{LabeledPrice, ShippingOption},
+    payments::{LabeledPrice, ShippingOption, StarTransactions},
     poll::{InputPollOption, Poll},
     reactions::ReactionType,
     stickers::{InputSticker, MaskPosition, Sticker, StickerSet},
@@ -146,6 +146,9 @@ pub struct SendMessage {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -218,6 +221,9 @@ pub struct CopyMessage {
     /// Optional. List of special entities that appear in the new caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_notification: Option<Boolean>,
@@ -279,6 +285,9 @@ pub struct SendPhoto {
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Pass True if the photo needs to be covered with a spoiler animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_spoiler: Option<Boolean>,
@@ -288,6 +297,9 @@ pub struct SendPhoto {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -320,6 +332,9 @@ pub struct SendAudio {
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Duration of the audio in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
@@ -338,6 +353,9 @@ pub struct SendAudio {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -372,6 +390,9 @@ pub struct SendDocument {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Disables automatic server-side content type detection for files uploaded using multipart/form-data
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_content_type_detection: Option<Boolean>,
@@ -381,6 +402,9 @@ pub struct SendDocument {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -424,6 +448,9 @@ pub struct SendVideo {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Pass True if the video needs to be covered with a spoiler animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_spoiler: Option<Boolean>,
@@ -436,6 +463,9 @@ pub struct SendVideo {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -479,6 +509,9 @@ pub struct SendAnimation {
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Pass True if the animation needs to be covered with a spoiler animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_spoiler: Option<Boolean>,
@@ -488,6 +521,9 @@ pub struct SendAnimation {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -519,6 +555,9 @@ pub struct SendVoice {
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Duration of the voice message in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
@@ -528,6 +567,9 @@ pub struct SendVoice {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -565,6 +607,9 @@ pub struct SendVideoNote {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -593,6 +638,9 @@ pub struct SendMediaGroup {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -632,6 +680,9 @@ pub struct SendLocation {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -728,6 +779,9 @@ pub struct SendVenue {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -764,6 +818,9 @@ pub struct SendContact {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -827,6 +884,9 @@ pub struct SendPoll {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -856,6 +916,9 @@ pub struct SendDice {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -1640,6 +1703,9 @@ pub struct EditMessageCaption {
     // List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. A JSON-serialized object for an inline keyboard.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -1747,6 +1813,9 @@ pub struct SendSticker {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -1970,8 +2039,9 @@ pub struct SendInvoice {
     pub description: String,
     /// Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
     pub payload: String,
-    /// Payments provider token, obtained via Botfather
-    pub provider_token: String,
+    /// Optional. Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub provider_token:	Option<String>,	
     /// Three-letter ISO 4217 currency code, see more on currencies
     pub currency: String,
     /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
@@ -2027,6 +2097,9 @@ pub struct SendInvoice {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,
@@ -2045,8 +2118,9 @@ pub struct CreateInvoiceLink {
     pub description: String,
     /// Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
     pub payload: String,
-    /// Payment provider token, obtained via BotFather
-    pub provider_token: String,
+    /// Optional. Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub provider_token:	Option<String>,	
     /// Three-letter ISO 4217 currency code, see more on currencies
     pub currency: String,
     /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
@@ -2124,6 +2198,28 @@ pub struct AnswerPreCheckoutQuery {
     pub error_message: Option<String>,
 }
 
+/// Returns the bot's Telegram Star transactions in chronological order. On success, returns a StarTransactions object.
+#[derive(Serialize, Debug, Response)]
+#[response = "StarTransactions"]
+pub struct GetStarTransactions {
+    /// Optional. Number of transactions to skip in the response
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub offset:	Option<Integer>,	
+    /// Optional. The maximum number of transactions to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub limit:	Option<Integer>,	
+}
+
+/// Refunds a successful payment in Telegram Stars. Returns True on success.
+#[derive(Serialize, Debug, Response)]
+#[response = "Boolean"]
+pub struct RefundStarPayment {
+    /// Yes	Identifier of the user whose payment will be refunded
+    pub user_id:	Integer	,
+    /// Yes	Telegram payment identifier
+    pub telegram_payment_charge_id:	String,	
+}
+
 // ------------------ PASSPORT -----------------
 
 /// Informs a user that some of the Telegram Passport elements they provided contains errors. The user will not be able to re-submit their Passport to you until the errors are fixed (the contents of the field for which you returned the error must change). Returns True on success. Use this if the data submitted by the user doesn't satisfy the standards your service requires for any reason. For example, if a birthday date seems invalid, a submitted document is blurry, a scan shows evidence of tampering, etc. Supply some details in the error message to make sure the user knows how to correct the issues.
@@ -2158,6 +2254,9 @@ pub struct SendGame {
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protect_content: Option<Boolean>,
+    /// Optional. Unique identifier of the message effect to be added to the message; for private chats only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_effect_id: Option<String>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_parameters: Option<ReplyParameters>,

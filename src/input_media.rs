@@ -32,6 +32,9 @@ pub struct InputMediaPhoto {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Pass True if the photo needs to be covered with a spoiler animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_spoiler: Option<Boolean>,
@@ -57,6 +60,9 @@ pub struct InputMediaVideo {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Video width
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width: Option<Integer>,
@@ -94,6 +100,9 @@ pub struct InputMediaAnimation {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Animation width
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width: Option<Integer>,
@@ -128,6 +137,9 @@ pub struct InputMediaAudio {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Duration of the audio in seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<Integer>,
@@ -159,6 +171,9 @@ pub struct InputMediaDocument {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Disables automatic server-side content type detection for files uploaded using multipart/form-data. Always True, if the document is sent as part of an album.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_content_type_detection: Option<Boolean>,

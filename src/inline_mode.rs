@@ -135,6 +135,9 @@ pub struct InlineQueryResultPhoto {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -179,6 +182,9 @@ pub struct InlineQueryResultGif {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -223,6 +229,9 @@ pub struct InlineQueryResultMpeg4Gif {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
@@ -256,6 +265,9 @@ pub struct InlineQueryResultVideo {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Video width
     #[serde(skip_serializing_if = "Option::is_none")]
     pub video_width: Option<Integer>,
@@ -292,6 +304,9 @@ pub struct InlineQueryResultAudio {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub performer: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -318,6 +333,9 @@ pub struct InlineQueryResultVoice {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub voice_duration: Option<Integer>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -345,6 +363,9 @@ pub struct InlineQueryResultDocument {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// A valid URL for the file
     pub document_url: String,
     /// MIME type of the content of the file, either “application/pdf” or “application/zip”
@@ -522,6 +543,9 @@ pub struct InlineQueryResultCachedPhoto {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -531,12 +555,17 @@ pub struct InlineQueryResultCachedPhoto {
 /// Represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedGif {
+    /// Type of the result, must be gif
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 bytes
     pub id: String,
+    /// A valid file identifier for the GIF file
     pub gif_file_id: String,
+    /// Optional. Title for the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    /// Optional. Caption of the GIF file to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -545,8 +574,13 @@ pub struct InlineQueryResultCachedGif {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the GIF animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -554,12 +588,17 @@ pub struct InlineQueryResultCachedGif {
 /// Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InlineQueryResultCachedMpeg4Gif {
+    /// Type of the result, must be mpeg4_gif
     #[serde(rename = "type")]
     pub kind: String,
+    /// Unique identifier for this result, 1-64 bytes
     pub id: String,
+    /// A valid file identifier for the MPEG4 file
     pub mpeg4_file_id: String,
+    /// Optional. Title for the result
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    /// Optional. Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
@@ -568,8 +607,13 @@ pub struct InlineQueryResultCachedMpeg4Gif {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
+    /// Optional. Inline keyboard attached to the message
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
+    /// Optional. Content of the message to be sent instead of the video animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub input_message_content: Option<InputMessageContent>,
 }
@@ -605,6 +649,9 @@ pub struct InlineQueryResultCachedDocument {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -629,6 +676,9 @@ pub struct InlineQueryResultCachedVideo {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -651,6 +701,9 @@ pub struct InlineQueryResultCachedVoice {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -672,6 +725,9 @@ pub struct InlineQueryResultCachedAudio {
     /// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<InlineKeyboardMarkup>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -760,8 +816,9 @@ pub struct InputInvoiceMessageContent {
     pub description: String,
     /// Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
     pub payload: String,
-    /// Payment provider token, obtained via Botfather
-    pub provider_token: String,
+    /// Optional. Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub provider_token:	Option<String>,	
     /// Three-letter ISO 4217 currency code, see more on currencies
     pub currency: String,
     /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)

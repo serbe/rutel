@@ -87,3 +87,112 @@ pub struct PreCheckoutQuery {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_info: Option<OrderInfo>,
 }
+
+/// This object describes the state of a revenue withdrawal operation. Currently, it can be one of
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum RevenueWithdrawalState {
+RevenueWithdrawalStatePending,
+RevenueWithdrawalStateSucceeded,
+RevenueWithdrawalStateFailed,
+}
+
+/// The withdrawal is in progress.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct RevenueWithdrawalStatePending {
+    /// Type of the state, always “pending”
+    #[serde(rename = "type")]
+    pub kind: String,
+}
+
+/// The withdrawal succeeded.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct RevenueWithdrawalStateSucceeded {
+    /// Type of the state, always “succeeded”
+    #[serde(rename = "type")]
+    pub kind:	String,	
+    /// Date the withdrawal was completed in Unix time
+    pub date:	Integer,	
+    /// An HTTPS URL that can be used to see transaction details
+    pub url:	String,	
+}
+
+/// The withdrawal failed and the transaction was refunded.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct RevenueWithdrawalStateFailed {
+    /// Type of the state, always “failed”
+    #[serde(rename = "type")]
+    pub kind:	String,	
+}
+
+/// This object describes the source of a transaction, or its recipient for outgoing transactions. Currently, it can be one of
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum TransactionPartner {
+    TransactionPartnerUser,
+    TransactionPartnerFragment,
+    TransactionPartnerTelegramAds,
+    TransactionPartnerOther,
+}
+
+/// Describes a transaction with a user.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct TransactionPartnerUser {
+    /// Type of the transaction partner, always “user”
+    #[serde(rename = "type")]
+    pub kind:	String,	
+    /// Information about the user
+    pub user:	User	,
+    /// Optional. Bot-specified invoice payload
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub invoice_payload:	Option<String>	,
+}
+
+/// Describes a withdrawal transaction with Fragment.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct TransactionPartnerFragment {
+    /// Type of the transaction partner, always “fragment”
+    #[serde(rename = "type")]
+    pub kind:	String,	
+    /// Optional. State of the transaction if the transaction is outgoing
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub withdrawal_state:	Option<RevenueWithdrawalState>,	
+}
+
+/// Describes a withdrawal transaction to the Telegram Ads platform.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct TransactionPartnerTelegramAds {
+    /// Type of the transaction partner, always “telegram_ads”
+    #[serde(rename = "type")]
+    pub kind:	String,	
+}
+
+/// Describes a transaction with an unknown source or recipient.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct TransactionPartnerOther {
+    /// Type of the transaction partner, always “other”
+    #[serde(rename = "type")]
+    pub kind:	String	,
+}
+
+/// Describes a Telegram Star transaction.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct StarTransaction {
+    /// Unique identifier of the transaction. Coincides with the identifer of the original transaction for refund transactions. Coincides with SuccessfulPayment.telegram_payment_charge_id for successful incoming payments from users.
+    pub id:	String,	
+    /// Number of Telegram Stars transferred by the transaction
+    pub amount:	Integer,	
+    /// Date the transaction was created in Unix time
+    pub date:	Integer,	
+    /// Optional. Source of an incoming transaction (e.g., a user purchasing goods or services, Fragment refunding a failed withdrawal). Only for incoming transactions
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source:	Option<TransactionPartner>,
+    /// Optional. Receiver of an outgoing transaction (e.g., a user for a purchase refund, Fragment for a withdrawal). Only for outgoing transactions
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub receiver:	Option<TransactionPartner>,
+}
+
+/// Contains a list of Telegram Star transactions.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct StarTransactions {
+    /// The list of transactions
+    pub transactions: Vec<StarTransaction>,	
+}

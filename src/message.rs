@@ -96,6 +96,9 @@ pub struct Message {
     /// Optional. Options used for link preview generation for the message, if it is a text message and link preview options were changed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub link_preview_options: Option<LinkPreviewOptions>,
+    /// Optional. Unique identifier of the message effect added to the message
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub effect_id: Option<String>,
     /// Optional. Message is an animation, information about the animation. For backward compatibility, when this field is set, the document field will also be set
     #[serde(skip_serializing_if = "Option::is_none")]
     pub animation: Option<Animation>,
@@ -129,6 +132,9 @@ pub struct Message {
     /// Optional. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in the caption
     #[serde(skip_serializing_if = "Option::is_none")]
     pub caption_entities: Option<Vec<MessageEntity>>,
+    /// Optional. True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. True, if the message media is covered by a spoiler animation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub has_media_spoiler: Option<Boolean>,
