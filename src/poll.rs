@@ -8,8 +8,26 @@ use crate::{
 /// This object contains information about one answer option in a poll.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PollOption {
+    /// Option text, 1-100 characters
     pub text: String,
+    /// Optional. Special entities that appear in the option text. Currently, only custom emoji entities are allowed in poll option texts
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text_entities: Option<Vec<MessageEntity>>,
+    /// Number of users that voted for this option
     pub voter_count: Integer,
+}
+
+/// This object contains information about one answer option in a poll to be sent.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct InputPollOption {
+    /// Option text, 1-100 characters
+    pub text: String,
+    /// Optional. Mode for parsing entities in the text. See formatting options for more details. Currently, only custom emoji entities are allowed
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text_parse_mode: Option<String>,
+    /// Optional. A JSON-serialized list of special entities that appear in the poll option text. It can be specified instead of text_parse_mode
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text_entities: Option<Vec<MessageEntity>>,
 }
 
 /// This object represents an answer of a user in a non-anonymous poll.
@@ -34,6 +52,9 @@ pub struct Poll {
     pub id: String,
     /// Poll question, 1-300 characters
     pub question: String,
+    /// Optional. Special entities that appear in the question. Currently, only custom emoji entities are allowed in poll questions
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub question_entities: Option<Vec<MessageEntity>>,
     /// List of poll options
     pub options: Vec<PollOption>,
     /// Total number of users that voted in the poll

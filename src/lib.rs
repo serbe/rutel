@@ -5,6 +5,7 @@
 //#![allow(empty_line_after_outer_attr)]
 //#![allow(unused_attributes)]
 
+pub mod background;
 pub mod bot;
 pub mod bot_command;
 pub mod business;

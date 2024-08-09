@@ -14,11 +14,11 @@ use crate::{
     message::{Message, MessageEntity, MessageId, ReplyParameters},
     passport::PassportElementError,
     payments::{LabeledPrice, ShippingOption},
-    poll::Poll,
+    poll::{InputPollOption, Poll},
     reactions::ReactionType,
     stickers::{InputSticker, MaskPosition, Sticker, StickerSet},
     types::{
-        Boolean, BotDescription, BotName, BotShortDescription, Chat, ChatAdministratorRights,
+        Boolean, BotDescription, BotName, BotShortDescription, ChatFullInfo, ChatAdministratorRights,
         ChatID, ChatInviteLink, ChatMember, ChatPermissions, Float, ForumTopic,
         InlineKeyboardMarkup, InputFile, InputFileString, Integer, LinkPreviewOptions, MenuButton,
         ReplyMarkup, Response, TrueMessage, Update, User, UserProfilePhotos,
@@ -656,6 +656,9 @@ pub struct EditMessageLiveLocation {
     pub latitude: Float,
     /// Longitude of new location
     pub longitude: Float,
+    /// Optional	New period in seconds during which the location can be updated, starting from the message send date. If 0x7FFFFFFF is specified, then the location can be updated forever. Otherwise, the new value must not exceed the current live_period by more than a day, and the live location expiration date must remain within the next 90 days. If not specified, then live_period remains unchanged
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub live_period: Option<Integer>,
     /// Optional. The radius of uncertainty for the location, measured in meters; 0-1500
     #[serde(skip_serializing_if = "Option::is_none")]
     pub horizontal_accuracy: Option<Float>,
@@ -783,8 +786,11 @@ pub struct SendPoll {
     pub message_thread_id: Option<Integer>,
     /// Poll question, 1-255 characters
     pub question: String,
-    /// A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
-    pub options: Vec<String>,
+    /// Optional. Mode for parsing entities in the question. See formatting options for more details. Currently, only custom emoji entities are allowed
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub question_parse_mode: Option<String>,
+    /// A JSON-serialized list of 2-10 answer options
+    pub options: Vec<InputPollOption>,
     /// Optional. True, if the poll needs to be anonymous, defaults to True
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_anonymous: Option<Boolean>,
@@ -1219,9 +1225,9 @@ pub struct LeaveChat {
     pub chat_id: ChatID,
 }
 
-/// Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a Chat object on success.
+/// Use this method to get up-to-date information about the chat. Returns a ChatFullInfo object on success.
 #[derive(Serialize, Debug, Response)]
-#[response = "Chat"]
+#[response = "ChatFullInfo"]
 pub struct GetChat {
     /// Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: ChatID,

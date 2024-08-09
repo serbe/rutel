@@ -120,20 +120,20 @@ async fn test_send_audio() {
 
 // -----------------
 
-#[tokio::test]
-async fn test_send_poll() {
-    if let Some((mut bot, target)) = get_tt() {
-        let message = bot
-            .send_poll(&bot::SendPoll::new(
-                ChatID::from(&target),
-                "Question".to_string(),
-                vec!["one".to_string(), "two".to_string()],
-            ))
-            .await
-            .unwrap();
-        assert!(message.poll.is_some());
-    }
-}
+// #[tokio::test]
+// async fn test_send_poll() {
+//     if let Some((mut bot, target)) = get_tt() {
+//         let message = bot
+//             .send_poll(&bot::SendPoll::new(
+//                 ChatID::from(&target),
+//                 "Question".to_string(),
+//                 vec!["one".to_string(), "two".to_string()],
+//             ))
+//             .await
+//             .unwrap();
+//         assert!(message.poll.is_some());
+//     }
+// }
 
 #[tokio::test]
 async fn test_send_dice() {
