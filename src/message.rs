@@ -9,7 +9,7 @@ use crate::{
     games::Game,
     giveaway::{Giveaway, GiveawayCompleted, GiveawayCreated, GiveawayWinners},
     passport::PassportData,
-    payments::{Invoice, SuccessfulPayment},
+    payments::{Invoice, PaidMediaInfo, SuccessfulPayment},
     poll::Poll,
     stickers::Sticker,
     types::{
@@ -108,6 +108,9 @@ pub struct Message {
     /// Optional. Message is a general file, information about the file
     #[serde(skip_serializing_if = "Option::is_none")]
     pub document: Option<Document>,
+    /// Optional. Message contains paid media; information about the paid media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub paid_media: Option<PaidMediaInfo>,	
     /// Optional. Message is a photo, available sizes of the photo
     #[serde(skip_serializing_if = "Option::is_none")]
     pub photo: Option<Vec<PhotoSize>>,
@@ -356,6 +359,9 @@ pub struct ExternalReplyInfo {
     /// Optional. Message is a general file, information about the file
     #[serde(skip_serializing_if = "Option::is_none")]
     pub document: Option<Document>,
+    /// Optional. Message contains paid media; information about the paid media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub paid_media: Option<PaidMediaInfo>,	
     /// Optional. Message is a photo, available sizes of the photo
     #[serde(skip_serializing_if = "Option::is_none")]
     pub photo: Option<Vec<PhotoSize>>,

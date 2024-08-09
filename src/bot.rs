@@ -18,10 +18,7 @@ use crate::{
     reactions::ReactionType,
     stickers::{InputSticker, MaskPosition, Sticker, StickerSet},
     types::{
-        Boolean, BotDescription, BotName, BotShortDescription, ChatFullInfo, ChatAdministratorRights,
-        ChatID, ChatInviteLink, ChatMember, ChatPermissions, Float, ForumTopic,
-        InlineKeyboardMarkup, InputFile, InputFileString, Integer, LinkPreviewOptions, MenuButton,
-        ReplyMarkup, Response, TrueMessage, Update, User, UserProfilePhotos,
+        Boolean, BotDescription, BotName, BotShortDescription, ChatAdministratorRights, ChatFullInfo, ChatID, ChatInviteLink, ChatMember, ChatPermissions, Float, ForumTopic, InlineKeyboardMarkup, InputFile, InputFileString, InputPaidMedia, Integer, LinkPreviewOptions, MenuButton, ReplyMarkup, Response, TrueMessage, Update, User, UserProfilePhotos
     },
 };
 
@@ -199,7 +196,7 @@ pub struct ForwardMessages {
     pub protect_content: Option<Boolean>,
 }
 
-/// Use this method to copy messages of any kind. The method is analogous to the method forwardMessages, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
+/// Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "MessageId"]
 pub struct CopyMessage {
@@ -238,7 +235,7 @@ pub struct CopyMessage {
     pub reply_markup: Option<ReplyMarkup>,
 }
 
-/// Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an array of MessageId of the sent messages is returned.
+/// Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an array of MessageId of the sent messages is returned.
 #[derive(Serialize, Debug, Response)]
 #[response = "Vec<MessageId>"]
 pub struct CopyMessages {
@@ -616,6 +613,42 @@ pub struct SendVideoNote {
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reply_markup: Option<ReplyMarkup>,
+}
+
+/// Use this method to send paid media to channel chats. On success, the sent Message is returned.
+#[derive(Serialize, Debug, Response)]
+#[response = "Message"]
+pub struct SendPaidMedia {
+    /// Yes	Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id:	ChatID,	
+    /// Yes	The number of Telegram Stars that must be paid to buy access to the media
+    pub star_count:	Integer	,
+    /// Yes	A JSON-serialized array describing the media to be sent; up to 10 items
+    pub media: Vec<InputPaidMedia>,
+    /// Optional. Media caption, 0-1024 characters after entities parsing
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub caption:	Option<String>,	
+    /// Optional. Mode for parsing entities in the media caption. See formatting options for more details.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parse_mode:	Option<String>,	
+    /// Optional. A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub caption_entities:	Option<Vec<MessageEntity>>,	
+    /// Optional. Pass True, if the caption must be shown above the message media
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub show_caption_above_media:	Option<Boolean>,	
+    /// Optional. Sends the message silently. Users will receive a notification with no sound.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_notification:	Option<Boolean>,	
+    /// Optional. Protects the contents of the sent message from forwarding and saving
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub protect_content:	Option<Boolean>,	
+    /// Optional. Description of the message to reply to
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_parameters:	Option<ReplyParameters>,	
+    /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reply_markup:	Option<ReplyMarkup>,	
 }
 
 /// Use this method to send a group of photos or videos as an album. On success, an array of the sent Messages is returned.

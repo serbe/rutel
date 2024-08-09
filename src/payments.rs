@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::types::{Integer, User};
+use crate::{files::{PhotoSize, Video}, types::{Integer, User}};
 
 /// This object represents a portion of the price for goods or services.
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -195,4 +195,58 @@ pub struct StarTransaction {
 pub struct StarTransactions {
     /// The list of transactions
     pub transactions: Vec<StarTransaction>,	
+}
+
+/// Describes the paid media added to a message.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PaidMediaInfo {
+    /// The number of Telegram Stars that must be paid to buy access to the media
+    pub star_count:	Integer	,
+    /// Information about the paid media
+    pub paid_media:	Vec< PaidMedia	>,
+}
+
+/// This object describes paid media. Currently, it can be one of
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum PaidMedia {
+PaidMediaPreview,
+PaidMediaPhoto,
+PaidMediaVideo,
+}
+
+/// The paid media isn't available before the payment.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PaidMediaPreview {
+    /// Type of the paid media, always “preview”
+    #[serde(rename = "type")]
+    pub kind:	String,	
+    /// Optional. Media width as defined by the sender
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width:	Option<Integer>,	
+    /// Optional. Media height as defined by the sender
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub height:	Option<Integer>,	
+    /// Optional. Duration of the media in seconds as defined by the sender
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duration:	Option<Integer>,	
+}
+
+/// The paid media is a photo.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PaidMediaPhoto {
+    /// Type of the paid media, always “photo”
+    #[serde(rename = "type")]
+    pub kind:	String	,
+    /// The photo
+    pub photo:	Vec< PhotoSize>,
+}
+
+/// The paid media is a video.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PaidMediaVideo {
+    /// Type of the paid media, always “video”
+    #[serde(rename = "type")]
+    pub kind:	String	,
+    /// The video
+    pub video:	Video	,
 }
