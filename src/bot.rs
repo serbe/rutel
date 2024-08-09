@@ -18,7 +18,11 @@ use crate::{
     reactions::ReactionType,
     stickers::{InputSticker, MaskPosition, Sticker, StickerSet},
     types::{
-        Boolean, BotDescription, BotName, BotShortDescription, ChatAdministratorRights, ChatFullInfo, ChatID, ChatInviteLink, ChatMember, ChatPermissions, Float, ForumTopic, InlineKeyboardMarkup, InputFile, InputFileString, InputPaidMedia, Integer, LinkPreviewOptions, MenuButton, ReplyMarkup, Response, TrueMessage, Update, User, UserProfilePhotos
+        Boolean, BotDescription, BotName, BotShortDescription, ChatAdministratorRights,
+        ChatFullInfo, ChatID, ChatInviteLink, ChatMember, ChatPermissions, Float, ForumTopic,
+        InlineKeyboardMarkup, InputFile, InputFileString, InputPaidMedia, Integer,
+        LinkPreviewOptions, MenuButton, ReplyMarkup, Response, TrueMessage, Update, User,
+        UserProfilePhotos,
     },
 };
 
@@ -619,36 +623,36 @@ pub struct SendVideoNote {
 #[derive(Serialize, Debug, Response)]
 #[response = "Message"]
 pub struct SendPaidMedia {
-    /// Yes	Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-    pub chat_id:	ChatID,	
-    /// Yes	The number of Telegram Stars that must be paid to buy access to the media
-    pub star_count:	Integer	,
-    /// Yes	A JSON-serialized array describing the media to be sent; up to 10 items
+    /// Yes Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    pub chat_id: ChatID,
+    /// Yes The number of Telegram Stars that must be paid to buy access to the media
+    pub star_count: Integer,
+    /// Yes A JSON-serialized array describing the media to be sent; up to 10 items
     pub media: Vec<InputPaidMedia>,
     /// Optional. Media caption, 0-1024 characters after entities parsing
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub caption:	Option<String>,	
+    pub caption: Option<String>,
     /// Optional. Mode for parsing entities in the media caption. See formatting options for more details.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub parse_mode:	Option<String>,	
+    pub parse_mode: Option<String>,
     /// Optional. A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub caption_entities:	Option<Vec<MessageEntity>>,	
+    pub caption_entities: Option<Vec<MessageEntity>>,
     /// Optional. Pass True, if the caption must be shown above the message media
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub show_caption_above_media:	Option<Boolean>,	
+    pub show_caption_above_media: Option<Boolean>,
     /// Optional. Sends the message silently. Users will receive a notification with no sound.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub disable_notification:	Option<Boolean>,	
+    pub disable_notification: Option<Boolean>,
     /// Optional. Protects the contents of the sent message from forwarding and saving
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub protect_content:	Option<Boolean>,	
+    pub protect_content: Option<Boolean>,
     /// Optional. Description of the message to reply to
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_parameters:	Option<ReplyParameters>,	
+    pub reply_parameters: Option<ReplyParameters>,
     /// Optional. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reply_markup:	Option<ReplyMarkup>,	
+    pub reply_markup: Option<ReplyMarkup>,
 }
 
 /// Use this method to send a group of photos or videos as an album. On success, an array of the sent Messages is returned.
@@ -743,7 +747,7 @@ pub struct EditMessageLiveLocation {
     pub latitude: Float,
     /// Longitude of new location
     pub longitude: Float,
-    /// Optional	New period in seconds during which the location can be updated, starting from the message send date. If 0x7FFFFFFF is specified, then the location can be updated forever. Otherwise, the new value must not exceed the current live_period by more than a day, and the live location expiration date must remain within the next 90 days. If not specified, then live_period remains unchanged
+    /// Optional. New period in seconds during which the location can be updated, starting from the message send date. If 0x7FFFFFFF is specified, then the location can be updated forever. Otherwise, the new value must not exceed the current live_period by more than a day, and the live location expiration date must remain within the next 90 days. If not specified, then live_period remains unchanged
     #[serde(skip_serializing_if = "Option::is_none")]
     pub live_period: Option<Integer>,
     /// Optional. The radius of uncertainty for the location, measured in meters; 0-1500
@@ -2023,7 +2027,7 @@ pub struct SetStickerSetThumbnail {
     /// Optional. A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see [technical-requirements](https://core.telegram.org/animated_stickers#technical-requirements) for animated sticker technical requirements. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files ». Animated sticker set thumbnail can't be uploaded via HTTP URL.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub thumbnail: Option<InputFileString>,
-    /// Yes	Format of the thumbnail, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, or “video” for a WEBM video
+    /// Yes Format of the thumbnail, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, or “video” for a WEBM video
     pub format: String,
 }
 
@@ -2095,7 +2099,7 @@ pub struct SendInvoice {
     pub payload: String,
     /// Optional. Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub provider_token:	Option<String>,	
+    pub provider_token: Option<String>,
     /// Three-letter ISO 4217 currency code, see more on currencies
     pub currency: String,
     /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
@@ -2174,7 +2178,7 @@ pub struct CreateInvoiceLink {
     pub payload: String,
     /// Optional. Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub provider_token:	Option<String>,	
+    pub provider_token: Option<String>,
     /// Three-letter ISO 4217 currency code, see more on currencies
     pub currency: String,
     /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
@@ -2258,20 +2262,20 @@ pub struct AnswerPreCheckoutQuery {
 pub struct GetStarTransactions {
     /// Optional. Number of transactions to skip in the response
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub offset:	Option<Integer>,	
+    pub offset: Option<Integer>,
     /// Optional. The maximum number of transactions to be retrieved. Values between 1-100 are accepted. Defaults to 100.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit:	Option<Integer>,	
+    pub limit: Option<Integer>,
 }
 
 /// Refunds a successful payment in Telegram Stars. Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct RefundStarPayment {
-    /// Yes	Identifier of the user whose payment will be refunded
-    pub user_id:	Integer	,
-    /// Yes	Telegram payment identifier
-    pub telegram_payment_charge_id:	String,	
+    /// Yes Identifier of the user whose payment will be refunded
+    pub user_id: Integer,
+    /// Yes Telegram payment identifier
+    pub telegram_payment_charge_id: String,
 }
 
 // ------------------ PASSPORT -----------------

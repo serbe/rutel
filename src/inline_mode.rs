@@ -818,7 +818,7 @@ pub struct InputInvoiceMessageContent {
     pub payload: String,
     /// Optional. Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub provider_token:	Option<String>,	
+    pub provider_token: Option<String>,
     /// Three-letter ISO 4217 currency code, see more on currencies
     pub currency: String,
     /// Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
