@@ -1834,7 +1834,7 @@ pub struct StopPoll {
 /// - Bots granted can_post_messages permissions can delete outgoing messages in channels.
 /// - If the bot is an administrator of a group, it can delete any message there.
 /// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
-///  Returns True on success.
+///   Returns True on success.
 #[derive(Serialize, Debug, Response)]
 #[response = "Boolean"]
 pub struct DeleteMessage {

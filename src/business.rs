@@ -18,7 +18,7 @@ pub struct BusinessConnection {
     pub date: Integer,
     /// True, if the bot can act on behalf of the business account in chats that were active in the last 24 hours
     pub can_reply: Boolean,
-    ///	True, if the connection is active
+    /// True, if the connection is active
     pub is_enabled: Boolean,
 }
 
