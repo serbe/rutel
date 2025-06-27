@@ -1,9 +1,9 @@
-use dotenv;
+use dotenvy;
 use rutel::bot;
 use rutel::types::{ChatID, InputFileString};
 
 fn get_tt() -> Option<(bot::Bot, String)> {
-    if let (Ok(token), Ok(target)) = (dotenv::var("TG_TOKEN"), dotenv::var("TARGET")) {
+    if let (Ok(token), Ok(target)) = (dotenvy::var("TG_TOKEN"), dotenvy::var("TARGET")) {
         return Some((bot::Bot::new(&token), target));
     } else {
         return None;
@@ -55,7 +55,7 @@ async fn test_send_message() {
 #[tokio::test]
 async fn test_forward_message() {
     if let Some((mut bot, target)) = get_tt() {
-        if let Ok(msg_id) = dotenv::var("MESSAGE_ID") {
+        if let Ok(msg_id) = dotenvy::var("MESSAGE_ID") {
             let msg = bot
                 .forward_message(&bot::ForwardMessage::new(
                     ChatID::from(&target),
@@ -72,7 +72,7 @@ async fn test_forward_message() {
 #[tokio::test]
 async fn test_copy_message() {
     if let Some((mut bot, target)) = get_tt() {
-        if let Ok(msg_id) = dotenv::var("MESSAGE_ID") {
+        if let Ok(msg_id) = dotenvy::var("MESSAGE_ID") {
             let message_id = bot
                 .copy_message(&bot::CopyMessage::new(
                     ChatID::from(&target),
@@ -89,7 +89,7 @@ async fn test_copy_message() {
 #[tokio::test]
 async fn test_send_photo() {
     if let Some((mut bot, target)) = get_tt() {
-        if let Ok(photo_id) = dotenv::var("PHOTO_ID") {
+        if let Ok(photo_id) = dotenvy::var("PHOTO_ID") {
             let message = bot
                 .send_photo(&bot::SendPhoto::new(
                     ChatID::from(&target),
@@ -105,7 +105,7 @@ async fn test_send_photo() {
 #[tokio::test]
 async fn test_send_audio() {
     if let Some((mut bot, target)) = get_tt() {
-        if let Ok(audio_id) = dotenv::var("AUDIO_ID") {
+        if let Ok(audio_id) = dotenvy::var("AUDIO_ID") {
             let message = bot
                 .send_audio(&bot::SendAudio::new(
                     ChatID::from(&target),

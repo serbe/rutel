@@ -296,7 +296,7 @@ pub struct InaccessibleMessage {
 /// This object describes a message that can be inaccessible to the bot. It can be one of
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum MaybeInaccessibleMessage {
-    Message(Message),
+    Message(Box<Message>),
     InaccessibleMessage(InaccessibleMessage),
 }
 
